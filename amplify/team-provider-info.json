@@ -1,0 +1,23 @@
+{
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tmweb-prod-baba4-authRole",
+      "UnauthRoleArn": "arn:aws:iam::327362716042:role/amplify-tmweb-prod-baba4-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::327362716042:role/amplify-tmweb-prod-baba4-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-tmweb-prod-baba4-deployment",
+      "UnauthRoleName": "amplify-tmweb-prod-baba4-unauthRole",
+      "StackName": "amplify-tmweb-prod-baba4",
+      "StackId": "arn:aws:cloudformation:eu-west-1:327362716042:stack/amplify-tmweb-prod-baba4/02d45750-b5d4-11f0-abe8-06654506aa01",
+      "AmplifyAppId": "d2s8udh2m9kn1a"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d2s8udh2m9kn1a",
+          "type": "cicd"
+        }
+      }
+    }
+  }
+}
