@@ -29,10 +29,14 @@ jobs:
           node-version: '18'
           cache: 'yarn'
       
-      - name: Build .env
+      - name: Build Application
         run: |
+          # Fetch .env
           aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:eu-west-1:327362716042:secret:tournament/web/env-fBXu54 --query SecretString --output text > .env
-      
+
+          yarn install
+          yarn build
+
       - name: Upload Artifacts to S3 Bucket
         run: |
             aws deploy push \
