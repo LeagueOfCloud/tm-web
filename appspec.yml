@@ -1,5 +1,6 @@
 version: 0.0
 os: linux
+runas
 files:
   - source: /
     destination: /var/www/tournament-web
@@ -7,3 +8,4 @@ files:
 hooks:
   AfterInstall:
     - location: scripts/hooks/restart-app.sh
+      runas: root
