@@ -4,4 +4,6 @@ files:
   - source: /
     destination: /var/www/tournament-web
     overwrite: yes
-hooks: {}
+hooks:
+  AfterInstall:
+    - location: scripts/hooks/restart-app.sh
