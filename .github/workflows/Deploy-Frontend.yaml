@@ -1,0 +1,56 @@
+name: Deploy Frontend
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_REGION: eu-west-1
+  AWS_IAM_ROLE: arn:aws:iam::327362716042:role/DeployFrontendRole-Role-oo6lRkcPrCCN
+  APPLICATION_NAME: TOURNAMENT-WEB
+  DEPLOYMENT_GROUP_NAME: tournament-web
+  AWS_SECRET_ARN: arn:aws:secretsmanager:eu-west-1:327362716042:secret:tournament/web/env-fBXu54
+  AWS_ARTIFACTS_BUCKET: tournament-artifacts
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+      
+      - name: Build .env
+        run: |
+          aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:eu-west-1:327362716042:secret:tournament/web/env-fBXu54 --query SecretString --output text > .env
+      
+      - name: Upload Artifacts to S3 Bucket
+        run: |
+            aws deploy push \
+            --application-name ${{ env.APPLICATION_NAME }}  \
+            --description "This is a revision for TOURNAMENT-WEB-${{ github.sha }}" \
+            --s3-location s3://${{ env.AWS_ARTIFACTS_BUCKET }}/$GITHUB_REPOSITORY/prod/${{ github.sha }}.zip \
+            --source .
+      
+      - name: Create Deployment
+        id: deployment
+        run: |
+            OUTPUT=$(aws deploy create-deployment \
+            --application-name ${{ env.APPLICATION_NAME }}  \
+            --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} \
+            --file-exists-behavior OVERWRITE \
+            --s3-location bucket=${{ env.AWS_ARTIFACTS_BUCKET }},key=$GITHUB_REPOSITORY/prod/${{ github.sha }}.zip,bundleType=zip)
+            DEPLOYMENT_ID=$(echo $OUTPUT | jq -r '.deploymentId')
+            echo "deploymentId=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+      
+      - name: Wait for successful deployment
+        run: aws deploy wait deployment-successful --deployment-id ${{ steps.deployment.outputs.deploymentId }}
