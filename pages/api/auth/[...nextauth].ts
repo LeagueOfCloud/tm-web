@@ -34,17 +34,17 @@ export const authOptions: NextAuthOptions = {
                 'SELECT * FROM profiles WHERE discord_id = ? LIMIT 1',
                 [user.id]
             )
-            
+
             const result = results[0];
 
-            if(!result) {
+            if (!result) {
                 await connection.execute(
                     "INSERT INTO profiles (discord_id, name, avatar_url) VALUES (?, ?, ?)",
                     [user.id, user.name, user.image || null]
                 )
             }
 
-            
+
             return true;
         },
 
@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
 
             const result: DBUser | undefined = results[0];
 
-            if(!result) {
+            if (!result) {
                 throw new Error("This user is not authorized")
             }
 
@@ -76,9 +76,31 @@ export const authOptions: NextAuthOptions = {
             session.user.discord_id = result.discord_id;
 
             return session;
+        },
+
+        async jwt({ token, account }) {
+            if (account) {
+                const connection = await mysql.createConnection({
+                    database: `${process.env.DB_NAME}`,
+                    host: `${process.env.DB_HOST}`,
+                    user: `${process.env.DB_USER}`,
+                    password: `${process.env.DB_PASSWORD}`,
+                })
+
+                const [results] = await connection.query(
+                    'SELECT * FROM profiles WHERE discord_id = ? LIMIT 1',
+                    [account.providerAccountId]
+                )
+
+                const result: DBUser | undefined = results[0];
+
+                token.type = result?.type || "user";
+            }
+
+            return token;
         }
     }
-    
+
 }
 
 export default NextAuth(authOptions);

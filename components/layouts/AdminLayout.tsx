@@ -1,0 +1,62 @@
+import { AbsoluteCenter, Button, ButtonProps, Flex, Icon, Spinner, Text } from "@chakra-ui/react";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { PropsWithChildren } from "react";
+import { FaUsers } from "react-icons/fa";
+import { LuLogOut } from "react-icons/lu";
+
+export function SidebarButton({ children, ...props }: ButtonProps & PropsWithChildren) {
+
+    return (
+        <Button variant="ghost" width="100%" rounded="none" justifyContent="start" {...props}>
+            {children}
+        </Button>
+    )
+}
+
+export default function AdminLayout({ children }: PropsWithChildren) {
+    const session = useSession();
+    const router = useRouter();
+
+    return (
+        <>
+            {session.status !== "authenticated" && (
+                <AbsoluteCenter>
+                    <Spinner boxSize="60px" borderWidth="10px" color="successGreen" />
+                </AbsoluteCenter>
+            )}
+
+            {session.status === "authenticated" && session.data.user.type === "admin" && (
+                <Flex
+                    direction="row"
+                    height="100vh"
+                    overflow="auto"
+                    gap={5}
+                >
+                    <Flex
+                        width="13vw"
+                        backgroundColor="featureBackground"
+                        roundedRight="5px"
+                        height="100%"
+                        boxShadow="md"
+                        direction="column"
+                        overflow="auto"
+                        alignItems="center"
+                        py={2}
+                    >
+                        <Text mb={5}>Logged in as: <strong>{session.data.user.name}</strong></Text>
+
+                        <SidebarButton onClick={() => router.push("/admin/teams")}>
+                            <Icon as={FaUsers} />
+                            Manage Teams
+                        </SidebarButton>
+
+                        <SidebarButton mt="auto" color="tomato" onClick={() => signOut({ callbackUrl: "/" })}> <Icon as={LuLogOut} /> Sign Out</SidebarButton>
+                    </Flex>
+
+                    {children}
+                </Flex>
+            )}
+        </>
+    )
+}
