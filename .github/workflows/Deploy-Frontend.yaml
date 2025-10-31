@@ -57,7 +57,7 @@ jobs:
         run: |
             OUTPUT=$(aws deploy create-deployment \
             --application-name ${{ env.APPLICATION_NAME }}  \
-            --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} \
+            --deployment-group-name ${{ env.DEPLOYMENT_GROUP_NAME }} \
             --file-exists-behavior OVERWRITE \
             --s3-location bucket=${{ env.AWS_ARTIFACTS_BUCKET }},key=$GITHUB_REPOSITORY/prod/${{ github.sha }}.zip,bundleType=zip)
             DEPLOYMENT_ID=$(echo $OUTPUT | jq -r '.deploymentId')
