@@ -19,9 +19,19 @@ async function getProfiles(token: string): Promise<ProfileResponse[]> {
     })
 }
 
+async function postTeams(token: string, payload: object) {
+    console.log(payload)
+    return new Promise((resolve, reject) => {
+        axios.post(`${API_URL}/teams`, JSON.stringify(payload), { headers: { Authorization: token } })
+            .then(res => resolve(res.data))
+            .catch(err => reject(err.response.data));
+    })
+}
+
 const api = {
     getProfiles,
-    getProfileTotal
+    getProfileTotal,
+    postTeams
 }
 
 export default api;

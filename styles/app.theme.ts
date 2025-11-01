@@ -1,4 +1,5 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
+import { dialogRecipe } from "./recipes/dialog";
 
 const config = defineConfig({
     theme: {
@@ -18,6 +19,9 @@ const config = defineConfig({
                     solid: { value: "#5966f2" },
                 }
             }
+        },
+        slotRecipes: {
+            dialog: dialogRecipe
         }
     },
     globalCss: {
