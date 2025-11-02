@@ -1,11 +1,12 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 import { dialogRecipe } from "./recipes/dialog";
+import { buttonRecipe } from "./recipes/button";
 
 const config = defineConfig({
     theme: {
         tokens: {
             colors: {
-                white: { value: "#D8DADF" },
+                white: { value: "#fff" },
                 feature: { value: "#5965f9" },
                 secondary: { value: "#7b818a" },
                 featureBackground: { value: "#32363f" },
@@ -22,6 +23,9 @@ const config = defineConfig({
         },
         slotRecipes: {
             dialog: dialogRecipe
+        },
+        recipes: {
+            button: buttonRecipe
         }
     },
     globalCss: {

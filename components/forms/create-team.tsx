@@ -33,7 +33,7 @@ function FileUploadPreview({ width, height, onClear }: { width: string | number,
     )
 }
 
-export default function CreateTeamModal({ token, isOpen, setOpen }: { token: string, isOpen: boolean, setOpen: (state: boolean) => void }) {
+export default function CreateTeamModal({ token, isOpen, setOpen, onEnd }: { token: string, isOpen: boolean, setOpen: (state: boolean) => void, onEnd: () => void }) {
     const [teamName, setTeamName] = useState<string>("");
     const [logoBytes, setLogoBytes] = useState<string>("");
     const [bannerBytes, setBannerBytes] = useState<string>("");
@@ -72,7 +72,7 @@ export default function CreateTeamModal({ token, isOpen, setOpen }: { token: str
                                         Logo <Field.RequiredIndicator />
                                     </Field.Label>
 
-                                    <FileUpload.Root accept={"image/png"} maxFileSize={15728640} maxFiles={1} onFileAccept={async (e) => {
+                                    <FileUpload.Root accept={"image/png"} maxFileSize={10485760} maxFiles={1} onFileAccept={async (e) => {
                                         for (const file of e.files) {
                                             const reader = new FileReader();
 
@@ -93,7 +93,7 @@ export default function CreateTeamModal({ token, isOpen, setOpen }: { token: str
 
                                         <FileUploadPreview height={"150px"} width={"150px"} onClear={() => setLogoBytes("")} />
                                     </FileUpload.Root>
-                                    <Field.HelperText>* Maximum Size 15MB | Ideal Size 150x150</Field.HelperText>
+                                    <Field.HelperText>* Maximum Size 10MB | Ideal Size 150x150</Field.HelperText>
                                 </Field.Root>
                             </SimpleGrid>
 
@@ -102,7 +102,7 @@ export default function CreateTeamModal({ token, isOpen, setOpen }: { token: str
                                     Banner <Field.RequiredIndicator />
                                 </Field.Label>
 
-                                <FileUpload.Root accept={"image/png"} maxFileSize={52428800} maxFiles={1} onFileAccept={async (e) => {
+                                <FileUpload.Root accept={"image/png"} maxFileSize={10485760} maxFiles={1} onFileAccept={async (e) => {
                                     for (const file of e.files) {
                                         const reader = new FileReader();
 
@@ -121,14 +121,14 @@ export default function CreateTeamModal({ token, isOpen, setOpen }: { token: str
                                         </Button>
                                     </FileUpload.Trigger>
 
-                                    <FileUploadPreview height={`${720/5}px`} width={`${1600/5}px`} onClear={() => setBannerBytes("")} />
+                                    <FileUploadPreview height={`${720 / 5}px`} width={`${1600 / 5}px`} onClear={() => setBannerBytes("")} />
                                 </FileUpload.Root>
-                                <Field.HelperText>* Maximum Size 50MB | Ideal Size 1600x720</Field.HelperText>
+                                <Field.HelperText>* Maximum Size 10MB | Ideal Size 1600x720</Field.HelperText>
                             </Field.Root>
                         </Dialog.Body>
 
                         <Dialog.Footer>
-                            <Button loading={isSubmitting} loadingText="Submitting..." onClick={async() => {
+                            <Button variant="solid" colorPalette="blue" loading={isSubmitting} loadingText="Submitting..." onClick={async () => {
                                 setSubmitting(true);
                                 api.postTeams(token, {
                                     name: teamName,
@@ -136,19 +136,25 @@ export default function CreateTeamModal({ token, isOpen, setOpen }: { token: str
                                     logo_bytes: logoBytes,
                                     banner_bytes: bannerBytes
                                 })
-                                    .then(res => toaster.create({
-                                        title: "Team Created",
-                                        description: res,
-                                        type: "success",
-                                        closable: true
-                                    }))
+                                    .then(res => {
+                                        toaster.create({
+                                            title: "Team Created",
+                                            description: res,
+                                            type: "success",
+                                            closable: true
+                                        });
+                                        setOpen(false);
+                                    })
                                     .catch(err => toaster.create({
                                         title: "Team Create Failed",
                                         description: err,
                                         type: "error",
                                         closable: true
                                     }))
-                                    .finally(() => setSubmitting(false));
+                                    .finally(() => {
+                                        setSubmitting(false);
+                                        onEnd();
+                                    });
                             }}>Add Team</Button>
                         </Dialog.Footer>
 

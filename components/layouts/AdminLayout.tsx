@@ -3,6 +3,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { PropsWithChildren } from "react";
 import { FaUsers } from "react-icons/fa";
+import { FaWebAwesome } from "react-icons/fa6";
 import { LuLogOut } from "react-icons/lu";
 
 export function SidebarButton({ children, ...props }: ButtonProps & PropsWithChildren) {
@@ -31,7 +32,6 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                     direction="row"
                     height="100vh"
                     overflow="auto"
-                    gap={5}
                 >
                     <Flex
                         width="13vw"
@@ -46,6 +46,10 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                     >
                         <Text mb={5}>Logged in as: <strong>{session.data.user.name}</strong></Text>
 
+                        <SidebarButton onClick={() => router.push("/admin")}>
+                            <Icon as={FaWebAwesome} />
+                            Dashboard
+                        </SidebarButton>
                         <SidebarButton onClick={() => router.push("/admin/teams")}>
                             <Icon as={FaUsers} />
                             Manage Teams
@@ -54,7 +58,14 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                         <SidebarButton mt="auto" color="tomato" onClick={() => signOut({ callbackUrl: "/" })}> <Icon as={LuLogOut} /> Sign Out</SidebarButton>
                     </Flex>
 
-                    {children}
+                    <Flex
+                        p={2}
+                        width="full"
+                        direction="column"
+                        overflow="auto"
+                    >
+                        {children}
+                    </Flex>
                 </Flex>
             )}
         </>

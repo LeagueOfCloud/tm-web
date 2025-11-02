@@ -16,13 +16,6 @@ export const authOptions: NextAuthOptions = {
 
     callbacks: {
         async signIn({ user }) {
-            console.log({
-                database: `${process.env.DB_NAME}`,
-                host: `${process.env.DB_HOST}`,
-                user: `${process.env.DB_USER}`,
-                password: `${process.env.DB_PASSWORD}`,
-            })
-
             const connection = await mysql.createConnection({
                 database: `${process.env.DB_NAME}`,
                 host: `${process.env.DB_HOST}`,

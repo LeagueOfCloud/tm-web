@@ -14,3 +14,11 @@ export interface ProfileResponse {
     avatar_url?: string
     name: string
 }
+
+export interface TeamResponse {
+    id: number
+    name: string
+    tag: string
+    logo_url: string
+    banner_url: string
+}
