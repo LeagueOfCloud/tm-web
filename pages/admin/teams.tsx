@@ -1,12 +1,24 @@
 import CreateTeamModal from "@/components/forms/create-team";
 import DeleteTeamsModal from "@/components/forms/delete-teams";
+import EditTeamModal from "@/components/forms/edit-teams";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import useTeams from "@/lib/hooks/useTeams";
 import { TeamResponse } from "@/types/db";
 import { Button, ButtonGroup, Checkbox, Icon, Link, Table, useDisclosure } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu";
+import { LuPencil, LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu";
+
+function TeamEdit({ team, token, onEnd }: { team: TeamResponse, token: string, onEnd: () => void }) {
+    const disclosure = useDisclosure();
+
+    return (
+        <>
+            <Icon as={LuPencil} ml={2} cursor="pointer" onClick={disclosure.onOpen} />
+            <EditTeamModal defaultValues={team} teamId={team.id} token={token} isOpen={disclosure.open} setOpen={disclosure.setOpen} onEnd={() => onEnd()} />
+        </>
+    )
+}
 
 export default function ManageTeams() {
     const session = useSession();
@@ -55,6 +67,7 @@ export default function ManageTeams() {
                         <Table.ColumnHeader>TAG</Table.ColumnHeader>
                         <Table.ColumnHeader>LOGO_URL</Table.ColumnHeader>
                         <Table.ColumnHeader>BANNER_URL</Table.ColumnHeader>
+                        <Table.ColumnHeader>EDIT</Table.ColumnHeader>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -84,6 +97,12 @@ export default function ManageTeams() {
                             <Table.Cell>{team.tag}</Table.Cell>
                             <Table.Cell><Link href={team.logo_url} target="_blank" color="blue.400">{team.logo_url}</Link></Table.Cell>
                             <Table.Cell><Link href={team.banner_url} target="_blank" color="blue.400">{team.banner_url}</Link></Table.Cell>
+                            <Table.Cell width="30px">
+                                <TeamEdit team={team} token={session.data.user.token} onEnd={() => {
+                                    setSelectedTeams([]);
+                                    refreshTeams();
+                                }}  />
+                            </Table.Cell>
                         </Table.Row>
                     ))}
                 </Table.Body>

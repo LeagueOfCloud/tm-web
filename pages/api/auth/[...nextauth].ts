@@ -35,6 +35,11 @@ export const authOptions: NextAuthOptions = {
                     "INSERT INTO profiles (discord_id, name, avatar_url) VALUES (?, ?, ?)",
                     [user.id, user.name, user.image || null]
                 )
+            } else {
+                await connection.execute(
+                    "UPDATE profiles SET name = ?, avatar_url = ? WHERE discord_id = ?",
+                    [user.name, user.image || null, user.id]
+                )
             }
 
 

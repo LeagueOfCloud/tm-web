@@ -10,7 +10,7 @@ export default function AdminIndex() {
 
     return (
         <AdminLayout>
-            Profiles Registered:
+            Nothing 2 see here
         </AdminLayout>
     )
 }

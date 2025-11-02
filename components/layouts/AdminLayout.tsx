@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { PropsWithChildren } from "react";
 import { FaUsers } from "react-icons/fa";
 import { FaWebAwesome } from "react-icons/fa6";
-import { LuLogOut } from "react-icons/lu";
+import { LuLogOut, LuStepBack } from "react-icons/lu";
 
 export function SidebarButton({ children, ...props }: ButtonProps & PropsWithChildren) {
 
@@ -55,7 +55,8 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                             Manage Teams
                         </SidebarButton>
 
-                        <SidebarButton mt="auto" color="tomato" onClick={() => signOut({ callbackUrl: "/" })}> <Icon as={LuLogOut} /> Sign Out</SidebarButton>
+                        <SidebarButton mt={"auto"} color="blue.200" onClick={() => router.push("/")}> <Icon as={LuStepBack} /> Leave Admin Dashboard</SidebarButton>
+                        <SidebarButton color="tomato" onClick={() => signOut({ callbackUrl: "/" })}> <Icon as={LuLogOut} /> Sign Out</SidebarButton>
                     </Flex>
 
                     <Flex

@@ -7,6 +7,10 @@ type Query = {
     [key: string]: string
 }
 
+/*
+* RESORUCE GET METHODS
+*/
+
 async function getTotal(table: string, token: string): Promise<number> {
     return new Promise((resolve, reject) => {
         axios.get(`${API_URL}/${table}?limit=1`, { headers: { Authorization: token } })
@@ -31,6 +35,11 @@ async function getSpecific(table: string, id: number, token: string): Promise<Pr
     })
 }
 
+
+/*
+* TEAMS METHODS
+*/
+
 async function postTeams(token: string, payload: object) {
     return new Promise((resolve, reject) => {
         axios.post(`${API_URL}/teams`, JSON.stringify(payload), { headers: { Authorization: token } })
@@ -44,6 +53,14 @@ async function deleteTeams(token: string, teamId: number) {
         axios.delete(`${API_URL}/teams`, { headers: { Authorization: token }, data: JSON.stringify({ team_id: teamId }) })
             .then(res => resolve(res.data))
             .catch(err => reject(err.response?.data));
+    })
+}
+
+async function patchTeams(token: string, payload: object) {
+    return new Promise((resolve, reject) => {
+        axios.patch(`${API_URL}/teams`, JSON.stringify(payload), { headers: { Authorization: token } })
+            .then(res => resolve(res.data.message))
+            .catch(err => reject(err.response?.data.error));
     })
 }
 
@@ -72,7 +89,8 @@ const api = {
     getSpecific,
     postTeams,
     deleteTeams,
-    deleteTeamsMultiple
+    deleteTeamsMultiple,
+    patchTeams,
 }
 
 export default api;
