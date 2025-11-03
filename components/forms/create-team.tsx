@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FaUpload } from "react-icons/fa";
 import { LuX } from "react-icons/lu";
 import { toaster } from "../ui/toaster";
+import { BANNER_HEIGHT, BANNER_MAX_FILE_SIZE, BANNER_WIDTH, LOGO_HEIGHT, LOGO_MAX_FILE_SIZE, LOGO_WIDTH } from "@/lib/constants";
 
 function FileUploadPreview({ width, height, onClear }: { width: string | number, height: string | number, onClear: () => void }) {
     const upload = useFileUploadContext();
@@ -35,8 +36,8 @@ function FileUploadPreview({ width, height, onClear }: { width: string | number,
 
 export default function CreateTeamModal({ token, isOpen, setOpen, onEnd }: { token: string, isOpen: boolean, setOpen: (state: boolean) => void, onEnd: () => void }) {
     const [teamName, setTeamName] = useState<string>("");
-    const [logoBytes, setLogoBytes] = useState<string>("");
-    const [bannerBytes, setBannerBytes] = useState<string>("");
+    const [logoFile, setLogoFile] = useState<File>();
+    const [bannerFile, setBannerFile] = useState<File>();
     const [tag, setTag] = useState<string>("");
     const [isSubmitting, setSubmitting] = useState<boolean>(false);
 
@@ -72,16 +73,9 @@ export default function CreateTeamModal({ token, isOpen, setOpen, onEnd }: { tok
                                         Logo <Field.RequiredIndicator />
                                     </Field.Label>
 
-                                    <FileUpload.Root accept={"image/png"} maxFileSize={10485760} maxFiles={1} onFileAccept={async (e) => {
+                                    <FileUpload.Root accept={"image/png"} maxFileSize={LOGO_MAX_FILE_SIZE} maxFiles={1} onFileAccept={async (e) => {
                                         for (const file of e.files) {
-                                            const reader = new FileReader();
-
-                                            reader.onload = () => {
-                                                const base64 = (reader.result as string).split(',')[1];
-                                                setLogoBytes(base64)
-                                            };
-
-                                            reader.readAsDataURL(file);
+                                            setLogoFile(file);
                                         }
                                     }}>
                                         <FileUpload.HiddenInput />
@@ -91,9 +85,9 @@ export default function CreateTeamModal({ token, isOpen, setOpen, onEnd }: { tok
                                             </Button>
                                         </FileUpload.Trigger>
 
-                                        <FileUploadPreview height={"150px"} width={"150px"} onClear={() => setLogoBytes("")} />
+                                        <FileUploadPreview height={LOGO_HEIGHT} width={LOGO_WIDTH} onClear={() => setLogoFile(undefined)} />
                                     </FileUpload.Root>
-                                    <Field.HelperText>* Maximum Size 10MB | Ideal Size 150x150</Field.HelperText>
+                                    <Field.HelperText>* Maximum Size 10MB | Ideal Size {LOGO_WIDTH} x {LOGO_HEIGHT}</Field.HelperText>
                                 </Field.Root>
                             </SimpleGrid>
 
@@ -102,16 +96,9 @@ export default function CreateTeamModal({ token, isOpen, setOpen, onEnd }: { tok
                                     Banner <Field.RequiredIndicator />
                                 </Field.Label>
 
-                                <FileUpload.Root accept={"image/png"} maxFileSize={10485760} maxFiles={1} onFileAccept={async (e) => {
+                                <FileUpload.Root accept={"image/png"} maxFileSize={BANNER_MAX_FILE_SIZE} maxFiles={1} onFileAccept={async (e) => {
                                     for (const file of e.files) {
-                                        const reader = new FileReader();
-
-                                        reader.onload = () => {
-                                            const base64 = (reader.result as string).split(',')[1];
-                                            setBannerBytes(base64);
-                                        };
-
-                                        reader.readAsDataURL(file);
+                                        setBannerFile(file)
                                     }
                                 }}>
                                     <FileUpload.HiddenInput />
@@ -121,21 +108,25 @@ export default function CreateTeamModal({ token, isOpen, setOpen, onEnd }: { tok
                                         </Button>
                                     </FileUpload.Trigger>
 
-                                    <FileUploadPreview height={`${720 / 5}px`} width={`${1600 / 5}px`} onClear={() => setBannerBytes("")} />
+                                    <FileUploadPreview height={`calc(${BANNER_HEIGHT} / 5)`} width={`calc(${BANNER_WIDTH} / 5)`} onClear={() => setBannerFile(undefined)} />
                                 </FileUpload.Root>
-                                <Field.HelperText>* Maximum Size 10MB | Ideal Size 1600x720</Field.HelperText>
+                                <Field.HelperText>* Maximum Size 10MB | Ideal Size {BANNER_WIDTH} x {BANNER_HEIGHT}</Field.HelperText>
                             </Field.Root>
                         </Dialog.Body>
 
                         <Dialog.Footer>
                             <Button variant="solid" colorPalette="blue" loading={isSubmitting} loadingText="Submitting..." onClick={async () => {
                                 setSubmitting(true);
+                                
+                                if(!logoFile || !bannerFile) {
+                                    setSubmitting(false);
+                                    return;
+                                }
+
                                 api.postTeams(token, {
                                     name: teamName,
-                                    tag: tag,
-                                    logo_bytes: logoBytes,
-                                    banner_bytes: bannerBytes
-                                })
+                                    tag: tag
+                                }, logoFile, bannerFile)
                                     .then(res => {
                                         toaster.create({
                                             title: "Team Created",

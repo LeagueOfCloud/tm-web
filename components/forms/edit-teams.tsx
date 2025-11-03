@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FaUpload } from "react-icons/fa";
 import { LuX } from "react-icons/lu";
 import { toaster } from "../ui/toaster";
+import { BANNER_MAX_FILE_SIZE, LOGO_MAX_FILE_SIZE } from "@/lib/constants";
 
 function FileUploadPreview({ width, height, onClear }: { width: string | number, height: string | number, onClear: () => void }) {
     const upload = useFileUploadContext();
@@ -47,8 +48,8 @@ type EditTeamModalProps = {
 
 export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultValues, teamId }: EditTeamModalProps) {
     const [teamName, setTeamName] = useState<string>(defaultValues.name);
-    const [logoBytes, setLogoBytes] = useState<string>();
-    const [bannerBytes, setBannerBytes] = useState<string>();
+    const [logoFile, setLogoFile] = useState<File>();
+    const [bannerFile, setBannerFile] = useState<File>();
     const [tag, setTag] = useState<string>(defaultValues.tag);
     const [isSubmitting, setSubmitting] = useState<boolean>(false);
 
@@ -84,16 +85,9 @@ export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultVa
                                         New Logo <Field.RequiredIndicator />
                                     </Field.Label>
 
-                                    <FileUpload.Root accept={"image/png"} maxFileSize={10485760} maxFiles={1} onFileAccept={async (e) => {
+                                    <FileUpload.Root accept={"image/png"} maxFileSize={LOGO_MAX_FILE_SIZE} maxFiles={1} onFileAccept={async (e) => {
                                         for (const file of e.files) {
-                                            const reader = new FileReader();
-
-                                            reader.onload = () => {
-                                                const base64 = (reader.result as string).split(',')[1];
-                                                setLogoBytes(base64)
-                                            };
-
-                                            reader.readAsDataURL(file);
+                                            setLogoFile(file);
                                         }
                                     }}>
                                         <FileUpload.HiddenInput />
@@ -103,7 +97,7 @@ export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultVa
                                             </Button>
                                         </FileUpload.Trigger>
 
-                                        <FileUploadPreview height={"150px"} width={"150px"} onClear={() => setLogoBytes(undefined)} />
+                                        <FileUploadPreview height={"150px"} width={"150px"} onClear={() => setLogoFile(undefined)} />
                                     </FileUpload.Root>
                                     <Field.HelperText>* Maximum Size 10MB | Ideal Size 150x150</Field.HelperText>
                                 </Field.Root>
@@ -114,16 +108,9 @@ export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultVa
                                     New Banner <Field.RequiredIndicator />
                                 </Field.Label>
 
-                                <FileUpload.Root accept={"image/png"} maxFileSize={10485760} maxFiles={1} onFileAccept={async (e) => {
+                                <FileUpload.Root accept={"image/png"} maxFileSize={BANNER_MAX_FILE_SIZE} maxFiles={1} onFileAccept={async (e) => {
                                     for (const file of e.files) {
-                                        const reader = new FileReader();
-
-                                        reader.onload = () => {
-                                            const base64 = (reader.result as string).split(',')[1];
-                                            setBannerBytes(base64);
-                                        };
-
-                                        reader.readAsDataURL(file);
+                                        setBannerFile(file)
                                     }
                                 }}>
                                     <FileUpload.HiddenInput />
@@ -133,7 +120,7 @@ export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultVa
                                         </Button>
                                     </FileUpload.Trigger>
 
-                                    <FileUploadPreview height={`${720 / 5}px`} width={`${1600 / 5}px`} onClear={() => setBannerBytes(undefined)} />
+                                    <FileUploadPreview height={`${720 / 5}px`} width={`${1600 / 5}px`} onClear={() => setBannerFile(undefined)} />
                                 </FileUpload.Root>
                                 <Field.HelperText>* Maximum Size 10MB | Ideal Size 1600x720</Field.HelperText>
                             </Field.Root>
@@ -146,9 +133,9 @@ export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultVa
                                     team_id: teamId,
                                     name: teamName,
                                     tag: tag,
-                                    logo_bytes: logoBytes,
-                                    banner_bytes: bannerBytes
-                                })
+                                    new_logo: logoFile !== undefined ? true : false,
+                                    new_banner: bannerFile !== undefined ? true: false
+                                }, logoFile, bannerFile)
                                     .then(res => {
                                         toaster.create({
                                             title: "Team Updated",

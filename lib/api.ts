@@ -30,7 +30,9 @@ async function getAll(table: string, token: string, query?: Query): Promise<Prof
 async function getSpecific(table: string, id: number, token: string): Promise<ProfileResponse[] | TeamResponse[]> {
     return new Promise((resolve, reject) => {
         axios.get(`${API_URL}/${table}/${id}`, { headers: { Authorization: token } })
-            .then(res => resolve(res.data))
+            .then(res => {
+                resolve(res.data);
+            })
             .catch(err => reject(err.response));
     })
 }
@@ -40,10 +42,29 @@ async function getSpecific(table: string, id: number, token: string): Promise<Pr
 * TEAMS METHODS
 */
 
-async function postTeams(token: string, payload: object) {
+async function postTeams(token: string, payload: object, logoFile: File, bannerFile: File) {
     return new Promise((resolve, reject) => {
         axios.post(`${API_URL}/teams`, JSON.stringify(payload), { headers: { Authorization: token } })
-            .then(res => resolve(res.data))
+            .then(res => {
+                const { logo_presigned_data, banner_presigned_data, message } = res.data;
+
+                const logoFormData = new FormData();
+                Object.entries(logo_presigned_data.fields).forEach(([k, v]) => logoFormData.append(k, v as string))
+                logoFormData.append("file", logoFile)
+
+                const bannerFormData = new FormData();
+                Object.entries(banner_presigned_data.fields).forEach(([k, v]) => bannerFormData.append(k, v as string))
+                bannerFormData.append("file", bannerFile)
+
+                Promise.all([
+                    axios.post(logo_presigned_data.url, logoFormData, { headers: { "Content-Type": "multipart/form-data" } }),
+                    axios.post(banner_presigned_data.url, bannerFormData, { headers: { "Content-Type": "multipart/form-data" } })
+                ])
+                    .then(() => {
+                        resolve(message);
+                    })
+                    .catch((err) => reject(`${err}`));
+            })
             .catch(err => reject(err.response?.data));
     })
 }
@@ -56,10 +77,30 @@ async function deleteTeams(token: string, teamId: number) {
     })
 }
 
-async function patchTeams(token: string, payload: object) {
+async function patchTeams(token: string, payload: object, logoFile?: File, bannerFile?: File) {
     return new Promise((resolve, reject) => {
         axios.patch(`${API_URL}/teams`, JSON.stringify(payload), { headers: { Authorization: token } })
-            .then(res => resolve(res.data.message))
+            .then(res => {
+                const { upload: { logo_presigned_data, banner_presigned_data }, message } = res.data;
+
+                if (logo_presigned_data && logoFile) {
+                    const logoFormData = new FormData();
+                    Object.entries(logo_presigned_data.fields).forEach(([k, v]) => logoFormData.append(k, v as string))
+                    logoFormData.append("file", logoFile)
+
+                    axios.post(logo_presigned_data.url, logoFormData, { headers: { "Content-Type": "multipart/form-data" } })
+                }
+
+                if (banner_presigned_data && bannerFile) {
+                    const bannerFormData = new FormData();
+                    Object.entries(banner_presigned_data.fields).forEach(([k, v]) => bannerFormData.append(k, v as string))
+                    bannerFormData.append("file", bannerFile)
+
+                    axios.post(banner_presigned_data.url, bannerFormData, { headers: { "Content-Type": "multipart/form-data" } })
+                }
+
+                resolve(message);
+            })
             .catch(err => reject(err.response?.data.error));
     })
 }
