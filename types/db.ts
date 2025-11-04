@@ -22,3 +22,12 @@ export interface TeamResponse {
     logo_url: string
     banner_url: string
 }
+
+export interface PlayerResponse {
+    id: number
+    name: string
+    discord_id: string
+    avatar_url?: string
+    team_id: number
+    team_role: "top" | "jungle" | "mid" | "bot" | "sup" | "sub"
+}

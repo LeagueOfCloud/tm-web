@@ -1,6 +1,6 @@
 import CreateTeamModal from "@/components/forms/create-team";
-import DeleteTeamsModal from "@/components/forms/delete-teams";
-import EditTeamModal from "@/components/forms/edit-teams";
+import DeleteTeamsModal from "@/components/forms/delete-team";
+import EditTeamModal from "@/components/forms/edit-team";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import { Tooltip } from "@/components/ui/tooltip";
 import { BANNER_HEIGHT, BANNER_WIDTH, LOGO_HEIGHT, LOGO_WIDTH } from "@/lib/constants";

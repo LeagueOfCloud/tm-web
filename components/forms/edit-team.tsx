@@ -4,7 +4,7 @@ import { useState } from "react";
 import { FaUpload } from "react-icons/fa";
 import { LuX } from "react-icons/lu";
 import { toaster } from "../ui/toaster";
-import { BANNER_MAX_FILE_SIZE, LOGO_MAX_FILE_SIZE } from "@/lib/constants";
+import { BANNER_HEIGHT, BANNER_MAX_FILE_SIZE_MB, BANNER_WIDTH, LOGO_HEIGHT, LOGO_MAX_FILE_SIZE_MB, LOGO_WIDTH } from "@/lib/constants";
 
 function FileUploadPreview({ width, height, onClear }: { width: string | number, height: string | number, onClear: () => void }) {
     const upload = useFileUploadContext();
@@ -85,7 +85,7 @@ export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultVa
                                         New Logo <Field.RequiredIndicator />
                                     </Field.Label>
 
-                                    <FileUpload.Root accept={"image/png"} maxFileSize={LOGO_MAX_FILE_SIZE} maxFiles={1} onFileAccept={async (e) => {
+                                    <FileUpload.Root accept={"image/png"} maxFileSize={LOGO_MAX_FILE_SIZE_MB * 1024 * 1024} maxFiles={1} onFileAccept={async (e) => {
                                         for (const file of e.files) {
                                             setLogoFile(file);
                                         }
@@ -99,7 +99,7 @@ export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultVa
 
                                         <FileUploadPreview height={"150px"} width={"150px"} onClear={() => setLogoFile(undefined)} />
                                     </FileUpload.Root>
-                                    <Field.HelperText>* Maximum Size 10MB | Ideal Size 150x150</Field.HelperText>
+                                    <Field.HelperText>* Maximum Size {LOGO_MAX_FILE_SIZE_MB}MB | Ideal Size {LOGO_WIDTH} x {LOGO_HEIGHT}</Field.HelperText>
                                 </Field.Root>
                             </SimpleGrid>
 
@@ -108,7 +108,7 @@ export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultVa
                                     New Banner <Field.RequiredIndicator />
                                 </Field.Label>
 
-                                <FileUpload.Root accept={"image/png"} maxFileSize={BANNER_MAX_FILE_SIZE} maxFiles={1} onFileAccept={async (e) => {
+                                <FileUpload.Root accept={"image/png"} maxFileSize={BANNER_MAX_FILE_SIZE_MB * 1024 * 1024} maxFiles={1} onFileAccept={async (e) => {
                                     for (const file of e.files) {
                                         setBannerFile(file)
                                     }
@@ -122,7 +122,7 @@ export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultVa
 
                                     <FileUploadPreview height={`${720 / 5}px`} width={`${1600 / 5}px`} onClear={() => setBannerFile(undefined)} />
                                 </FileUpload.Root>
-                                <Field.HelperText>* Maximum Size 10MB | Ideal Size 1600x720</Field.HelperText>
+                                <Field.HelperText>* Maximum Size {BANNER_MAX_FILE_SIZE_MB}MB | Ideal Size {BANNER_WIDTH} x {BANNER_HEIGHT}</Field.HelperText>
                             </Field.Root>
                         </Dialog.Body>
 

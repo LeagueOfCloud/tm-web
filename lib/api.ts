@@ -19,7 +19,7 @@ async function getTotal(table: string, token: string): Promise<number> {
     })
 }
 
-async function getAll(table: string, token: string, query?: Query): Promise<ProfileResponse[] | TeamResponse[]> {
+async function getAll(table: string, token: string, query?: Query): Promise<object[]> {
     return new Promise((resolve, reject) => {
         axios.get(`${API_URL}/${table}${query ? "?" + Object.keys(query).map(key => `${key}=${query[key]}`) : ""}`, { headers: { Authorization: token } })
             .then(res => resolve(res.data.items))
