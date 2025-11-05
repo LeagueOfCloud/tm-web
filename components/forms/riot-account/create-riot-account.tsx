@@ -46,7 +46,7 @@ export default function CreateRiotAccount({ players, token, isOpen, setOpen, onE
                                         <Select.HiddenSelect />
                                         <Select.Control>
                                             <Select.Trigger cursor="pointer">
-                                                <Select.ValueText placeholder="Select Team" />
+                                                <Select.ValueText placeholder="Select Player" />
                                             </Select.Trigger>
                                             <Select.IndicatorGroup>
                                                 <Select.Indicator />
