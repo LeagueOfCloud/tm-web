@@ -1,10 +1,11 @@
 
+import CreatePlayerModal from "@/components/forms/create-player";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import { Tooltip } from "@/components/ui/tooltip";
 import usePlayers from "@/lib/hooks/usePlayers";
 import useTeams from "@/lib/hooks/useTeams";
 import { PlayerResponse } from "@/types/db";
-import { Box, Button, ButtonGroup, Checkbox, Icon, Link, Table } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, Checkbox, Icon, Link, Table, useDisclosure } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { LuPencil, LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu";
@@ -20,6 +21,7 @@ function PlayerEdit({ }) {
 
 export default function ManagePlayers() {
     const session = useSession();
+    const createPlayerDisclosure = useDisclosure();
     const [selectedPlayers, setSelectedPlayers] = useState<PlayerResponse[]>([]);
     const { players, refreshPlayers, loading: refreshPlayersLoading } = usePlayers(session.data?.user.token);
     const { teams } = useTeams(session.data?.user.token);
@@ -31,7 +33,7 @@ export default function ManagePlayers() {
     return (
         <AdminLayout>
             <ButtonGroup>
-                <Button onClick={() => { }} colorPalette="blue"><Icon as={LuPlus} /> Add Player</Button>
+                <Button onClick={() => createPlayerDisclosure.onOpen()} colorPalette="blue"><Icon as={LuPlus} /> Add Player</Button>
                 <Button onClick={() => {
                     setSelectedPlayers([]);
                     refreshPlayers();
@@ -70,7 +72,7 @@ export default function ManagePlayers() {
                 </Table.Header>
                 <Table.Body>
                     {players.map(player => (
-                        <Table.Row key={`display-player-${player.id}`}>
+                        <Table.Row key={`display-player-${player.id}-${teams.length}`}>
                             <Table.Cell width="10px">
                                 <Checkbox.Root
                                     mt="0.5"
@@ -116,6 +118,11 @@ export default function ManagePlayers() {
                     ))}
                 </Table.Body>
             </Table.Root>
+
+            <CreatePlayerModal token={session.data.user.token} isOpen={createPlayerDisclosure.open} setOpen={createPlayerDisclosure.setOpen} onEnd={() => {
+                setSelectedPlayers([]);
+                refreshPlayers();
+            }} />
         </AdminLayout>
     )
 }

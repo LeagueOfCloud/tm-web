@@ -8,7 +8,7 @@ type Query = {
 }
 
 /*
-* RESORUCE GET METHODS
+* RESOURCE GET METHODS
 */
 
 async function getTotal(table: string, token: string): Promise<number> {
@@ -124,6 +124,30 @@ async function deleteTeamsMultiple(token: string, teamIds: number[]) {
     }
 }
 
+/*
+* PLAYERS METHODS
+*/
+
+async function postPlayers(token: string, payload: object, avatarFile: File) {
+    return new Promise((resolve, reject) => {
+        axios.post(`${API_URL}/players`, JSON.stringify(payload), { headers: { Authorization: token } })
+            .then(res => {
+                const {avatar_presigned_data, message } = res.data;
+
+                const avatarFormData = new FormData();
+                Object.entries(avatar_presigned_data.fields).forEach(([k, v]) => avatarFormData.append(k, v as string))
+                avatarFormData.append("file", avatarFile)
+
+                axios.post(avatar_presigned_data.url, avatarFormData, { headers: { "Content-Type": "multipart/form-data" } })
+                    .then(() => {
+                        resolve(message);
+                    })
+                    .catch((err) => reject(`${err}`));
+            })
+            .catch(err => reject(err.response?.data));
+    })
+}
+
 const api = {
     getTotal,
     getAll,
@@ -132,6 +156,7 @@ const api = {
     deleteTeams,
     deleteTeamsMultiple,
     patchTeams,
+    postPlayers
 }
 
 export default api;

@@ -1,38 +1,10 @@
 import api from "@/lib/api";
-import { Button, CloseButton, Dialog, Field, FileUpload, Float, Icon, Input, Portal, SimpleGrid, useFileUploadContext } from "@chakra-ui/react";
+import { Button, CloseButton, Dialog, Field, FileUpload, Icon, Input, Portal, SimpleGrid } from "@chakra-ui/react";
 import { useState } from "react";
 import { FaUpload } from "react-icons/fa";
-import { LuX } from "react-icons/lu";
 import { toaster } from "../ui/toaster";
 import { BANNER_HEIGHT, BANNER_MAX_FILE_SIZE_MB, BANNER_WIDTH, LOGO_HEIGHT, LOGO_MAX_FILE_SIZE_MB, LOGO_WIDTH } from "@/lib/constants";
-
-function FileUploadPreview({ width, height, onClear }: { width: string | number, height: string | number, onClear: () => void }) {
-    const upload = useFileUploadContext();
-    const files = upload.acceptedFiles
-    if (files.length === 0) return null
-    return (
-        <FileUpload.ItemGroup>
-            {files.map((file) => (
-                <FileUpload.Item
-                    background="transparent"
-                    border="2px solid black"
-                    width={width}
-                    height={height}
-                    file={file}
-                    key={file.name}
-                    p={1}
-                >
-                    <FileUpload.ItemPreviewImage height={height} width={width} p={1} />
-                    <Float placement="top-end">
-                        <FileUpload.ItemDeleteTrigger boxSize="4" layerStyle="fill.solid" onClick={() => onClear()}>
-                            <LuX />
-                        </FileUpload.ItemDeleteTrigger>
-                    </Float>
-                </FileUpload.Item>
-            ))}
-        </FileUpload.ItemGroup>
-    )
-}
+import { FileUploadPreview } from "../ui/file-upload-preview";
 
 type EditTeamModalProps = {
     token: string
@@ -69,14 +41,14 @@ export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultVa
                                     <Field.Label>
                                         Name <Field.RequiredIndicator />
                                     </Field.Label>
-                                    <Input defaultValue={defaultValues.name} placeholder="Gen.G" type="text" variant="subtle" onChange={(e) => setTeamName(e.target.value)} />
+                                    <Input defaultValue={defaultValues.name} placeholder="Gen.G" type="text" variant="subtle" onChange={(e) => setTeamName(e.target.value)} autoComplete="off" />
                                 </Field.Root>
 
                                 <Field.Root required>
                                     <Field.Label>
                                         Tag <Field.RequiredIndicator />
                                     </Field.Label>
-                                    <Input defaultValue={defaultValues.tag} placeholder="GEN" type="text" variant="subtle" onChange={(e) => setTag(e.target.value.toUpperCase())} minLength={0} maxLength={3} />
+                                    <Input defaultValue={defaultValues.tag} placeholder="GEN" type="text" variant="subtle" onChange={(e) => setTag(e.target.value.toUpperCase())} minLength={0} maxLength={3} autoComplete="off" />
                                     <Field.HelperText>* Maximum 3 Characters</Field.HelperText>
                                 </Field.Root>
 
