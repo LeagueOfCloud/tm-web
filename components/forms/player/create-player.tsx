@@ -60,7 +60,7 @@ export default function CreatePlayerModal({ teams, token, isOpen, setOpen, onEnd
                                     <Field.Label>
                                         Discord ID <Field.RequiredIndicator />
                                     </Field.Label>
-                                    <Input placeholder="123456789012345678" type="text" variant="subtle" onChange={(e) => setDiscordId(e.target.value)} minLength={0} maxLength={18} autoComplete="off" />
+                                    <Input placeholder="123456789012345678" type="text" variant="subtle" onChange={(e) => setDiscordId(e.target.value)} minLength={0} maxLength={50} autoComplete="off" />
                                 </Field.Root>
 
                                 <Field.Root required>
