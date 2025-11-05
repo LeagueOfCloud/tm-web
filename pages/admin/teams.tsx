@@ -74,7 +74,7 @@ export default function ManageTeams() {
                 </Table.Header>
                 <Table.Body>
                     {teams.map(team => (
-                        <Table.Row key={`display-table-${team.id}`}>
+                        <Table.Row key={`display-team-${team.id}`}>
                             <Table.Cell width="10px">
                                 <Checkbox.Root
                                     mt="0.5"

@@ -31,3 +31,11 @@ export interface PlayerResponse {
     team_id: number
     team_role: "top" | "jungle" | "mid" | "bot" | "sup" | "sub"
 }
+
+export interface RiotAccountResponse {
+    id: number
+    account_name: string
+    account_puuid: string
+    player_id: number
+    is_primary: "true" | "false"
+}

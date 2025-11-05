@@ -5,6 +5,7 @@ import { PropsWithChildren } from "react";
 import { FaUsers } from "react-icons/fa";
 import { FaComputer, FaWebAwesome } from "react-icons/fa6";
 import { LuLogOut, LuStepBack } from "react-icons/lu";
+import { SiRiotgames } from "react-icons/si";
 
 export function SidebarButton({ children, ...props }: ButtonProps & PropsWithChildren) {
 
@@ -59,6 +60,11 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                         <SidebarButton onClick={() => router.push("/admin/players")}>
                             <Icon as={FaComputer} />
                             Manage Players
+                        </SidebarButton>
+
+                        <SidebarButton onClick={() => router.push("/admin/riot-accounts")}>
+                            <Icon as={SiRiotgames} />
+                            Riot Accounts
                         </SidebarButton>
 
                         <SidebarButton mt={"auto"} color="blue.200" onClick={() => router.push("/")}> <Icon as={LuStepBack} /> Leave Admin Dashboard</SidebarButton>

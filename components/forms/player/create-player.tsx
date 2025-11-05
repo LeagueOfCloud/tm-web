@@ -67,7 +67,7 @@ export default function CreatePlayerModal({ teams, token, isOpen, setOpen, onEnd
                                     <Field.Label>
                                         Team <Field.RequiredIndicator />
                                     </Field.Label>
-                                    <Select.Root collection={teamsCollection} size="sm" variant="subtle" onSelect={(e) => setTeamId(parseInt(e.value))} required>
+                                    <Select.Root collection={teamsCollection} size="md" variant="subtle" onSelect={(e) => setTeamId(parseInt(e.value))} required>
                                         <Select.HiddenSelect />
                                         <Select.Control>
                                             <Select.Trigger cursor="pointer">
@@ -94,7 +94,7 @@ export default function CreatePlayerModal({ teams, token, isOpen, setOpen, onEnd
                                     <Field.Label>
                                         Role <Field.RequiredIndicator />
                                     </Field.Label>
-                                    <Select.Root collection={roleCollection} size="sm" variant="subtle" onSelect={(e) => setTeamRole(e.value)} required>
+                                    <Select.Root collection={roleCollection} size="md" variant="subtle" onSelect={(e) => setTeamRole(e.value)} required>
                                         <Select.HiddenSelect />
                                         <Select.Control>
                                             <Select.Trigger cursor="pointer">

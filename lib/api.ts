@@ -196,6 +196,62 @@ async function deletePlayersMultiple(token: string, playerIds: number[]) {
     }
 }
 
+/*
+* RIOT ACCOUNTS METHODS
+*/
+
+async function postRiotAccounts(token: string, payload: object) {
+    return new Promise((resolve, reject) => {
+        axios.post(`${API_URL}/riot-accounts`, JSON.stringify(payload), { headers: { Authorization: token } })
+            .then(res => {
+                const {message } = res.data;
+
+                resolve(message);
+            })
+            .catch(err => reject(err.response?.data));
+    })
+}
+
+async function patchRiotAccounts(token: string, payload: object) {
+    return new Promise((resolve, reject) => {
+        axios.patch(`${API_URL}/riot-accounts`, JSON.stringify(payload), { headers: { Authorization: token } })
+            .then(res => {
+                const { message } = res.data;
+
+                resolve(message);
+            })
+            .catch(err => reject(err.response?.data.error));
+    })
+}
+
+async function deleteRiotAccounts(token: string, riotAccountId: number) {
+    return new Promise((resolve, reject) => {
+        axios.delete(`${API_URL}/riot-accounts`, { headers: { Authorization: token }, data: JSON.stringify({ account_id: riotAccountId }) })
+            .then(res => resolve(res.data))
+            .catch(err => reject(err.response?.data));
+    })
+}
+
+
+async function deleteRiotAccountsMultiple(token: string, riotAccountIds: number[]) {
+    const successes: number[] = [];
+    const errors: number[] = [];
+
+    for (const riotAccountId of riotAccountIds) {
+        try {
+            await deleteRiotAccounts(token, riotAccountId)
+            successes.push(riotAccountId);
+        } catch {
+            errors.push(riotAccountId);
+        }
+    }
+
+    return {
+        successes,
+        errors
+    }
+}
+
 const api = {
     getTotal,
     getAll,
@@ -207,7 +263,11 @@ const api = {
     postPlayers,
     patchPlayers,
     deletePlayers,
-    deletePlayersMultiple
+    deletePlayersMultiple,
+    postRiotAccounts,
+    patchRiotAccounts,
+    deleteRiotAccounts,
+    deleteRiotAccountsMultiple
 }
 
 export default api;
