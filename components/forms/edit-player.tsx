@@ -7,12 +7,26 @@ import { AVATAR_HEIGHT, AVATAR_MAX_FILE_SIZE_MB, AVATAR_WIDTH } from "@/lib/cons
 import { FileUploadPreview } from "../ui/file-upload-preview";
 import useTeams from "@/lib/hooks/useTeams";
 
-export default function CreatePlayerModal({ token, isOpen, setOpen, onEnd }: { token: string, isOpen: boolean, setOpen: (state: boolean) => void, onEnd: () => void }) {
-    const [playerName, setPlayerName] = useState<string>("");
-    const [discordId, setDiscordId] = useState<string>("");
+type EditTeamModalProps = {
+    token: string
+    isOpen: boolean
+    playerId: number
+    defaultValues: {
+        name: string
+        discord_id: string
+        team_id: number
+        team_role: string
+    }
+    setOpen: (state: boolean) => void
+    onEnd: () => void
+}
+
+export default function EditPlayerModal({ token, isOpen, setOpen, onEnd, defaultValues, playerId }: EditTeamModalProps) {
+    const [playerName, setPlayerName] = useState<string>(defaultValues.name);
+    const [discordId, setDiscordId] = useState<string>(defaultValues.discord_id);
+    const [teamId, setTeamId] = useState<number>(defaultValues.team_id);
+    const [teamRole, setTeamRole] = useState<string>(defaultValues.team_role);
     const [avatarFile, setAvatarFile] = useState<File>();
-    const [teamId, setTeamId] = useState<number>();
-    const [teamRole, setTeamRole] = useState<string>();
     const { teams } = useTeams(token);
     const [isSubmitting, setSubmitting] = useState<boolean>(false);
 
@@ -20,7 +34,7 @@ export default function CreatePlayerModal({ token, isOpen, setOpen, onEnd }: { t
         return createListCollection({
             items: teams.map(team => ({
                 label: team.name,
-                value: team.id
+                value: team.id.toString()
             }))
         })
     }, [teams])
@@ -45,7 +59,7 @@ export default function CreatePlayerModal({ token, isOpen, setOpen, onEnd }: { t
                 <Dialog.Positioner>
                     <Dialog.Content>
                         <Dialog.Header>
-                            <Dialog.Title>Register new tournament player</Dialog.Title>
+                            <Dialog.Title>Update: {defaultValues.name}</Dialog.Title>
                         </Dialog.Header>
 
                         <Dialog.Body>
@@ -54,21 +68,22 @@ export default function CreatePlayerModal({ token, isOpen, setOpen, onEnd }: { t
                                     <Field.Label>
                                         Name <Field.RequiredIndicator />
                                     </Field.Label>
-                                    <Input placeholder="Canyon" type="text" variant="subtle" onChange={(e) => setPlayerName(e.target.value)} autoComplete="off" />
+                                    <Input defaultValue={defaultValues.name} placeholder="Canyon" type="text" variant="subtle" onChange={(e) => setPlayerName(e.target.value)} autoComplete="off" />
                                 </Field.Root>
 
                                 <Field.Root required>
                                     <Field.Label>
                                         Discord ID <Field.RequiredIndicator />
                                     </Field.Label>
-                                    <Input placeholder="123456789012345678" type="text" variant="subtle" onChange={(e) => setDiscordId(e.target.value)} minLength={0} maxLength={18} autoComplete="off" />
+                                    <Input defaultValue={defaultValues.discord_id} placeholder="123456789012345678" type="text" variant="subtle" onChange={(e) => setDiscordId(e.target.value)} minLength={0} maxLength={18} autoComplete="off" />
                                 </Field.Root>
 
                                 <Field.Root required>
                                     <Field.Label>
                                         Team <Field.RequiredIndicator />
                                     </Field.Label>
-                                    <Select.Root collection={teamsCollection} size="sm" variant="subtle" onSelect={(e) => setTeamId(parseInt(e.value))} required>
+                                    
+                                    <Select.Root defaultValue={[teamId.toString()]} collection={teamsCollection} size="sm" variant="subtle" onSelect={(e) => setTeamId(parseInt(e.value))} required>
                                         <Select.HiddenSelect />
                                         <Select.Control>
                                             <Select.Trigger cursor="pointer">
@@ -95,7 +110,7 @@ export default function CreatePlayerModal({ token, isOpen, setOpen, onEnd }: { t
                                     <Field.Label>
                                         Role <Field.RequiredIndicator />
                                     </Field.Label>
-                                    <Select.Root collection={roleCollection} size="sm" variant="subtle" onSelect={(e) => setTeamRole(e.value)} required>
+                                    <Select.Root defaultValue={[defaultValues.team_role]} collection={roleCollection} size="sm" variant="subtle" onSelect={(e) => setTeamRole(e.value)} required>
                                         <Select.HiddenSelect />
                                         <Select.Control>
                                             <Select.Trigger cursor="pointer">
@@ -121,7 +136,7 @@ export default function CreatePlayerModal({ token, isOpen, setOpen, onEnd }: { t
 
                             <Field.Root mt={2} required>
                                 <Field.Label>
-                                    Avatar <Field.RequiredIndicator />
+                                    New Avatar <Field.RequiredIndicator />
                                 </Field.Label>
 
                                 <FileUpload.Root accept={"image/png"} maxFileSize={AVATAR_MAX_FILE_SIZE_MB * 1024 * 1024} maxFiles={1} onFileAccept={async (e) => {
@@ -146,19 +161,16 @@ export default function CreatePlayerModal({ token, isOpen, setOpen, onEnd }: { t
                             <Button variant="solid" colorPalette="blue" loading={isSubmitting} loadingText="Submitting..." onClick={async () => {
                                 setSubmitting(true);
 
-                                if (!avatarFile) {
-                                    setSubmitting(false);
-                                    return;
-                                }
-
-                                api.postPlayers(token, {
+                                api.patchPlayers(token, {
+                                    player_id: playerId,
                                     name: playerName,
                                     discord_id: discordId,
                                     team_id: teamId,
-                                    team_role: teamRole
+                                    team_role: teamRole,
+                                    new_avatar: avatarFile ? true : false
                                 }, avatarFile).then(res => {
                                         toaster.create({
-                                            title: "Player Created",
+                                            title: "Player Updated",
                                             description: res,
                                             type: "success",
                                             closable: true
@@ -166,7 +178,7 @@ export default function CreatePlayerModal({ token, isOpen, setOpen, onEnd }: { t
                                         setOpen(false);
                                     })
                                     .catch(err => toaster.create({
-                                        title: "Player Create Failed",
+                                        title: "Player Update Failed",
                                         description: err,
                                         type: "error",
                                         closable: true
@@ -176,7 +188,7 @@ export default function CreatePlayerModal({ token, isOpen, setOpen, onEnd }: { t
                                         onEnd();
                                     });
 
-                            }}>Add Player</Button>
+                            }}>Update Player</Button>
                         </Dialog.Footer>
 
                         <Dialog.CloseTrigger asChild>

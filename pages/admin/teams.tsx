@@ -128,7 +128,7 @@ export default function ManageTeams() {
                             <Table.Cell width="30px">
                                 <TeamEdit team={team} token={session.data.user.token} onEnd={() => {
                                     setSelectedTeams([]);
-                                    setTimeout(() => refreshTeams(), 500);
+                                    refreshTeams();
                                 }} />
                             </Table.Cell>
                         </Table.Row>

@@ -148,6 +148,54 @@ async function postPlayers(token: string, payload: object, avatarFile: File) {
     })
 }
 
+async function patchPlayers(token: string, payload: object, avatarFile?: File) {
+    return new Promise((resolve, reject) => {
+        axios.patch(`${API_URL}/players`, JSON.stringify(payload), { headers: { Authorization: token } })
+            .then(res => {
+                const { upload: { avatar_presigned_data }, message } = res.data;
+
+                if (avatar_presigned_data && avatarFile) {
+                    const avatarFormData = new FormData();
+                    Object.entries(avatar_presigned_data.fields).forEach(([k, v]) => avatarFormData.append(k, v as string))
+                    avatarFormData.append("file", avatarFile)
+
+                    axios.post(avatar_presigned_data.url, avatarFormData, { headers: { "Content-Type": "multipart/form-data" } })
+                }
+
+                resolve(message);
+            })
+            .catch(err => reject(err.response?.data.error));
+    })
+}
+
+async function deletePlayers(token: string, playerId: number) {
+    return new Promise((resolve, reject) => {
+        axios.delete(`${API_URL}/players`, { headers: { Authorization: token }, data: JSON.stringify({ player_id: playerId }) })
+            .then(res => resolve(res.data))
+            .catch(err => reject(err.response?.data));
+    })
+}
+
+
+async function deletePlayersMultiple(token: string, playerIds: number[]) {
+    const successes: number[] = [];
+    const errors: number[] = [];
+
+    for (const playerId of playerIds) {
+        try {
+            await deletePlayers(token, playerId)
+            successes.push(playerId);
+        } catch {
+            errors.push(playerId);
+        }
+    }
+
+    return {
+        successes,
+        errors
+    }
+}
+
 const api = {
     getTotal,
     getAll,
@@ -156,7 +204,10 @@ const api = {
     deleteTeams,
     deleteTeamsMultiple,
     patchTeams,
-    postPlayers
+    postPlayers,
+    patchPlayers,
+    deletePlayers,
+    deletePlayersMultiple
 }
 
 export default api;

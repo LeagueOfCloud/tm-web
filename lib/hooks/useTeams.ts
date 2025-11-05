@@ -7,13 +7,16 @@ export default function useTeams(token?: string) {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        if(!token) {
+        if (!token) {
             return;
         }
-        api.getAll("teams", token || "")
-            .then(res => setTeams(res as TeamResponse[]))
-            .catch(console.error)
-            .finally(() => setLoading(false));
+
+        setTimeout(() => {
+            api.getAll("teams", token || "")
+                .then(res => setTeams(res as TeamResponse[]))
+                .catch(() => { })
+                .finally(() => setLoading(false));
+        }, 500)
     }, [token])
 
     return {
@@ -21,10 +24,12 @@ export default function useTeams(token?: string) {
         loading,
         refreshTeams: () => {
             setLoading(true);
-            api.getAll("teams", token || "")
-                .then(res => setTeams(res as TeamResponse[]))
-                .catch(console.error)
-                .finally(() => setLoading(false));
+            setTimeout(() => {
+                api.getAll("teams", token || "")
+                    .then(res => setTeams(res as TeamResponse[]))
+                    .catch(() => { })
+                    .finally(() => setLoading(false));
+            }, 1000)
         },
     }
 }

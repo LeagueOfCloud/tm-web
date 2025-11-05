@@ -7,13 +7,16 @@ export default function usePlayers(token?: string) {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        if(!token) {
+        if (!token) {
             return;
         }
-        api.getAll("players", token || "")
-            .then(res => setPlayers(res as PlayerResponse[]))
-            .catch(console.error)
-            .finally(() => setLoading(false));
+
+        setTimeout(() => {
+            api.getAll("players", token || "")
+                .then(res => setPlayers(res as PlayerResponse[]))
+                .catch(() => { })
+                .finally(() => setLoading(false));
+        }, 1000)
     }, [token])
 
     return {
@@ -21,10 +24,12 @@ export default function usePlayers(token?: string) {
         loading,
         refreshPlayers: () => {
             setLoading(true);
-            api.getAll("players", token || "")
-                .then(res => setPlayers(res as PlayerResponse[]))
-                .catch(console.error)
-                .finally(() => setLoading(false));
+            setTimeout(() => {
+                api.getAll("players", token || "")
+                    .then(res => setPlayers(res as PlayerResponse[]))
+                    .catch(() => { })
+                    .finally(() => setLoading(false));
+            }, 1000)
         },
     }
 }
