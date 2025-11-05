@@ -2,18 +2,17 @@ import api from "@/lib/api";
 import { Button, CloseButton, createListCollection, Dialog, Field, FileUpload, Icon, Input, Portal, Select, SimpleGrid } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import { FaUpload } from "react-icons/fa";
-import { toaster } from "../ui/toaster";
+import { toaster } from "../../ui/toaster";
 import { AVATAR_HEIGHT, AVATAR_MAX_FILE_SIZE_MB, AVATAR_WIDTH } from "@/lib/constants";
-import { FileUploadPreview } from "../ui/file-upload-preview";
-import useTeams from "@/lib/hooks/useTeams";
+import { FileUploadPreview } from "../../ui/file-upload-preview";
+import { TeamResponse } from "@/types/db";
 
-export default function CreatePlayerModal({ token, isOpen, setOpen, onEnd }: { token: string, isOpen: boolean, setOpen: (state: boolean) => void, onEnd: () => void }) {
+export default function CreatePlayerModal({ teams, token, isOpen, setOpen, onEnd }: { teams: TeamResponse[], token: string, isOpen: boolean, setOpen: (state: boolean) => void, onEnd: () => void }) {
     const [playerName, setPlayerName] = useState<string>("");
     const [discordId, setDiscordId] = useState<string>("");
     const [avatarFile, setAvatarFile] = useState<File>();
     const [teamId, setTeamId] = useState<number>();
     const [teamRole, setTeamRole] = useState<string>();
-    const { teams } = useTeams(token);
     const [isSubmitting, setSubmitting] = useState<boolean>(false);
 
     const teamsCollection = useMemo(() => {

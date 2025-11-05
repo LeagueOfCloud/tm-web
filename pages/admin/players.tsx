@@ -1,24 +1,23 @@
 
-import CreatePlayerModal from "@/components/forms/create-player";
-import DeletePlayersModal from "@/components/forms/delete-player";
-import EditPlayerModal from "@/components/forms/edit-player";
+import CreatePlayerModal from "@/components/forms/player/create-player";
+import DeletePlayersModal from "@/components/forms/player/delete-player";
+import EditPlayerModal from "@/components/forms/player/edit-player";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import { Tooltip } from "@/components/ui/tooltip";
-import usePlayers from "@/lib/hooks/usePlayers";
-import useTeams from "@/lib/hooks/useTeams";
-import { PlayerResponse } from "@/types/db";
+import useApiFetch from "@/lib/hooks/useApiFetch";
+import { PlayerResponse, TeamResponse } from "@/types/db";
 import { Box, Button, ButtonGroup, Checkbox, Icon, Link, Table, useDisclosure } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { LuPencil, LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu";
 
-function PlayerEdit({ player, token, onEnd }: { player: PlayerResponse, token: string, onEnd: () => void }) {
+function PlayerEdit({ teams, player, token, onEnd }: { teams: TeamResponse[], player: PlayerResponse, token: string, onEnd: () => void }) {
     const disclosure = useDisclosure();
 
     return (
         <>
             <Icon as={LuPencil} ml={2} cursor="pointer" onClick={() => disclosure.onOpen()} />
-            <EditPlayerModal defaultValues={player} token={token} isOpen={disclosure.open} setOpen={disclosure.setOpen} playerId={player.id} onEnd={() => onEnd()} />
+            <EditPlayerModal teams={teams} defaultValues={player} token={token} isOpen={disclosure.open} setOpen={disclosure.setOpen} playerId={player.id} onEnd={() => onEnd()} />
         </>
     )
 }
@@ -28,8 +27,8 @@ export default function ManagePlayers() {
     const createPlayerDisclosure = useDisclosure();
     const deletePlayerDisclosure = useDisclosure();
     const [selectedPlayers, setSelectedPlayers] = useState<PlayerResponse[]>([]);
-    const { players, refreshPlayers, loading: refreshPlayersLoading } = usePlayers(session.data?.user.token);
-    const { teams, refreshTeams, loading: refreshTeamsLoading } = useTeams(session.data?.user.token);
+    const { data: players, refresh: refreshPlayers, loading: refreshPlayersLoading } = useApiFetch<PlayerResponse>("players", session.data?.user.token);
+    const { data: teams, refresh: refreshTeams, loading: refreshTeamsLoading } = useApiFetch<TeamResponse>("teams", session.data?.user.token);
 
     if (session.status !== "authenticated") {
         return <></>;
@@ -121,7 +120,7 @@ export default function ManagePlayers() {
                                 <Table.Cell>{teams.find(t => t.id === player.team_id)?.name}</Table.Cell>
                                 <Table.Cell>{player.team_role.toUpperCase()}</Table.Cell>
                                 <Table.Cell width="30px">
-                                    <PlayerEdit player={player} token={session.data.user.token} onEnd={() => {
+                                    <PlayerEdit teams={teams} player={player} token={session.data.user.token} onEnd={() => {
                                         setSelectedPlayers([]);
                                         refreshPlayers();
                                     }} />
@@ -132,7 +131,7 @@ export default function ManagePlayers() {
                 </Table.Body>
             </Table.Root>
 
-            <CreatePlayerModal token={session.data.user.token} isOpen={createPlayerDisclosure.open} setOpen={createPlayerDisclosure.setOpen} onEnd={() => {
+            <CreatePlayerModal teams={teams} token={session.data.user.token} isOpen={createPlayerDisclosure.open} setOpen={createPlayerDisclosure.setOpen} onEnd={() => {
                 setSelectedPlayers([]);
                 refreshPlayers();
             }} />

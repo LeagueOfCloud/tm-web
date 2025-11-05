@@ -2,13 +2,14 @@ import api from "@/lib/api";
 import { Button, CloseButton, createListCollection, Dialog, Field, FileUpload, Icon, Input, Portal, Select, SimpleGrid } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import { FaUpload } from "react-icons/fa";
-import { toaster } from "../ui/toaster";
+import { toaster } from "../../ui/toaster";
 import { AVATAR_HEIGHT, AVATAR_MAX_FILE_SIZE_MB, AVATAR_WIDTH } from "@/lib/constants";
-import { FileUploadPreview } from "../ui/file-upload-preview";
-import useTeams from "@/lib/hooks/useTeams";
+import { FileUploadPreview } from "../../ui/file-upload-preview";
+import { TeamResponse } from "@/types/db";
 
 type EditTeamModalProps = {
     token: string
+    teams: TeamResponse[]
     isOpen: boolean
     playerId: number
     defaultValues: {
@@ -21,13 +22,12 @@ type EditTeamModalProps = {
     onEnd: () => void
 }
 
-export default function EditPlayerModal({ token, isOpen, setOpen, onEnd, defaultValues, playerId }: EditTeamModalProps) {
+export default function EditPlayerModal({ teams, token, isOpen, setOpen, onEnd, defaultValues, playerId }: EditTeamModalProps) {
     const [playerName, setPlayerName] = useState<string>(defaultValues.name);
     const [discordId, setDiscordId] = useState<string>(defaultValues.discord_id);
     const [teamId, setTeamId] = useState<number>(defaultValues.team_id);
     const [teamRole, setTeamRole] = useState<string>(defaultValues.team_role);
     const [avatarFile, setAvatarFile] = useState<File>();
-    const { teams } = useTeams(token);
     const [isSubmitting, setSubmitting] = useState<boolean>(false);
 
     const teamsCollection = useMemo(() => {

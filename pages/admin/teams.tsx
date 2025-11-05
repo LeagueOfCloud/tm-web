@@ -1,10 +1,10 @@
-import CreateTeamModal from "@/components/forms/create-team";
-import DeleteTeamsModal from "@/components/forms/delete-team";
-import EditTeamModal from "@/components/forms/edit-team";
+import CreateTeamModal from "@/components/forms/team/create-team";
+import DeleteTeamsModal from "@/components/forms/team/delete-team";
+import EditTeamModal from "@/components/forms/team/edit-team";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import { Tooltip } from "@/components/ui/tooltip";
 import { BANNER_HEIGHT, BANNER_WIDTH, LOGO_HEIGHT, LOGO_WIDTH } from "@/lib/constants";
-import useTeams from "@/lib/hooks/useTeams";
+import useApiFetch from "@/lib/hooks/useApiFetch";
 import { TeamResponse } from "@/types/db";
 import { Box, Button, ButtonGroup, Checkbox, Icon, Link, Table, useDisclosure } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
@@ -27,7 +27,7 @@ export default function ManageTeams() {
     const createTeamDisclosure = useDisclosure();
     const deleteTeamsDisclosure = useDisclosure();
     const [selectedTeams, setSelectedTeams] = useState<TeamResponse[]>([]);
-    const { teams, refreshTeams, loading: refreshTeamsLoading } = useTeams(session.data?.user.token);
+    const { data: teams, refresh: refreshTeams, loading: refreshTeamsLoading } = useApiFetch<TeamResponse>("teams", session.data?.user.token);
 
     if (session.status !== "authenticated") {
         return <></>;

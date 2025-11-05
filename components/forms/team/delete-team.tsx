@@ -2,7 +2,7 @@ import api from "@/lib/api";
 import { TeamResponse } from "@/types/db";
 import { Button, CloseButton, Dialog, Portal, Text, chakra } from "@chakra-ui/react";
 import { useState } from "react";
-import { toaster } from "../ui/toaster";
+import { toaster } from "../../ui/toaster";
 
 export default function DeleteTeamsModal({ token, isOpen, setOpen, teams, onEnd }: { token: string, isOpen: boolean, setOpen: (state: boolean) => void, teams: TeamResponse[], onEnd: () => void }) {
     const [loading, setLoading] = useState<boolean>(false);

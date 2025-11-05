@@ -1,7 +1,7 @@
 import api from "@/lib/api";
 import { Button, CloseButton, Dialog, Portal, Text, chakra } from "@chakra-ui/react";
 import { useState } from "react";
-import { toaster } from "../ui/toaster";
+import { toaster } from "../../ui/toaster";
 import { PlayerResponse } from "@/types/db";
 
 export default function DeletePlayersModal({ token, isOpen, setOpen, players, onEnd }: { token: string, isOpen: boolean, setOpen: (state: boolean) => void, players: PlayerResponse[], onEnd: () => void }) {

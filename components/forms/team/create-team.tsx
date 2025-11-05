@@ -2,9 +2,9 @@ import api from "@/lib/api";
 import { Button, CloseButton, Dialog, Field, FileUpload, Icon, Input, Portal, SimpleGrid } from "@chakra-ui/react";
 import { useState } from "react";
 import { FaUpload } from "react-icons/fa";
-import { toaster } from "../ui/toaster";
+import { toaster } from "../../ui/toaster";
 import { BANNER_HEIGHT, BANNER_MAX_FILE_SIZE_MB, BANNER_WIDTH, LOGO_HEIGHT, LOGO_MAX_FILE_SIZE_MB, LOGO_WIDTH } from "@/lib/constants";
-import { FileUploadPreview } from "../ui/file-upload-preview";
+import { FileUploadPreview } from "../../ui/file-upload-preview";
 
 export default function CreateTeamModal({ token, isOpen, setOpen, onEnd }: { token: string, isOpen: boolean, setOpen: (state: boolean) => void, onEnd: () => void }) {
     const [teamName, setTeamName] = useState<string>("");
