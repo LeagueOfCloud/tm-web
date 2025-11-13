@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import api from "../api";
+import cache from "../cache";
 
 export default function useApiFetch<T>(table: string, token?: string) {
     const [data, setData] = useState<T[]>([]);
@@ -10,8 +11,21 @@ export default function useApiFetch<T>(table: string, token?: string) {
             return;
         }
 
+        const cachedData = cache.get(`apiFetch-${table}`);
+
+        if (cachedData != undefined) {
+            queueMicrotask(() => {
+                setData(cachedData as T[]);
+                setLoading(false);
+            });
+            return;
+        }
+
         api.getAll(table, token || "")
-            .then(res => setData(res as T[]))
+            .then(res => {
+                cache.set(`apiFetch-${table}`, res, 2_000);
+                setData(res as T[]);
+            })
             .catch(() => { })
             .finally(() => setLoading(false));
     }, [token, table])
@@ -20,17 +34,28 @@ export default function useApiFetch<T>(table: string, token?: string) {
         data,
         loading,
         refresh: () => {
-            if(!token) {
+            if (!token) {
                 return;
             }
 
             setLoading(true);
-            setTimeout(() => {
-                api.getAll(table, token)
-                    .then(res => setData(res as T[]))
-                    .catch(() => { })
-                    .finally(() => setLoading(false));
-            }, 1000)
+
+            const cachedData = cache.get(`apiFetch-${table}`);
+
+            if (cachedData != undefined) {
+                queueMicrotask(() => {
+                    setData(cachedData as T[]);
+                })
+                return;
+            }
+
+            api.getAll(table, token || "")
+                .then(res => {
+                    cache.set(`apiFetch-${table}`, res, 2_000);
+                    setData(res as T[]);
+                })
+                .catch(() => { })
+                .finally(() => setLoading(false));
         },
     }
 }

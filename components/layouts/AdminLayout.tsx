@@ -1,11 +1,12 @@
-import { AbsoluteCenter, Button, ButtonProps, Flex, Icon, Spinner, Text } from "@chakra-ui/react";
+import { AbsoluteCenter, Button, ButtonProps, Flex, Icon, Text } from "@chakra-ui/react";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { PropsWithChildren } from "react";
-import { FaUsers } from "react-icons/fa";
+import { FaCog, FaUsers } from "react-icons/fa";
 import { FaComputer, FaWebAwesome } from "react-icons/fa6";
 import { LuLogOut, LuStepBack } from "react-icons/lu";
 import { SiRiotgames } from "react-icons/si";
+import Loader from "../ui/loader";
 
 export function SidebarButton({ children, ...props }: ButtonProps & PropsWithChildren) {
 
@@ -24,7 +25,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
         <>
             {session.status !== "authenticated" && (
                 <AbsoluteCenter>
-                    <Spinner boxSize="60px" borderWidth="10px" color="successGreen" />
+                    <Loader />
                 </AbsoluteCenter>
             )}
 
@@ -65,6 +66,11 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                         <SidebarButton onClick={() => router.push("/admin/riot-accounts")}>
                             <Icon as={SiRiotgames} />
                             Riot Accounts
+                        </SidebarButton>
+
+                        <SidebarButton onClick={() => router.push("/admin/settings")}>
+                            <Icon as={FaCog} />
+                            Settings
                         </SidebarButton>
 
                         <SidebarButton mt={"auto"} color="blue.200" onClick={() => router.push("/")}> <Icon as={LuStepBack} /> Leave Admin Dashboard</SidebarButton>

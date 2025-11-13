@@ -37,6 +37,16 @@ async function getSpecific(table: string, id: number, token: string): Promise<Pr
     })
 }
 
+async function getConfig(token: string): Promise<{ [key: string]: string }> {
+    return new Promise((resolve, reject) => {
+        axios.get(`${API_URL}/config`, { headers: { Authorization: token } })
+            .then(res => {
+                resolve(res.data);
+            })
+            .catch(err => reject(err.response));
+    })
+}
+
 
 /*
 * TEAMS METHODS
@@ -132,7 +142,7 @@ async function postPlayers(token: string, payload: object, avatarFile: File) {
     return new Promise((resolve, reject) => {
         axios.post(`${API_URL}/players`, JSON.stringify(payload), { headers: { Authorization: token } })
             .then(res => {
-                const {avatar_presigned_data, message } = res.data;
+                const { avatar_presigned_data, message } = res.data;
 
                 const avatarFormData = new FormData();
                 Object.entries(avatar_presigned_data.fields).forEach(([k, v]) => avatarFormData.append(k, v as string))
@@ -204,7 +214,7 @@ async function postRiotAccounts(token: string, payload: object) {
     return new Promise((resolve, reject) => {
         axios.post(`${API_URL}/riot-accounts`, JSON.stringify(payload), { headers: { Authorization: token } })
             .then(res => {
-                const {message } = res.data;
+                const { message } = res.data;
 
                 resolve(message);
             })
@@ -252,10 +262,26 @@ async function deleteRiotAccountsMultiple(token: string, riotAccountIds: number[
     }
 }
 
+/*
+* CONFIG CREATE-UPDATE METHOD
+*/
+async function updateConfig(token: string, payload: object) {
+    return new Promise((resolve, reject) => {
+        axios.put(`${API_URL}/config`, JSON.stringify(payload), { headers: { Authorization: token } })
+            .then(res => {
+                const { message } = res.data;
+
+                resolve(message);
+            })
+            .catch(err => reject(err.response?.data.error));
+    })
+}
+
 const api = {
     getTotal,
     getAll,
     getSpecific,
+    getConfig,
     postTeams,
     deleteTeams,
     deleteTeamsMultiple,
@@ -267,7 +293,8 @@ const api = {
     postRiotAccounts,
     patchRiotAccounts,
     deleteRiotAccounts,
-    deleteRiotAccountsMultiple
+    deleteRiotAccountsMultiple,
+    updateConfig
 }
 
 export default api;
