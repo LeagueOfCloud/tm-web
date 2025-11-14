@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { toaster } from "@/components/ui/toaster";
 import Loader from "@/components/ui/loader";
-import { deformPickems, formatPickems, PickEms } from "@/lib/helpers";
+import { deformPickems, formatPickems } from "@/lib/helpers";
 
 export default function AdminConfig() {
     const session = useSession();
