@@ -145,7 +145,7 @@ export default function AdminConfig() {
                         <Field.Root invalid={!!form.formState.errors.pickem_categories} maxWidth="600px" required>
                             <Field.Label>PickEm Categories <Field.RequiredIndicator /></Field.Label>
                             <Textarea variant="subtle" autoresize {...form.register("pickem_categories", { required: true })} />
-                            <Field.HelperText>{"Split by new lines, add Pick'Ems like so: \"TYPE::TITLE::EXTRAS\", where EXTRAS is an optional area for custom categories (non-PLAYER, TEAM, CHAMPION) that have custom options."}</Field.HelperText>
+                            <Field.HelperText>{"Split by new lines, add Pick'Ems like so: \"ID::TYPE::TITLE::EXTRAS\", where EXTRAS is an optional area separated by two colons `::` for custom categories (non-PLAYER, TEAM, CHAMPION) that have custom options."}</Field.HelperText>
                             <Field.ErrorText>{form.formState.errors.pickem_categories?.message}</Field.ErrorText>
                         </Field.Root>
                     </VStack>

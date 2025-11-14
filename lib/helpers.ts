@@ -1,4 +1,5 @@
 export interface PickEms {
+    id: string
     type: string
     title: string
     extras: string[]
@@ -9,10 +10,11 @@ export function formatPickems(pickems: string): PickEms[] {
 
     const result = input.split("\n").map(line => {
         const parts = line.split("::");
-        const [type, title, ...extras] = parts;
+        const [id, type, title, ...extras] = parts;
         const cleanedExtras = extras.filter(e => e !== "");
 
         return {
+            id,
             type,
             title,
             extras: cleanedExtras
@@ -26,8 +28,8 @@ export function deformPickems(pickems: PickEms[]): string {
     const result = pickems.map(item => {
         const extrasString = item.extras.join("::");
         return extrasString
-            ? `${item.type}::${item.title}::${extrasString}`
-            : `${item.type}::${item.title}`;
+            ? `${item.id}::${item.type}::${item.title}::${extrasString}`
+            : `${item.id}::${item.type}::${item.title}`;
     });
 
     console.log(result)
