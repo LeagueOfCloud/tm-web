@@ -31,8 +31,6 @@ export function deformPickems(pickems: PickEms[]): string {
             ? `${item.id}::${item.type}::${item.title}::${extrasString}`
             : `${item.id}::${item.type}::${item.title}`;
     });
-
-    console.log(result)
         
     return result.join("\n");
 }

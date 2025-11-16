@@ -46,6 +46,7 @@ export default function useApiFetch<T>(table: string, token?: string) {
                 queueMicrotask(() => {
                     setData(cachedData as T[]);
                 })
+                setLoading(false);
                 return;
             }
 
