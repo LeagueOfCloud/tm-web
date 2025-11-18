@@ -3,10 +3,12 @@ import CreatePlayerModal from "@/components/forms/player/create-player";
 import DeletePlayersModal from "@/components/forms/player/delete-player";
 import EditPlayerModal from "@/components/forms/player/edit-player";
 import AdminLayout from "@/components/layouts/AdminLayout";
+import DataTable from "@/components/ui/data-table";
 import { Tooltip } from "@/components/ui/tooltip";
+import { AVATAR_HEIGHT, AVATAR_WIDTH } from "@/lib/constants";
 import useApiFetch from "@/lib/hooks/useApiFetch";
 import { PlayerResponse, TeamResponse } from "@/types/db";
-import { Box, Button, ButtonGroup, Checkbox, Icon, Link, Table, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, Icon, Link, useDisclosure } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { LuPencil, LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu";
@@ -51,85 +53,57 @@ export default function ManagePlayers() {
                 }} colorPalette="red" disabled={selectedPlayers.length === 0}><Icon as={LuTrash2} /> Delete {selectedPlayers.length > 0 && `(${selectedPlayers.length} item${selectedPlayers.length === 1 ? "" : "s"})`}</Button>
             </ButtonGroup>
 
-            <Table.Root showColumnBorder stickyHeader interactive mt={5}>
-                <Table.Header>
-                    <Table.Row background="blackAlpha.500">
-                        <Table.ColumnHeader>
-                            <Checkbox.Root
-                                mt="0.5"
-                                aria-label="Select all rows"
-                                checked={selectedPlayers.length === players.length ? true : selectedPlayers.length > 0 ? "indeterminate" : false}
-                                onCheckedChange={(changes) => setSelectedPlayers(changes.checked ? players : [])}
-                                disabled={refreshPlayersLoading}
+            <DataTable
+                data={players}
+                selected={selectedPlayers}
+                setSelected={setSelectedPlayers}
+                loading={refreshPlayersLoading}
+                columns={[
+                    { key: "id", header: "ID", render: p => p.id },
+                    { key: "name", header: "NAME", render: p => p.name },
+                    { key: "discord_id", header: "DISCORD_ID", render: p => p.discord_id },
+                    {
+                        key: "avatar",
+                        header: "AVATAR_URL",
+                        render: p => (
+                            <Tooltip
+                                content={
+                                    <Box
+                                        width={`calc(${AVATAR_WIDTH} / 5)`}
+                                        height={`calc(${AVATAR_HEIGHT} / 5)`}
+                                        backgroundImage={`url(${p.avatar_url})`}
+                                        backgroundSize="contain"
+                                        backgroundRepeat="no-repeat"
+                                        backgroundPosition="center"
+                                    />
+                                }
                             >
-                                <Checkbox.HiddenInput />
-                                <Checkbox.Control cursor="pointer" />
-                            </Checkbox.Root>
-                        </Table.ColumnHeader>
-                        <Table.ColumnHeader>ID</Table.ColumnHeader>
-                        <Table.ColumnHeader>NAME</Table.ColumnHeader>
-                        <Table.ColumnHeader>DISCORD_ID</Table.ColumnHeader>
-                        <Table.ColumnHeader>AVATAR_URL</Table.ColumnHeader>
-                        <Table.ColumnHeader>TEAM</Table.ColumnHeader>
-                        <Table.ColumnHeader>ROLE</Table.ColumnHeader>
-                        <Table.ColumnHeader>EDIT</Table.ColumnHeader>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {players.map(player => {
-                        const playerTeam = teams.find(t => t.id === player.team_id);
-
-                        return (
-                            <Table.Row key={`display-player-${player.id}-${playerTeam?.id}`}>
-                                <Table.Cell width="10px">
-                                    <Checkbox.Root
-                                        mt="0.5"
-                                        aria-label="Select row"
-                                        checked={selectedPlayers.includes(player)}
-                                        size="sm"
-                                        onCheckedChange={(changes) => {
-                                            setSelectedPlayers((prev) =>
-                                                changes.checked
-                                                    ? [...prev, player]
-                                                    : selectedPlayers.filter((t) => t !== player),
-                                            )
-                                        }}
-                                        disabled={refreshPlayersLoading}
-                                    >
-                                        <Checkbox.HiddenInput />
-                                        <Checkbox.Control cursor="pointer" />
-                                    </Checkbox.Root>
-                                </Table.Cell>
-                                <Table.Cell>{player.id}</Table.Cell>
-                                <Table.Cell>{player.name}</Table.Cell>
-                                <Table.Cell>{player.discord_id}</Table.Cell>
-                                <Table.Cell>
-                                    <Tooltip content={
-                                        <Box
-                                            width={"300px"}
-                                            height={"300px"}
-                                            backgroundImage={`url(${player.avatar_url})`}
-                                            backgroundSize="contain"
-                                            backgroundRepeat="no-repeat"
-                                            backgroundPosition="center"
-                                        />
-                                    } showArrow>
-                                        <Link href={player.avatar_url} target="_blank" color="blue.400">{player.avatar_url}</Link>
-                                    </Tooltip>
-                                </Table.Cell>
-                                <Table.Cell>{teams.find(t => t.id === player.team_id)?.name}</Table.Cell>
-                                <Table.Cell>{player.team_role.toUpperCase()}</Table.Cell>
-                                <Table.Cell width="30px">
-                                    <PlayerEdit teams={teams} player={player} token={session.data.user.token} onEnd={() => {
-                                        setSelectedPlayers([]);
-                                        refreshPlayers();
-                                    }} />
-                                </Table.Cell>
-                            </Table.Row>
-                        )
-                    })}
-                </Table.Body>
-            </Table.Root>
+                                <Link href={p.avatar_url} target="_blank" color="blue.400">
+                                    {p.avatar_url}
+                                </Link>
+                            </Tooltip>
+                        ),
+                    },
+                    { key: "team", header: "Team", render: p => teams.find(t => t.id === p.team_id)?.name },
+                    { key: "team_role", header: "ROLE", render: p => p.team_role.toUpperCase() },
+                    {
+                        key: "edit",
+                        header: "EDIT",
+                        width: 30,
+                        render: t => (
+                            <PlayerEdit
+                                player={t}
+                                teams={teams}
+                                token={session.data.user.token}
+                                onEnd={() => {
+                                    setSelectedPlayers([]);
+                                    refreshTeams();
+                                }}
+                            />
+                        ),
+                    },
+                ]}
+            />
 
             <CreatePlayerModal teams={teams} token={session.data.user.token} isOpen={createPlayerDisclosure.open} setOpen={createPlayerDisclosure.setOpen} onEnd={() => {
                 setSelectedPlayers([]);

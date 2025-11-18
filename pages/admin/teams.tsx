@@ -2,11 +2,12 @@ import CreateTeamModal from "@/components/forms/team/create-team";
 import DeleteTeamsModal from "@/components/forms/team/delete-team";
 import EditTeamModal from "@/components/forms/team/edit-team";
 import AdminLayout from "@/components/layouts/AdminLayout";
+import DataTable from "@/components/ui/data-table";
 import { Tooltip } from "@/components/ui/tooltip";
 import { BANNER_HEIGHT, BANNER_WIDTH, LOGO_HEIGHT, LOGO_WIDTH } from "@/lib/constants";
 import useApiFetch from "@/lib/hooks/useApiFetch";
 import { TeamResponse } from "@/types/db";
-import { Box, Button, ButtonGroup, Checkbox, Icon, Link, Table, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, Icon, Link, useDisclosure } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { LuPencil, LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu";
@@ -49,92 +50,80 @@ export default function ManageTeams() {
                 }} colorPalette="red" disabled={selectedTeams.length === 0}><Icon as={LuTrash2} /> Delete {selectedTeams.length > 0 && `(${selectedTeams.length} item${selectedTeams.length === 1 ? "" : "s"})`}</Button>
             </ButtonGroup>
 
-            <Table.Root showColumnBorder interactive mt={5}>
-                <Table.Header>
-                    <Table.Row background="blackAlpha.500">
-                        <Table.ColumnHeader>
-                            <Checkbox.Root
-                                mt="0.5"
-                                aria-label="Select all rows"
-                                checked={selectedTeams.length === teams.length ? true : selectedTeams.length > 0 ? "indeterminate" : false}
-                                onCheckedChange={(changes) => setSelectedTeams(changes.checked ? teams : [])}
-                                disabled={refreshTeamsLoading}
-                            >
-                                <Checkbox.HiddenInput />
-                                <Checkbox.Control cursor="pointer" />
-                            </Checkbox.Root>
-                        </Table.ColumnHeader>
-                        <Table.ColumnHeader>ID</Table.ColumnHeader>
-                        <Table.ColumnHeader>NAME</Table.ColumnHeader>
-                        <Table.ColumnHeader>TAG</Table.ColumnHeader>
-                        <Table.ColumnHeader>LOGO_URL</Table.ColumnHeader>
-                        <Table.ColumnHeader>BANNER_URL</Table.ColumnHeader>
-                        <Table.ColumnHeader>EDIT</Table.ColumnHeader>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {teams.map(team => (
-                        <Table.Row key={`display-team-${team.id}`}>
-                            <Table.Cell width="10px">
-                                <Checkbox.Root
-                                    mt="0.5"
-                                    aria-label="Select row"
-                                    checked={selectedTeams.includes(team)}
-                                    size="sm"
-                                    onCheckedChange={(changes) => {
-                                        setSelectedTeams((prev) =>
-                                            changes.checked
-                                                ? [...prev, team]
-                                                : selectedTeams.filter((t) => t !== team),
-                                        )
-                                    }}
-                                    disabled={refreshTeamsLoading}
-                                >
-                                    <Checkbox.HiddenInput />
-                                    <Checkbox.Control cursor="pointer" />
-                                </Checkbox.Root>
-                            </Table.Cell>
-                            <Table.Cell>{team.id}</Table.Cell>
-                            <Table.Cell>{team.name}</Table.Cell>
-                            <Table.Cell>{team.tag}</Table.Cell>
-                            <Table.Cell>
-                                <Tooltip content={
+            <DataTable
+                data={teams}
+                selected={selectedTeams}
+                setSelected={setSelectedTeams}
+                loading={refreshTeamsLoading}
+                columns={[
+                    { key: "id", header: "ID", render: t => t.id },
+                    { key: "name", header: "NAME", render: t => t.name },
+                    { key: "tag", header: "TAG", render: t => t.tag },
+
+                    {
+                        key: "logo",
+                        header: "LOGO_URL",
+                        render: t => (
+                            <Tooltip
+                                content={
                                     <Box
                                         width={LOGO_WIDTH}
                                         height={LOGO_HEIGHT}
-                                        backgroundImage={`url(${team.logo_url})`}
+                                        backgroundImage={`url(${t.logo_url})`}
                                         backgroundSize="contain"
                                         backgroundRepeat="no-repeat"
                                         backgroundPosition="center"
                                     />
-                                } showArrow>
-                                    <Link href={team.logo_url} target="_blank" color="blue.400">{team.logo_url}</Link>
-                                </Tooltip>
-                            </Table.Cell>
-                            <Table.Cell>
-                                <Tooltip content={
+                                }
+                            >
+                                <Link href={t.logo_url} target="_blank" color="blue.400">
+                                    {t.logo_url}
+                                </Link>
+                            </Tooltip>
+                        ),
+                    },
+
+                    {
+                        key: "banner",
+                        header: "BANNER_URL",
+                        render: t => (
+                            <Tooltip
+                                content={
                                     <Box
                                         width={`calc(${BANNER_WIDTH} / 5)`}
                                         height={`calc(${BANNER_HEIGHT} / 5)`}
-                                        backgroundImage={`url(${team.banner_url})`}
+                                        backgroundImage={`url(${t.banner_url})`}
                                         backgroundSize="contain"
                                         backgroundRepeat="no-repeat"
                                         backgroundPosition="center"
                                     />
-                                } showArrow>
-                                    <Link href={team.banner_url} target="_blank" color="blue.400">{team.banner_url}</Link>
-                                </Tooltip>
-                            </Table.Cell>
-                            <Table.Cell width="30px">
-                                <TeamEdit team={team} token={session.data.user.token} onEnd={() => {
+                                }
+                            >
+                                <Link href={t.banner_url} target="_blank" color="blue.400">
+                                    {t.banner_url}
+                                </Link>
+                            </Tooltip>
+                        ),
+                    },
+
+                    {
+                        key: "edit",
+                        header: "EDIT",
+                        width: 30,
+                        render: t => (
+                            <TeamEdit
+                                team={t}
+                                token={session.data.user.token}
+                                onEnd={() => {
                                     setSelectedTeams([]);
                                     refreshTeams();
-                                }} />
-                            </Table.Cell>
-                        </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table.Root>
+                                }}
+                            />
+                        ),
+                    },
+                ]}
+            />
+
 
             <DeleteTeamsModal token={session.data.user.token} isOpen={deleteTeamsDisclosure.open} setOpen={deleteTeamsDisclosure.setOpen} teams={selectedTeams} onEnd={() => {
                 setSelectedTeams([]);
