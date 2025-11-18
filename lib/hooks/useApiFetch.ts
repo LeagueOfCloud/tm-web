@@ -1,62 +1,24 @@
-import { useEffect, useState } from "react"
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api";
-import cache from "../cache";
+import { queryKeys } from "../query";
 
 export default function useApiFetch<T>(table: string, token?: string) {
-    const [data, setData] = useState<T[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+  const queryClient = useQueryClient();
 
-    useEffect(() => {
-        if (!token) {
-            return;
-        }
+  const query = useQuery<T[]>({
+    queryKey: [queryKeys.fetch, table],
+    queryFn: async () => {
+      if (!token) throw new Error("No token");
+      const res = await api.getAll(table, token);
+      return res as T[];
+    },
+    enabled: !!token
+  });
 
-        const cachedData = cache.get(`apiFetch-${table}`);
-
-        if (cachedData != undefined) {
-            queueMicrotask(() => {
-                setData(cachedData as T[]);
-                setLoading(false);
-            });
-            return;
-        }
-
-        api.getAll(table, token || "")
-            .then(res => {
-                cache.set(`apiFetch-${table}`, res, 2_000);
-                setData(res as T[]);
-            })
-            .catch(() => { })
-            .finally(() => setLoading(false));
-    }, [token, table])
-
-    return {
-        data,
-        loading,
-        refresh: () => {
-            if (!token) {
-                return;
-            }
-
-            setLoading(true);
-
-            const cachedData = cache.get(`apiFetch-${table}`);
-
-            if (cachedData != undefined) {
-                queueMicrotask(() => {
-                    setData(cachedData as T[]);
-                })
-                setLoading(false);
-                return;
-            }
-
-            api.getAll(table, token || "")
-                .then(res => {
-                    cache.set(`apiFetch-${table}`, res, 2_000);
-                    setData(res as T[]);
-                })
-                .catch(() => { })
-                .finally(() => setLoading(false));
-        },
-    }
+  return {
+    data: query.data ?? [],
+    loading: query.isLoading,
+    canRefresh: !query.isStale,
+    refresh: () => queryClient.invalidateQueries({ queryKey: [queryKeys.fetch, table] })
+  }
 }

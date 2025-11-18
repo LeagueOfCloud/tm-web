@@ -1,58 +1,26 @@
-import { useEffect, useState } from "react"
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api";
-import cache from "../cache";
+import { queryKeys } from "../query";
 
 export default function useConfig(token?: string) {
-    const [config, setConfig] = useState<{ [key: string]: string | undefined }>({});
-    const [loading, setLoading] = useState<boolean>(true);
+  const queryClient = useQueryClient();
 
-    useEffect(() => {
-        if (!token) {
-            return;
-        }
+  const query = useQuery({
+    queryKey: [queryKeys.config],
+    queryFn: async () => {
+      if (!token) throw new Error("No token");
+      const res = await api.getConfig(token);
+      return res as { [key: string]: string | undefined };
+    },
+    enabled: !!token
+  });
 
-        const cachedData = cache.get("api-config");
-
-        if (cachedData !== undefined) {
-            queueMicrotask(() => {
-                setConfig(cachedData as typeof config);
-                setLoading(false);
-            })
-        }
-
-        api.getConfig(token || "")
-            .then(res => {
-                cache.set("api-config", res, 1_000);
-                setConfig(res);
-            })
-            .catch(() => { })
-            .finally(() => setLoading(false));
-    }, [token])
-
-    return {
-        config,
-        loading,
-        refresh: () => {
-            if (!token) {
-                return;
-            }
-
-            const cachedData = cache.get("api-config");
-
-            if (cachedData !== undefined) {
-                queueMicrotask(() => {
-                    setConfig(cachedData as typeof config);
-                    setLoading(false);
-                })
-            }
-
-            api.getConfig(token || "")
-                .then(res => {
-                    cache.set("api-config", res, 1_000);
-                    setConfig(res);
-                })
-                .catch(() => { })
-                .finally(() => setLoading(false));
-        },
-    }
+  return {
+    config: query.data ?? {},
+    loading: query.isLoading,
+    refresh: () =>
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.config],
+      })
+  };
 }

@@ -28,7 +28,7 @@ export default function ManagePlayers() {
     const deletePlayerDisclosure = useDisclosure();
     const [selectedPlayers, setSelectedPlayers] = useState<PlayerResponse[]>([]);
     const { data: players, refresh: refreshPlayers, loading: refreshPlayersLoading } = useApiFetch<PlayerResponse>("players", session.data?.user.token);
-    const { data: teams, refresh: refreshTeams, loading: refreshTeamsLoading } = useApiFetch<TeamResponse>("teams", session.data?.user.token);
+    const { data: teams, canRefresh, refresh: refreshTeams, loading: refreshTeamsLoading } = useApiFetch<TeamResponse>("teams", session.data?.user.token);
 
     if (session.status !== "authenticated") {
         return <></>;
@@ -42,7 +42,7 @@ export default function ManagePlayers() {
                     setSelectedPlayers([]);
                     refreshPlayers();
                     refreshTeams();
-                }} colorPalette="cyan" loading={refreshPlayersLoading || refreshTeamsLoading} loadingText="Updating..."><Icon as={LuRefreshCcw} /> Update Table</Button>
+                }} colorPalette="cyan" loading={refreshPlayersLoading || refreshTeamsLoading} disabled={!canRefresh} loadingText="Updating..."><Icon as={LuRefreshCcw} /> Update Table</Button>
                 <Button onClick={() => {
                     if (selectedPlayers.length === 0) {
                         return;

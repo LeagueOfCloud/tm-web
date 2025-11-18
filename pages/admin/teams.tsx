@@ -27,7 +27,7 @@ export default function ManageTeams() {
     const createTeamDisclosure = useDisclosure();
     const deleteTeamsDisclosure = useDisclosure();
     const [selectedTeams, setSelectedTeams] = useState<TeamResponse[]>([]);
-    const { data: teams, refresh: refreshTeams, loading: refreshTeamsLoading } = useApiFetch<TeamResponse>("teams", session.data?.user.token);
+    const { data: teams, canRefresh, refresh: refreshTeams, loading: refreshTeamsLoading } = useApiFetch<TeamResponse>("teams", session.data?.user.token);
 
     if (session.status !== "authenticated") {
         return <></>;
@@ -40,7 +40,7 @@ export default function ManageTeams() {
                 <Button onClick={() => {
                     setSelectedTeams([]);
                     refreshTeams();
-                }} colorPalette="cyan" loading={refreshTeamsLoading} loadingText="Updating..."><Icon as={LuRefreshCcw} /> Update Table</Button>
+                }} colorPalette="cyan" loading={refreshTeamsLoading} disabled={!canRefresh} loadingText="Updating..."><Icon as={LuRefreshCcw} /> Update Table</Button>
                 <Button onClick={() => {
                     if (selectedTeams.length === 0) {
                         return;
@@ -49,7 +49,7 @@ export default function ManageTeams() {
                 }} colorPalette="red" disabled={selectedTeams.length === 0}><Icon as={LuTrash2} /> Delete {selectedTeams.length > 0 && `(${selectedTeams.length} item${selectedTeams.length === 1 ? "" : "s"})`}</Button>
             </ButtonGroup>
 
-            <Table.Root showColumnBorder stickyHeader interactive mt={5}>
+            <Table.Root showColumnBorder interactive mt={5}>
                 <Table.Header>
                     <Table.Row background="blackAlpha.500">
                         <Table.ColumnHeader>
