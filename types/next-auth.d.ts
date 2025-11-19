@@ -13,7 +13,7 @@ declare module "next-auth" {
     user: {
       id: number;
       discord_id: string;
-      avatar_url: string | null;
+      avatar_url?: string;
       type: "player" | "admin" | "user";
       token: string;
       name: string;

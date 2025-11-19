@@ -47,6 +47,15 @@ async function getConfig(token: string): Promise<{ [key: string]: string }> {
     })
 }
 
+async function getSettings(): Promise<{ [key: string]: string}> {
+    return new Promise((resolve, reject) => {
+        axios.get(`${API_URL}/settings`)
+            .then(res => {
+                resolve(res.data);
+            })
+            .catch(err => reject(err.response));
+    })
+}
 
 /*
 * TEAMS METHODS
@@ -282,6 +291,7 @@ const api = {
     getAll,
     getSpecific,
     getConfig,
+    getSettings,
     postTeams,
     deleteTeams,
     deleteTeamsMultiple,

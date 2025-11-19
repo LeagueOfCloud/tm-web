@@ -68,7 +68,7 @@ export const authOptions: NextAuthOptions = {
             }
 
             session.user.id = result.id;
-            session.user.avatar_url = result.avatar_url || null;
+            session.user.avatar_url = result.avatar_url;
             session.user.token = result.token;
             session.user.type = result.type;
             session.user.discord_id = result.discord_id;

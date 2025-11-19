@@ -1,0 +1,43 @@
+import { Link } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { PropsWithChildren } from "react";
+
+type HeaderButtonProps = {
+    to: string
+}
+
+export default function HeaderButton({ to, children }: HeaderButtonProps & PropsWithChildren) {
+    const router = useRouter()
+
+    return (
+        <Link
+            onClick={() => router.push(to || "")}
+            fontWeight="semibold"
+            position="relative"
+            transition="all 150ms ease-in-out"
+            _after={{
+                content: "''",
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transformOrigin: "top left",
+                transform: "translate(-50%, -50%)",
+                width: "0px",
+                border: "0px solid",
+                borderColor: "successGreen",
+                transition: "all 300ms ease-in-out",
+            }}
+            _hover={{
+                textDecoration: "none",
+                _after: {
+                    width: "40px",
+                    borderWidth: "1px",
+                    rotate: "-45deg"
+                },
+                color: "successGreen"
+            }}
+        >
+            {children}
+        </Link>
+    )
+}

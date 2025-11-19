@@ -20,6 +20,11 @@ const config = defineConfig({
                     bot: { value: "#2373dcff" },
                     support: { value: "#0f992dff" },
                     sub: { value: "#dc2623" },
+                },
+                ui: {
+                    loginText: { value: "#44f980" },
+                    loginBackground: { value: "#04160aff" },
+                    headerBackground: { value: "#18202a" }
                 }
             }
         },
