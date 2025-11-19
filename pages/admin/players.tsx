@@ -6,9 +6,10 @@ import AdminLayout from "@/components/layouts/AdminLayout";
 import DataTable from "@/components/ui/data-table";
 import { Tooltip } from "@/components/ui/tooltip";
 import { AVATAR_HEIGHT, AVATAR_WIDTH } from "@/lib/constants";
+import { getPlayerTeam } from "@/lib/helpers";
 import useApiFetch from "@/lib/hooks/useApiFetch";
 import { PlayerResponse, TeamResponse } from "@/types/db";
-import { Box, Button, ButtonGroup, Icon, Link, useDisclosure } from "@chakra-ui/react";
+import { Badge, Box, Button, ButtonGroup, HStack, Icon, Image, Link, useDisclosure } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { LuPencil, LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu";
@@ -84,8 +85,41 @@ export default function ManagePlayers() {
                             </Tooltip>
                         ),
                     },
-                    { key: "team", header: "Team", render: p => teams.find(t => t.id === p.team_id)?.name },
-                    { key: "team_role", header: "ROLE", render: p => p.team_role.toUpperCase() },
+                    {
+                        key: "team_and_role", header: "Team Assignment", render: p => {
+                            const team = getPlayerTeam(p, teams)
+
+                            return (
+                                <HStack>
+                                    <Badge
+                                        background="featureBackground"
+                                        py={1}
+                                        width="max-content"
+                                        rounded="sm"
+                                    >
+                                        <HStack>
+                                        <Box
+                                            boxSize="20px"
+                                            backgroundImage={`url(${team?.logo_url})`}
+                                            backgroundSize="contain"
+                                            backgroundRepeat="no-repeat"
+                                            backgroundPosition="center"
+                                            rounded="md"
+                                        />
+                                        {team?.name.toUpperCase()}
+                                        </HStack>
+                                    </Badge>
+
+                                    <Badge py={1} background="featureBackground">
+                                        <HStack height="20px">
+                                            <Image alt="position-icon" src={`/position-icons/${p.team_role.toLowerCase()}.png`} boxSize="20px" />
+                                            {p.team_role.toUpperCase()}
+                                        </HStack>
+                                    </Badge>
+                                </HStack>
+                            )
+                        }
+                    },
                     {
                         key: "edit",
                         header: "EDIT",

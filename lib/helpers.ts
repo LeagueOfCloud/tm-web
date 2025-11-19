@@ -1,3 +1,6 @@
+import { PlayerResponse, TeamResponse } from "@/types/db"
+import { PiIslandFill } from "react-icons/pi"
+
 export interface PickEms {
     id: string
     type: string
@@ -35,4 +38,8 @@ export function deformPickems(pickems: PickEms[]): string {
     });
         
     return result.join("\n");
+}
+
+export function getPlayerTeam(player: PlayerResponse, teams: TeamResponse[]) {
+    return teams.find(t => t.id === player.team_id)
 }

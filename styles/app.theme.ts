@@ -12,7 +12,15 @@ const config = defineConfig({
                 secondary: { value: "#7b818a" },
                 featureBackground: { value: "#32363f" },
                 successGreen: { value: "#01d69e" },
-                failureRed: { value: "#dc2623" }
+                failureRed: { value: "#dc2623" },
+                roles: {
+                    top: { value: "#b63e3cff" },
+                    jungle: { value: "#8d8515ff" },
+                    mid: { value: "#5e1a58ff" },
+                    bot: { value: "#2373dcff" },
+                    support: { value: "#0f992dff" },
+                    sub: { value: "#dc2623" },
+                }
             }
         },
         semanticTokens: {
