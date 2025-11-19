@@ -4,16 +4,19 @@ import { queryClient } from "@/lib/query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
+import { StrictMode } from "react";
 
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <SessionProvider session={session}>
-        <Provider forcedTheme="dark">
-          <Toaster />
-          <Component {...pageProps} />
-        </Provider>
-      </SessionProvider>
-    </QueryClientProvider>
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider session={session}>
+          <Provider forcedTheme="dark">
+            <Toaster />
+            <Component {...pageProps} />
+          </Provider>
+        </SessionProvider>
+      </QueryClientProvider>
+    </StrictMode>
   );
 }
