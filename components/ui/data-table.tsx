@@ -1,20 +1,20 @@
-// components/data-table.tsx
-import { Table, Checkbox } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import { Table, Checkbox } from "@chakra-ui/react"
+import { ReactNode } from "react"
 
 export type DataTableColumn<T> = {
-    key: string;
-    header: string;
-    render: (item: T) => ReactNode;
-    width?: string | number;
+    key: string
+    header: string
+    render: (item: T) => ReactNode
+    width?: string | number
 };
 
 export interface DataTableProps<T> {
     data: T[];
-    columns: DataTableColumn<T>[];
-    selected: T[];
-    setSelected: (items: T[]) => void;
-    loading?: boolean;
+    columns: DataTableColumn<T>[]
+    selected: T[]
+    setSelected: (items: T[]) => void
+    loading?: boolean
+    filterFn?: (item: T, index: number, array: T[]) => boolean
 }
 
 export default function DataTable<T>({
@@ -23,12 +23,13 @@ export default function DataTable<T>({
     selected,
     setSelected,
     loading = false,
+    filterFn = () => true,
 }: DataTableProps<T>) {
     const allSelected = selected.length === data.length;
     const someSelected = selected.length > 0 && !allSelected;
 
     return (
-        <Table.Root showColumnBorder stickyHeader interactive mt={5}>
+        <Table.Root showColumnBorder interactive mt={5}>
             <Table.Header>
                 <Table.Row background="blackAlpha.500">
                     {/* SELECT ALL COLUMN */}
@@ -57,7 +58,7 @@ export default function DataTable<T>({
             </Table.Header>
 
             <Table.Body>
-                {data.map(item => (
+                {data.filter(filterFn).map(item => (
                     <Table.Row key={JSON.stringify(item)}>
                         <Table.Cell width="10px">
                             <Checkbox.Root

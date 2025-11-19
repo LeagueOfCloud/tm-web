@@ -5,14 +5,13 @@ import EditPlayerModal from "@/components/forms/player/edit-player";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import DataTable from "@/components/ui/data-table";
 import { Tooltip } from "@/components/ui/tooltip";
-import { AVATAR_HEIGHT, AVATAR_WIDTH } from "@/lib/constants";
 import { getPlayerTeam } from "@/lib/helpers";
 import useApiFetch from "@/lib/hooks/useApiFetch";
 import { PlayerResponse, TeamResponse } from "@/types/db";
-import { Badge, Box, Button, ButtonGroup, HStack, Icon, Image, Link, useDisclosure } from "@chakra-ui/react";
+import { Badge, Box, Button, ButtonGroup, createListCollection, HStack, Icon, Image, Link, Popover, Portal, Select, useDisclosure, VStack } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
-import { LuPencil, LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu";
+import { useMemo, useState } from "react";
+import { LuFilter, LuPencil, LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu";
 
 function PlayerEdit({ teams, player, token, onEnd }: { teams: TeamResponse[], player: PlayerResponse, token: string, onEnd: () => void }) {
     const disclosure = useDisclosure();
@@ -33,6 +32,32 @@ export default function ManagePlayers() {
     const { data: players, refresh: refreshPlayers, loading: refreshPlayersLoading } = useApiFetch<PlayerResponse>("players", session.data?.user.token);
     const { data: teams, canRefresh, refresh: refreshTeams, loading: refreshTeamsLoading } = useApiFetch<TeamResponse>("teams", session.data?.user.token);
 
+    const [filters, setFilters] = useState<{ [key: string]: unknown }>({})
+
+    const roleCollection = useMemo(() => {
+        return createListCollection({
+            items: [
+                { label: "TOP", value: "top" },
+                { label: "JUNGLE", value: "jungle" },
+                { label: "MID", value: "mid" },
+                { label: "BOT", value: "bot" },
+                { label: "SUPPORT", value: "support" },
+                { label: "SUB", value: "sub" }
+            ]
+        })
+    }, [])
+
+    const teamsCollection = useMemo(() => {
+        return createListCollection({
+            items: [
+                ...teams.map(team => ({
+                    label: team.name,
+                    value: team.id
+                }))
+            ]
+        })
+    }, [teams])
+
     if (session.status !== "authenticated") {
         return <></>;
     }
@@ -52,26 +77,108 @@ export default function ManagePlayers() {
                     }
                     deletePlayerDisclosure.onOpen();
                 }} colorPalette="red" disabled={selectedPlayers.length === 0}><Icon as={LuTrash2} /> Delete {selectedPlayers.length > 0 && `(${selectedPlayers.length} item${selectedPlayers.length === 1 ? "" : "s"})`}</Button>
+
+                <Popover.Root>
+                    <Popover.Trigger asChild>
+                        <Button colorPalette="purple"><Icon as={LuFilter} /> Filters</Button>
+                    </Popover.Trigger>
+                    <Portal>
+                        <Popover.Positioner>
+                            <Popover.Content>
+                                <Popover.Arrow />
+                                <Popover.Body>
+                                    <VStack>
+                                        <Select.Root collection={teamsCollection} size="md" variant="subtle" onSelect={(selection) => { setFilters({ ...filters, team: selection.value }) }}>
+                                            <Select.HiddenSelect />
+                                            <Select.Control>
+                                                <Select.Trigger cursor="pointer">
+                                                    <Select.ValueText placeholder="Select Team" />
+                                                </Select.Trigger>
+                                                <Select.IndicatorGroup>
+                                                    <Select.ClearTrigger cursor="pointer" onClick={() => setFilters({
+                                                        ...filters,
+                                                        team: undefined
+                                                    })} />
+                                                    <Select.Indicator />
+                                                </Select.IndicatorGroup>
+                                            </Select.Control>
+                                            <Select.Positioner>
+                                                <Select.Content>
+                                                    {teamsCollection.items.map(team => (
+                                                        <Select.Item item={team} key={`select-team-filter-${team.value}`} cursor="pointer">
+                                                            {team.label}
+                                                            <Select.ItemIndicator />
+                                                        </Select.Item>
+                                                    ))}
+                                                </Select.Content>
+                                            </Select.Positioner>
+                                        </Select.Root>
+
+                                        <Select.Root collection={roleCollection} size="md" variant="subtle" onSelect={(selection) => { setFilters({ ...filters, role: selection.value }) }}>
+                                            <Select.HiddenSelect />
+                                            <Select.Control>
+                                                <Select.Trigger cursor="pointer">
+                                                    <Select.ValueText placeholder="Select Role" />
+                                                </Select.Trigger>
+                                                <Select.IndicatorGroup>
+                                                    <Select.ClearTrigger cursor="pointer" onClick={() => setFilters({
+                                                        ...filters,
+                                                        role: undefined
+                                                    })} />
+                                                    <Select.Indicator />
+                                                </Select.IndicatorGroup>
+                                            </Select.Control>
+                                            <Select.Positioner>
+                                                <Select.Content>
+                                                    {roleCollection.items.map(role => (
+                                                        <Select.Item item={role} key={`select-role-filter-${role.value}`} cursor="pointer">
+                                                            {role.label}
+                                                            <Select.ItemIndicator />
+                                                        </Select.Item>
+                                                    ))}
+                                                </Select.Content>
+                                            </Select.Positioner>
+                                        </Select.Root>
+                                    </VStack>
+                                </Popover.Body>
+                            </Popover.Content>
+                        </Popover.Positioner>
+                    </Portal>
+                </Popover.Root>
             </ButtonGroup>
 
             <DataTable
                 data={players}
                 selected={selectedPlayers}
                 setSelected={setSelectedPlayers}
+                filterFn={(p) => {
+                    let teamCheck = false
+                    let roleCheck = false
+
+                    if (!filters.team || filters.team === p.team_id) {
+                        teamCheck = true
+                    }
+
+                    if (!filters.role || filters.role === p.team_role) {
+                        roleCheck = true
+                    }
+
+                    return teamCheck && roleCheck
+                }}
                 loading={refreshPlayersLoading}
                 columns={[
-                    { key: "id", header: "ID", render: p => p.id },
-                    { key: "name", header: "NAME", render: p => p.name },
-                    { key: "discord_id", header: "DISCORD_ID", render: p => p.discord_id },
+                    { key: "name", header: "Player Name", render: p => p.name },
+                    { key: "discord_id", header: "Discord ID", render: p => p.discord_id },
                     {
                         key: "avatar",
-                        header: "AVATAR_URL",
+                        header: "Avatar",
                         render: p => (
                             <Tooltip
+                                showArrow
                                 content={
                                     <Box
-                                        width={`calc(${AVATAR_WIDTH} / 5)`}
-                                        height={`calc(${AVATAR_HEIGHT} / 5)`}
+                                        width={"300px"}
+                                        height={"300px"}
                                         backgroundImage={`url(${p.avatar_url})`}
                                         backgroundSize="contain"
                                         backgroundRepeat="no-repeat"
@@ -98,15 +205,15 @@ export default function ManagePlayers() {
                                         rounded="sm"
                                     >
                                         <HStack>
-                                        <Box
-                                            boxSize="20px"
-                                            backgroundImage={`url(${team?.logo_url})`}
-                                            backgroundSize="contain"
-                                            backgroundRepeat="no-repeat"
-                                            backgroundPosition="center"
-                                            rounded="md"
-                                        />
-                                        {team?.name.toUpperCase()}
+                                            <Box
+                                                boxSize="20px"
+                                                backgroundImage={`url(${team?.logo_url})`}
+                                                backgroundSize="contain"
+                                                backgroundRepeat="no-repeat"
+                                                backgroundPosition="center"
+                                                rounded="md"
+                                            />
+                                            {team?.name.toUpperCase()}
                                         </HStack>
                                     </Badge>
 

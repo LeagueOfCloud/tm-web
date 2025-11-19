@@ -1,5 +1,4 @@
 import { PlayerResponse, TeamResponse } from "@/types/db"
-import { PiIslandFill } from "react-icons/pi"
 
 export interface PickEms {
     id: string
