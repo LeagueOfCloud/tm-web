@@ -17,7 +17,7 @@ function TeamEdit({ team, token, onEnd }: { team: TeamResponse, token: string, o
 
     return (
         <>
-            <Icon as={LuPencil} ml={2} cursor="pointer" onClick={disclosure.onOpen} />
+            <Icon as={LuPencil} mx={2} cursor="pointer" onClick={disclosure.onOpen} />
             <EditTeamModal defaultValues={team} teamId={team.id} token={token} isOpen={disclosure.open} setOpen={disclosure.setOpen} onEnd={() => onEnd()} />
         </>
     )
@@ -56,13 +56,12 @@ export default function ManageTeams() {
                 setSelected={setSelectedTeams}
                 loading={refreshTeamsLoading}
                 columns={[
-                    { key: "id", header: "ID", render: t => t.id },
-                    { key: "name", header: "NAME", render: t => t.name },
-                    { key: "tag", header: "TAG", render: t => t.tag },
+                    { key: "name", header: "Name", render: t => t.name },
+                    { key: "tag", header: "Tag", render: t => t.tag },
 
                     {
                         key: "logo",
-                        header: "LOGO_URL",
+                        header: "Logo",
                         render: t => (
                             <Tooltip
                                 content={
@@ -85,7 +84,7 @@ export default function ManageTeams() {
 
                     {
                         key: "banner",
-                        header: "BANNER_URL",
+                        header: "Banner",
                         render: t => (
                             <Tooltip
                                 content={
@@ -108,7 +107,7 @@ export default function ManageTeams() {
 
                     {
                         key: "edit",
-                        header: "EDIT",
+                        header: "Edit",
                         width: 30,
                         render: t => (
                             <TeamEdit

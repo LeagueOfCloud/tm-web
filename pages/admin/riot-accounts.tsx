@@ -3,9 +3,11 @@ import DeleteRiotAccountsModal from "@/components/forms/riot-account/delete-riot
 import EditRiotAccount from "@/components/forms/riot-account/edit-riot-account";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import DataTable from "@/components/ui/data-table";
+import { toaster } from "@/components/ui/toaster";
+import { ellipsise } from "@/lib/helpers";
 import useApiFetch from "@/lib/hooks/useApiFetch";
 import { PlayerResponse, RiotAccountResponse } from "@/types/db";
-import { Button, ButtonGroup, Icon, useDisclosure } from "@chakra-ui/react";
+import { Badge, Button, ButtonGroup, Code, HStack, Icon, useDisclosure } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { LuPencil, LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu";
@@ -15,7 +17,7 @@ function RiotAccountEdit({ account, token, onEnd, players }: { account: RiotAcco
 
     return (
         <>
-            <Icon as={LuPencil} ml={2} cursor="pointer" onClick={disclosure.onOpen} />
+            <Icon as={LuPencil} cursor="pointer" onClick={disclosure.onOpen} />
             <EditRiotAccount players={players} defaultValues={account} riotAccountId={account.id} token={token} isOpen={disclosure.open} setOpen={disclosure.setOpen} onEnd={() => onEnd()} />
         </>
     )
@@ -55,22 +57,45 @@ export default function ManageRiotAccounts() {
                 setSelected={setSelectedRiotAccounts}
                 loading={refreshRiotAccountsLoading}
                 columns={[
-                    { key: "id", header: "ID", render: a => a.id },
-                    { key: "account_name", header: "ACCOUNT_NAME", render: a => a.account_name },
-                    { key: "puuid", header: "PUUID", render: a => a.account_puuid },
-                    { key: "player_id", header: "PLAYER", render: a => players.find(p => p.id === a.player_id)?.name },
-                    { key: "is_primary", header: "IS_PRIMARY", render: a => a.is_primary },
                     {
-                        key: "edit_account", header: "EDIT", render: a => (
-                            <RiotAccountEdit
-                                players={players}
-                                account={a}
-                                token={session.data.user.token}
-                                onEnd={() => {
-                                    setSelectedRiotAccounts([]);
-                                    refreshRiotAccounts();
-                                }}
-                            />
+                        key: "account_name", header: "Account Tag", render: a => (
+                            <HStack>
+                                {a.account_name}
+                                {a.is_primary === "true" && (
+                                    <Badge colorPalette="green">
+                                        PRIMARY
+                                    </Badge>
+                                )}
+                            </HStack>
+                        )
+                    },
+                    { key: "player_id", header: "Owner", render: a => players.find(p => p.id === a.player_id)?.name },
+                    {
+                        key: "puuid", header: "Account PUUID", render: a => (
+                            <Code>{ellipsise(a.account_puuid, 5, 5, 20, "*")}</Code>
+                        )
+                    },
+                    {
+                        key: "edit_account", header: "Actions", render: a => (
+                            <HStack>
+                                <RiotAccountEdit
+                                    players={players}
+                                    account={a}
+                                    token={session.data.user.token}
+                                    onEnd={() => {
+                                        setSelectedRiotAccounts([]);
+                                        refreshRiotAccounts();
+                                    }}
+                                />
+
+                                <Icon as={LuRefreshCcw} cursor="pointer" onClick={() => {
+                                    toaster.create({
+                                        title: "Feature under development",
+                                        type: "warning",
+                                        closable: true
+                                    })
+                                }} />
+                            </HStack>
                         ),
                     },
                 ]}

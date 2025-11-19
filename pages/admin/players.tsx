@@ -18,7 +18,7 @@ function PlayerEdit({ teams, player, token, onEnd }: { teams: TeamResponse[], pl
 
     return (
         <>
-            <Icon as={LuPencil} ml={2} cursor="pointer" onClick={() => disclosure.onOpen()} />
+            <Icon as={LuPencil} mx={2} cursor="pointer" onClick={() => disclosure.onOpen()} />
             <EditPlayerModal teams={teams} defaultValues={player} token={token} isOpen={disclosure.open} setOpen={disclosure.setOpen} playerId={player.id} onEnd={() => onEnd()} />
         </>
     )
@@ -229,7 +229,7 @@ export default function ManagePlayers() {
                     },
                     {
                         key: "edit",
-                        header: "EDIT",
+                        header: "Edit",
                         width: 30,
                         render: t => (
                             <PlayerEdit
