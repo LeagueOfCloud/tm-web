@@ -13,6 +13,7 @@ const config = defineConfig({
                 featureBackground: { value: "#32363f" },
                 successGreen: { value: "#01d69e" },
                 failureRed: { value: "#dc2623" },
+                background: { value: "#282c35" },
                 roles: {
                     top: { value: "#b63e3cff" },
                     jungle: { value: "#8d8515ff" },
@@ -46,6 +47,8 @@ const config = defineConfig({
     globalCss: {
         body: {
             background: "#282c35",
+            backgroundImage: `url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/generic_background.png)`,
+            backgroundSize: "cover",
             fontFamily: 'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'
         }
     }

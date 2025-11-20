@@ -34,6 +34,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                     direction="row"
                     height="100vh"
                     overflow="auto"
+                    background="background"
                 >
                     <Flex
                         width="13vw"

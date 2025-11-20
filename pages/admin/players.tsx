@@ -219,7 +219,7 @@ export default function ManagePlayers() {
 
                                     <Badge py={1} background="featureBackground">
                                         <HStack height="20px">
-                                            <Image alt="position-icon" src={`/position-icons/${p.team_role.toLowerCase()}.png`} boxSize="20px" />
+                                            <Image alt="position-icon" src={`${process.env.NEXT_PUBLIC_CDN_URL}/assets/positions/${p.team_role.toLowerCase()}.png`} boxSize="20px" />
                                             {p.team_role.toUpperCase()}
                                         </HStack>
                                     </Badge>

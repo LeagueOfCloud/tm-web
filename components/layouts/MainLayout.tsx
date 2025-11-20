@@ -25,7 +25,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
                 type: "warning",
                 title: "Maintenance Enabled",
                 description: "Maintenance mode is enabled and the site is not accessible to the public. You can disable it from the admin settings page.",
-                duration: Infinity,
+                duration: 2000,
                 closable: true
             })
 
@@ -83,9 +83,9 @@ export default function MainLayout({ children }: PropsWithChildren) {
                 </Heading>
 
                 <HStack gap={5}>
-                    <HeaderButton to="#">{"HOME"}</HeaderButton>
+                    <HeaderButton to="/" isDefault>{"HOME"}</HeaderButton>
                     <HeaderButton to="#schedule">{"SCHEDULE"}</HeaderButton>
-                    <HeaderButton to="#pickems">{"PICK'EMS"}</HeaderButton>
+                    <HeaderButton to="/pickems">{"PICK'EMS"}</HeaderButton>
 
                     {session.data?.user.type === "admin" && (
                         <HeaderButton to="/admin">{"ADMIN"}</HeaderButton>
