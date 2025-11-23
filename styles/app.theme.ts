@@ -49,6 +49,7 @@ const config = defineConfig({
             background: "#282c35",
             backgroundImage: `url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/generic_background.png)`,
             backgroundSize: "cover",
+            // fontFamily: '"barlow", sans-serif'
             fontFamily: 'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'
         }
     }

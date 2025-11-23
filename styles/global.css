@@ -1,0 +1,15 @@
+@import url('https://lockout.nemika.me/fonts/BerlinSansFB/style.css');
+
+.animBorderFill:hover > svg > path {
+    animation: animBorderFill 1s forwards;
+}
+
+@keyframes animBorderFill {
+    from {
+        stroke-dashoffset: 355;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}

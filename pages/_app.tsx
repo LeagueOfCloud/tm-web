@@ -7,6 +7,8 @@ import NextProgress from "next-progress"
 import type { AppProps } from "next/app"
 import { StrictMode } from "react"
 
+import "@/styles/global.css"
+
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <StrictMode>
@@ -19,7 +21,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
         </SessionProvider>
       </QueryClientProvider>
 
-      <NextProgress color="var(--chakra-colors-feature)" disableSameRoute />
+      <NextProgress color="var(--chakra-colors-feature)" disableSameRoute options={{ showSpinner: false }} />
     </StrictMode>
   );
 }
