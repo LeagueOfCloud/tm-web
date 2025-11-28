@@ -30,6 +30,10 @@ export interface PlayerResponse {
     avatar_url?: string
     team_id: number
     team_role: "top" | "jungle" | "mid" | "bot" | "sup" | "sub"
+    team_name: string
+    team_logo_url: string
+    team_banner_url: string
+    team_tag: string
 }
 
 export interface RiotAccountResponse {

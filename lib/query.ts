@@ -21,5 +21,6 @@ export const queryClient = new QueryClient({
 export const queryKeys = {
     config: "apiConfig",
     fetch: "apiFetch",
-    settings: "apiSettings"
+    settings: "apiSettings",
+    publicFetch: "apiPublicFetch"
 }

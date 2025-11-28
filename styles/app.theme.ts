@@ -8,7 +8,8 @@ const config = defineConfig({
         tokens: {
             colors: {
                 white: { value: "#fff" },
-                feature: { value: "#5965f9" },
+                feature: { value: "#5767f2" },
+                featureAlter: { value: "#45f882" },
                 secondary: { value: "#7b818a" },
                 featureBackground: { value: "#32363f" },
                 successGreen: { value: "#01d69e" },

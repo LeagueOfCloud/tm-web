@@ -57,6 +57,16 @@ async function getSettings(): Promise<{ [key: string]: string}> {
     })
 }
 
+async function getPublic<T>(path: string): Promise<T> {
+    return new Promise((resolve, reject) => {
+        axios.get(`${API_URL}/${path}`)
+            .then(res => {
+                resolve(res.data.items);
+            })
+            .catch(err => reject(err.response));
+    })
+}
+
 /*
 * TEAMS METHODS
 */
@@ -292,6 +302,7 @@ const api = {
     getSpecific,
     getConfig,
     getSettings,
+    getPublic,
     postTeams,
     deleteTeams,
     deleteTeamsMultiple,

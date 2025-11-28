@@ -6,7 +6,6 @@ import { LuPencilLine } from "react-icons/lu";
 import useSettings from "@/lib/hooks/useSettings";
 import Loader from "../ui/loader";
 import { signIn, useSession } from "next-auth/react";
-import { toaster } from "../ui/toaster";
 import { useRouter } from "next/router";
 import HeaderButton from "../ui/header-button";
 import BorderFillButtonStg from "../svg/border-fill-button";
@@ -18,20 +17,6 @@ export default function MainLayout({ children }: PropsWithChildren) {
     const { settings, loading: loadingSettings } = useSettings()
     const session = useSession()
     const router = useRouter()
-
-    useEffect(() => {
-        if (settings.maintenance === "true") {
-            const maintenanceToaster = toaster.create({
-                type: "warning",
-                title: "Maintenance Enabled",
-                description: "Maintenance mode is enabled and the site is not accessible to the public. You can disable it from the admin settings page.",
-                duration: 2000,
-                closable: true
-            })
-
-            return () => toaster.remove(maintenanceToaster)
-        }
-    }, [settings])
 
     useEffect(() => {
         let changeFn: () => void
@@ -86,6 +71,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
                 <HStack gap={5}>
                     <HeaderButton to="/" isDefault>{"HOME"}</HeaderButton>
                     <HeaderButton to="#schedule">{"SCHEDULE"}</HeaderButton>
+                    <HeaderButton to="#dreamdraft">{"DREAM DRAFT"}</HeaderButton>
                     <HeaderButton to="/pickems">{"PICK'EMS"}</HeaderButton>
 
                     {session.data?.user.type === "admin" && (

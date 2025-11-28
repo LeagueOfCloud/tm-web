@@ -1,11 +1,10 @@
 
-import CreatePlayerModal from "@/components/forms/player/create-player";
-import DeletePlayersModal from "@/components/forms/player/delete-player";
-import EditPlayerModal from "@/components/forms/player/edit-player";
+import CreatePlayerModal from "@/components/dialogs/player/create-player";
+import DeletePlayersModal from "@/components/dialogs/player/delete-player";
+import EditPlayerModal from "@/components/dialogs/player/edit-player";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import DataTable from "@/components/ui/data-table";
 import { Tooltip } from "@/components/ui/tooltip";
-import { getPlayerTeam } from "@/lib/helpers";
 import useApiFetch from "@/lib/hooks/useApiFetch";
 import { PlayerResponse, TeamResponse } from "@/types/db";
 import { Badge, Box, Button, ButtonGroup, createListCollection, HStack, Icon, Image, Link, Popover, Portal, Select, useDisclosure, VStack } from "@chakra-ui/react";
@@ -194,7 +193,6 @@ export default function ManagePlayers() {
                     },
                     {
                         key: "team_and_role", header: "Team Assignment", render: p => {
-                            const team = getPlayerTeam(p, teams)
 
                             return (
                                 <HStack>
@@ -207,13 +205,13 @@ export default function ManagePlayers() {
                                         <HStack>
                                             <Box
                                                 boxSize="20px"
-                                                backgroundImage={`url(${team?.logo_url})`}
+                                                backgroundImage={`url(${p.team_logo_url})`}
                                                 backgroundSize="contain"
                                                 backgroundRepeat="no-repeat"
                                                 backgroundPosition="center"
                                                 rounded="md"
                                             />
-                                            {team?.name.toUpperCase()}
+                                            {p.team_name.toUpperCase()}
                                         </HStack>
                                     </Badge>
 

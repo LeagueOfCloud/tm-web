@@ -1,5 +1,9 @@
 @import url('https://lockout.nemika.me/fonts/BerlinSansFB/style.css');
 
+* {
+    scroll-behavior: smooth;
+}
+
 .animBorderFill:hover > svg > path {
     animation: animBorderFill 1s forwards;
 }

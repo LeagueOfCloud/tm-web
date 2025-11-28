@@ -1,6 +1,6 @@
-import CreateTeamModal from "@/components/forms/team/create-team";
-import DeleteTeamsModal from "@/components/forms/team/delete-team";
-import EditTeamModal from "@/components/forms/team/edit-team";
+import CreateTeamModal from "@/components/dialogs/team/create-team";
+import DeleteTeamsModal from "@/components/dialogs/team/delete-team";
+import EditTeamModal from "@/components/dialogs/team/edit-team";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import DataTable from "@/components/ui/data-table";
 import { Tooltip } from "@/components/ui/tooltip";

@@ -1,6 +1,6 @@
-import CreateRiotAccount from "@/components/forms/riot-account/create-riot-account";
-import DeleteRiotAccountsModal from "@/components/forms/riot-account/delete-riot-account";
-import EditRiotAccount from "@/components/forms/riot-account/edit-riot-account";
+import CreateRiotAccount from "@/components/dialogs/riot-account/create-riot-account";
+import DeleteRiotAccountsModal from "@/components/dialogs/riot-account/delete-riot-account";
+import EditRiotAccount from "@/components/dialogs/riot-account/edit-riot-account";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import DataTable from "@/components/ui/data-table";
 import { toaster } from "@/components/ui/toaster";
