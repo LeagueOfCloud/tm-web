@@ -14,7 +14,7 @@ export default function usePublicFetch<T>(path: string) {
   });
 
   return {
-    data: query.data ?? {},
+    data: query.data ?? [],
     loading: query.isLoading,
     refresh: () => queryClient.invalidateQueries({ queryKey: [queryKeys.publicFetch, path] })
   }
