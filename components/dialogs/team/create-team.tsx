@@ -89,8 +89,8 @@ export default function CreateTeamModal({ token, isOpen, setOpen, onEnd }: { tok
                         <Dialog.Footer>
                             <Button variant="solid" colorPalette="blue" loading={isSubmitting} loadingText="Submitting..." onClick={async () => {
                                 setSubmitting(true);
-                                
-                                if(!logoFile || !bannerFile) {
+
+                                if (!logoFile || !bannerFile) {
                                     setSubmitting(false);
                                     return;
                                 }

@@ -43,3 +43,10 @@ export interface RiotAccountResponse {
     player_id: number
     is_primary: "true" | "false"
 }
+
+export interface PickEmResponse {
+    id: string
+    pickem_id: string
+    user_id: number
+    value: string
+}

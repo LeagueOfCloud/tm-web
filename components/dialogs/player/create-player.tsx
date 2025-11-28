@@ -156,14 +156,14 @@ export default function CreatePlayerModal({ teams, token, isOpen, setOpen, onEnd
                                     team_id: teamId,
                                     team_role: teamRole
                                 }, avatarFile).then(res => {
-                                        toaster.create({
-                                            title: "Player Created",
-                                            description: res,
-                                            type: "success",
-                                            closable: true
-                                        });
-                                        setOpen(false);
-                                    })
+                                    toaster.create({
+                                        title: "Player Created",
+                                        description: res,
+                                        type: "success",
+                                        closable: true
+                                    });
+                                    setOpen(false);
+                                })
                                     .catch(err => toaster.create({
                                         title: "Player Create Failed",
                                         description: err,

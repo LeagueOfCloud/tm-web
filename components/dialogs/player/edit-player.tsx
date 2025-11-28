@@ -82,7 +82,7 @@ export default function EditPlayerModal({ teams, token, isOpen, setOpen, onEnd, 
                                     <Field.Label>
                                         Team <Field.RequiredIndicator />
                                     </Field.Label>
-                                    
+
                                     <Select.Root defaultValue={[teamId.toString()]} collection={teamsCollection} size="md" variant="subtle" onSelect={(e) => setTeamId(parseInt(e.value))} required>
                                         <Select.HiddenSelect />
                                         <Select.Control>
@@ -169,14 +169,14 @@ export default function EditPlayerModal({ teams, token, isOpen, setOpen, onEnd, 
                                     team_role: teamRole,
                                     new_avatar: avatarFile ? true : false
                                 }, avatarFile).then(res => {
-                                        toaster.create({
-                                            title: "Player Updated",
-                                            description: res,
-                                            type: "success",
-                                            closable: true
-                                        });
-                                        setOpen(false);
-                                    })
+                                    toaster.create({
+                                        title: "Player Updated",
+                                        description: res,
+                                        type: "success",
+                                        closable: true
+                                    });
+                                    setOpen(false);
+                                })
                                     .catch(err => toaster.create({
                                         title: "Player Update Failed",
                                         description: err,

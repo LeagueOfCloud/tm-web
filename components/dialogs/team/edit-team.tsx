@@ -106,7 +106,7 @@ export default function EditTeamModal({ token, isOpen, setOpen, onEnd, defaultVa
                                     name: teamName,
                                     tag: tag,
                                     new_logo: logoFile !== undefined ? true : false,
-                                    new_banner: bannerFile !== undefined ? true: false
+                                    new_banner: bannerFile !== undefined ? true : false
                                 }, logoFile, bannerFile)
                                     .then(res => {
                                         toaster.create({

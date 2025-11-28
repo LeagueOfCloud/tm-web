@@ -5,22 +5,38 @@ import useSettings from "@/lib/hooks/useSettings";
 import PlayerPickEmCard from "@/components/ui/pickems/player-card";
 import BorderFillButtonStg from "@/components/svg/border-fill-button";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
-import { PlayerResponse } from "@/types/db";
+import { PickEmResponse, PlayerResponse, TeamResponse } from "@/types/db";
+import { signIn, useSession } from "next-auth/react";
+import api from "@/lib/api";
+import Loader from "@/components/ui/loader";
+import TeamPickEmCard from "@/components/ui/pickems/team-card";
 
 export default function PickEms() {
     const { settings, loading } = useSettings()
     const router = useRouter()
+    const session = useSession()
     const { data: players, loading: loadingPlayers } = usePublicFetch<PlayerResponse[]>("players")
-    const { data: teams, loading: loadingTeams } = usePublicFetch<PlayerResponse[]>("teams")
+    const { data: teams, loading: loadingTeams } = usePublicFetch<TeamResponse[]>("teams")
+    const [defaultPickems, setDefaultPickems] = useState<PickEmResponse[]>([])
+
+    useEffect(() => {
+        if (session.status === "authenticated") {
+            api.getPickems(session.data.user.id)
+                .then((res) => setDefaultPickems(res))
+                .catch((err) => {
+                    console.warn(`PickEms could not be fetched: ${err}`)
+                })
+        }
+    }, [session])
 
     const pickems = useMemo(() => {
         if (settings.pickem_categories) {
             const data = JSON.parse(settings.pickem_categories)
             const pickem_data = {
                 players: data.filter(p => p.type === "PLAYER"),
-                team: data.filter(p => p.type === "TEAM"),
+                teams: data.filter(p => p.type === "TEAM"),
                 champion: data.filter(p => p.type === "CHAMPION"),
                 misc: data.filter(p => p.type === "MISC")
             }
@@ -31,9 +47,9 @@ export default function PickEms() {
 
     return (
         <MainLayout>
-            <Show when={!loading && !loadingPlayers && !loadingTeams}>
+            <Show when={!loading && !loadingPlayers && !loadingTeams} fallback={<Loader />}>
                 <Box
-                    height="95vh"
+                    height="100vh"
                     background={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems.png)`}
                     backgroundSize="cover"
                 >
@@ -68,123 +84,161 @@ export default function PickEms() {
                                     }}
                                 />
 
-                                <Button
-                                    position="absolute"
-                                    top="50%"
-                                    left="50%"
-                                    transform="translate(-50%, -50%)"
-                                    color="black"
-                                    fontWeight="bold"
-                                    fontSize="md"
-                                    variant="plain"
-                                    onClick={() => router.push("#players")}
+                                <Show
+                                    when={session.status === "authenticated"}
+                                    fallback={
+                                        <Button
+                                            position="absolute"
+                                            top="50%"
+                                            left="50%"
+                                            transform="translate(-50%, -50%)"
+                                            color="black"
+                                            fontWeight="bold"
+                                            fontSize="md"
+                                            variant="plain"
+                                            onClick={() => signIn("discord")}
+                                        >
+                                            LOGIN TO VOTE
+                                        </Button>
+                                    }
                                 >
-                                    CAST YOUR VOTES
-                                </Button>
+                                    <Button
+                                        position="absolute"
+                                        top="50%"
+                                        left="50%"
+                                        transform="translate(-50%, -50%)"
+                                        color="black"
+                                        fontWeight="bold"
+                                        fontSize="md"
+                                        variant="plain"
+                                        onClick={() => router.push("#players")}
+                                    >
+                                        CAST YOUR VOTES
+                                    </Button>
+                                </Show>
                             </Box>
                         </VStack>
                     </Center>
 
                 </Box>
 
-                <Box
-                    height="125vh"
-                    backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_1.png)`}
-                    backgroundSize="cover"
-                    mt="-15em"
-                    id="players"
-                    pt="15em"
-                    px={10}
+                <Show
+                    when={session.status === "authenticated"}
                 >
-                    <Text
-                        fontSize="2.5em"
-                        fontFamily="Berlin Sans FB Bold"
-                        textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
-                        borderBottom="2px solid white"
-                        width="30%"
-                        boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
+                    <Box
+                        height="125vh"
+                        backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_1.png)`}
+                        backgroundSize="cover"
+                        mt="-15em"
+                        id="players"
+                        pt="15em"
+                        px={10}
                     >
-                        Players
-                    </Text>
+                        <Text
+                            fontSize="2.5em"
+                            fontFamily="Berlin Sans FB Bold"
+                            textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
+                            borderBottom="2px solid white"
+                            width="30%"
+                            boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
+                        >
+                            Players
+                        </Text>
 
-                    <SimpleGrid my={5} columns={3} gap={5}>
-                        {pickems?.players.map(pickem => (
-                            <PlayerPickEmCard
-                                key={`pickems-player-${pickem.id}`}
-                                title={pickem.title}
-                                score={pickem.score}
-                                players={players}
-                            />
-                        ))}
-                    </SimpleGrid>
+                        <SimpleGrid my={5} columns={3} gap={5}>
+                            {pickems?.players.map(pickem => (
+                                <PlayerPickEmCard
+                                    key={`pickems-player-${pickem.id}-${defaultPickems}`}
+                                    pickemId={pickem.id}
+                                    title={pickem.title}
+                                    score={pickem.score}
+                                    players={players}
+                                    defaultId={defaultPickems.find(p => p.id === `${pickem.id}-${session.data?.user.id}`)?.value}
+                                />
+                            ))}
+                        </SimpleGrid>
 
-                </Box>
+                    </Box>
 
-                <Box
-                    height="100vh"
-                    backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_2.png)`}
-                    backgroundSize="cover"
-                    id="teams"
-                    mt="-11em"
-                    pt="15em"
-                    px={10}
-                >
-                    <Text
-                        fontSize="2.5em"
-                        fontFamily="Berlin Sans FB Bold"
-                        textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
-                        borderBottom="2px solid white"
-                        width="30%"
-                        boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
+                    <Box
+                        height="100vh"
+                        backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_2.png)`}
+                        backgroundSize="cover"
+                        id="teams"
+                        mt="-11em"
+                        pt="15em"
+                        px={10}
                     >
-                        Teams
-                    </Text>
+                        <Text
+                            fontSize="2.5em"
+                            fontFamily="Berlin Sans FB Bold"
+                            textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
+                            borderBottom="2px solid white"
+                            width="30%"
+                            boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
+                        >
+                            Teams
+                        </Text>
 
-                </Box>
+                        <SimpleGrid my={5} columns={3} gap={5}>
+                            {pickems?.teams.map(pickem => (
+                                <TeamPickEmCard
+                                    key={`pickems-teams-${pickem.id}-${defaultPickems}`}
+                                    pickemId={pickem.id}
+                                    title={pickem.title}
+                                    score={pickem.score}
+                                    teams={teams}
+                                    defaultId={defaultPickems.find(p => p.id === `${pickem.id}-${session.data?.user.id}`)?.value}
+                                />
+                            ))}
+                        </SimpleGrid>
 
-                <Box
-                    height="100vh"
-                    backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_3.png)`}
-                    backgroundSize="cover"
-                    id="champions"
-                    mt="-2em"
-                    pt="5em"
-                    px={10}
-                >
-                    <Text
-                        fontSize="2.5em"
-                        fontFamily="Berlin Sans FB Bold"
-                        textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
-                        borderBottom="2px solid white"
-                        width="30%"
-                        boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
+                    </Box>
+
+                    <Box
+                        height="100vh"
+                        backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_3.png)`}
+                        backgroundSize="cover"
+                        id="champions"
+                        mt="-2em"
+                        pt="5em"
+                        px={10}
                     >
-                        Champions
-                    </Text>
+                        <Text
+                            fontSize="2.5em"
+                            fontFamily="Berlin Sans FB Bold"
+                            textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
+                            borderBottom="2px solid white"
+                            width="30%"
+                            boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
+                        >
+                            Champions
+                        </Text>
 
-                </Box>
+                    </Box>
 
-                <Box
-                    height="100vh"
-                    backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_4.png)`}
-                    backgroundSize="cover"
-                    backgroundPosition="bottom"
-                    id="misc"
-                    pt="5em"
-                    px={10}
-                >
-                    <Text
-                        fontSize="2.5em"
-                        fontFamily="Berlin Sans FB Bold"
-                        textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
-                        borderBottom="2px solid white"
-                        width="30%"
-                        boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
+                    <Box
+                        height="100vh"
+                        backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_4.png)`}
+                        backgroundSize="cover"
+                        backgroundPosition="bottom"
+                        id="misc"
+                        pt="5em"
+                        px={10}
                     >
-                        Miscellaneous
-                    </Text>
+                        <Text
+                            fontSize="2.5em"
+                            fontFamily="Berlin Sans FB Bold"
+                            textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
+                            borderBottom="2px solid white"
+                            width="30%"
+                            boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
+                        >
+                            Miscellaneous
+                        </Text>
 
-                </Box>
+                    </Box>
+                </Show>
             </Show>
         </MainLayout>
     )

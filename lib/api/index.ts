@@ -1,11 +1,7 @@
 import { ProfileResponse, TeamResponse } from "@/types/db";
 import axios from "axios"
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL
-
-type Query = {
-    [key: string]: string
-}
+import { API_URL, Query } from "./common";
+import pickems from "./pickems";
 
 /*
 * RESOURCE GET METHODS
@@ -47,7 +43,7 @@ async function getConfig(token: string): Promise<{ [key: string]: string }> {
     })
 }
 
-async function getSettings(): Promise<{ [key: string]: string}> {
+async function getSettings(): Promise<{ [key: string]: string }> {
     return new Promise((resolve, reject) => {
         axios.get(`${API_URL}/settings`)
             .then(res => {
@@ -315,7 +311,8 @@ const api = {
     patchRiotAccounts,
     deleteRiotAccounts,
     deleteRiotAccountsMultiple,
-    updateConfig
+    updateConfig,
+    ...pickems
 }
 
 export default api;

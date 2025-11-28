@@ -1,4 +1,4 @@
-import { PlayerResponse, TeamResponse } from "@/types/db"
+import { PickEmResponse, PlayerResponse, TeamResponse } from "@/types/db"
 
 export interface PickEms {
     id: string
@@ -35,7 +35,7 @@ export function deformPickems(pickems: PickEms[]): string {
             ? `${item.id}::${item.type}::${item.title}::${item.score}::${extrasString}`
             : `${item.id}::${item.type}::${item.title}::${item.score}`;
     });
-        
+
     return result.join("\n");
 }
 
@@ -44,12 +44,11 @@ export function getPlayerTeam(player: PlayerResponse, teams: TeamResponse[]) {
 }
 
 export function ellipsise(text: string, maxLength: number, endLength = 0, repeat = 3, symbol = "."): string {
-  if (maxLength < 3) {
-    throw new Error("maxLength must be at least 3 to fit an ellipsis.");
-  }
-  if (text.length <= maxLength) {
-    return text;
-  }
-  return text.slice(0, maxLength) + symbol.repeat(repeat) + text.slice(text.length - endLength - 1, text.length)
+    if (maxLength < 3) {
+        throw new Error("maxLength must be at least 3 to fit an ellipsis.");
+    }
+    if (text.length <= maxLength) {
+        return text;
+    }
+    return text.slice(0, maxLength) + symbol.repeat(repeat) + text.slice(text.length - endLength - 1, text.length)
 }
-

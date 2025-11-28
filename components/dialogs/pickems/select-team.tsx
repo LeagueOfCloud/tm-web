@@ -1,14 +1,14 @@
-import { PlayerResponse } from "@/types/db"
+import { TeamResponse } from "@/types/db"
 import { Box, CloseButton, Dialog, HStack, Image, Input, Portal, SimpleGrid, Text, UseDisclosureReturn } from "@chakra-ui/react"
 import { useState } from "react"
 
 type SelectPickemPlayerProps = {
-    players: PlayerResponse[]
+    teams: TeamResponse[]
     disclosure: UseDisclosureReturn
-    onPlayerSelect: (player: PlayerResponse) => void
+    onTeamSelect: (team: TeamResponse) => void
 }
 
-export default function SelectPickemPlayer({ players, onPlayerSelect, disclosure }: SelectPickemPlayerProps) {
+export default function SelectPickemTeam({ teams, onTeamSelect, disclosure }: SelectPickemPlayerProps) {
     const [filter, setFilter] = useState<string>("")
 
     return (
@@ -18,7 +18,7 @@ export default function SelectPickemPlayer({ players, onPlayerSelect, disclosure
                 <Dialog.Positioner>
                     <Dialog.Content>
                         <Dialog.Header>
-                            <Dialog.Title>Select a Player</Dialog.Title>
+                            <Dialog.Title>Select a Team</Dialog.Title>
                         </Dialog.Header>
 
                         <Dialog.Body>
@@ -30,12 +30,12 @@ export default function SelectPickemPlayer({ players, onPlayerSelect, disclosure
                             />
 
                             <SimpleGrid columns={4} gap={5} mt={5}>
-                                {players.filter(p => `${p.team_tag} ${p.name} ${p.team_name}`.toLowerCase().includes(filter)).sort((a, b) => a.team_name.localeCompare(b.team_name)).map(player => (
+                                {teams.filter(p => `${p.tag} ${p.name}`.toLowerCase().includes(filter)).sort((a, b) => a.name.localeCompare(b.name)).map(team => (
                                     <HStack
-                                        key={`pickems-select-player-${player.id}`}
+                                        key={`pickems-select-team-${team.id}`}
                                         roundedLeft="md"
                                         backgroundColor="rgba(0, 0, 0, 0.95);"
-                                        backgroundImage={`url(${player.team_banner_url})`}
+                                        backgroundImage={`url(${team.banner_url})`}
                                         backgroundSize="cover"
                                         backgroundPosition="center"
                                         backgroundBlendMode="darken"
@@ -46,9 +46,9 @@ export default function SelectPickemPlayer({ players, onPlayerSelect, disclosure
                                         _hover={{
                                             boxShadow: "3px 3px 0px 0px var(--chakra-colors-feature-alter), 6px 6px 0px 0px var(--chakra-colors-feature)"
                                         }}
-                                        onClick={() => onPlayerSelect(player)}
+                                        onClick={() => onTeamSelect(team)}
                                     >
-                                        <Image alt="player-profile" roundedLeft="md" src={player.avatar_url} boxSize="100px" />
+                                        <Image alt="player-profile" roundedLeft="md" src={team.logo_url} boxSize="100px" />
 
                                         <Box
                                             height="100%"
@@ -57,8 +57,8 @@ export default function SelectPickemPlayer({ players, onPlayerSelect, disclosure
                                             p={4}
                                             textAlign="center"
                                         >
-                                            <Text fontSize="lg" fontWeight="bold" fontFamily="Berlin Sans FB">{player.team_tag} {player.name}</Text>
-                                            <Text mt={3} fontSize="lg" fontWeight="bold" fontFamily="Berlin Sans FB">{player.team_role.toUpperCase()} for {player.team_name}</Text>
+                                            <Text fontSize="lg" fontWeight="bold" fontFamily="Berlin Sans FB">{team.tag}</Text>
+                                            <Text mt={3} fontSize="lg" fontWeight="bold" fontFamily="Berlin Sans FB">{team.name}</Text>
                                         </Box>
                                     </HStack>
                                 ))}
