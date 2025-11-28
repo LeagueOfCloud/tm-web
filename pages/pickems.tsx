@@ -12,8 +12,8 @@ import { PlayerResponse } from "@/types/db";
 export default function PickEms() {
     const { settings, loading } = useSettings()
     const router = useRouter()
-    const { data: players } = usePublicFetch<PlayerResponse[]>("players")
-    const { data: teams } = usePublicFetch<PlayerResponse[]>("teams")
+    const { data: players, loading: loadingPlayers } = usePublicFetch<PlayerResponse[]>("players")
+    const { data: teams, loading: loadingTeams } = usePublicFetch<PlayerResponse[]>("teams")
 
     const pickems = useMemo(() => {
         if (settings.pickem_categories) {
@@ -31,7 +31,7 @@ export default function PickEms() {
 
     return (
         <MainLayout>
-            <Show when={!loading}>
+            <Show when={!loading && !loadingPlayers && !loadingTeams}>
                 <Box
                     height="95vh"
                     background={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems.png)`}
@@ -113,7 +113,7 @@ export default function PickEms() {
                                 key={`pickems-player-${pickem.id}`}
                                 title={pickem.title}
                                 score={pickem.score}
-                                players={players as PlayerResponse[]}
+                                players={players}
                             />
                         ))}
                     </SimpleGrid>
