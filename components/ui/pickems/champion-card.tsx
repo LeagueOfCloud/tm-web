@@ -1,27 +1,27 @@
-import { TeamResponse } from "@/types/db"
 import { Button, Card, Flex, Image, Show, useDisclosure } from "@chakra-ui/react"
 import { useMemo, useState } from "react"
-import api from "@/lib/api"
 import { useSession } from "next-auth/react"
+import { Champion } from "@/types/riot"
+import SelectPickemChampion from "@/components/dialogs/pickems/select-champion"
+import api from "@/lib/api"
 import { toaster } from "../toaster"
-import SelectPickemTeam from "@/components/dialogs/pickems/select-team"
 
-type TeamPickemCardProps = {
+type ChampionPickemCardProps = {
     pickemId: string
     title: string
     score: number
     defaultId?: string
-    teams: TeamResponse[]
+    champions: Champion[]
 }
 
-export default function TeamPickEmCard({ pickemId, title, defaultId, teams }: TeamPickemCardProps) {
+export default function ChampionPickemCard({ pickemId, title, defaultId, champions }: ChampionPickemCardProps) {
     const selectDisclosure = useDisclosure()
     const session = useSession()
-    const [selectedId, setSelectedId] = useState<number | undefined>(defaultId ? parseInt(defaultId) : undefined)
+    const [selectedId, setSelectedId] = useState<string | undefined>(defaultId ?? undefined)
 
-    const selectedTeam = useMemo(() => {
-        return teams.find(p => p.id === selectedId)
-    }, [selectedId, teams])
+    const selectedChampion = useMemo(() => {
+        return champions.find(p => p.id === selectedId)
+    }, [selectedId, champions])
 
     return (
         <Show when={session.status === "authenticated"}>
@@ -35,7 +35,7 @@ export default function TeamPickEmCard({ pickemId, title, defaultId, teams }: Te
                     objectFit="cover"
                     minWidth="200px"
                     height="200px"
-                    src={selectedTeam ? selectedTeam.logo_url : `${process.env.NEXT_PUBLIC_CDN_URL}/assets/pickem_missing.png`}
+                    src={selectedChampion ? selectedChampion.splash_url : `${process.env.NEXT_PUBLIC_CDN_URL}/assets/pickem_missing.png`}
                     alt="pickem-cover"
                     draggable={false}
                 />
@@ -43,7 +43,7 @@ export default function TeamPickEmCard({ pickemId, title, defaultId, teams }: Te
                     <Card.Body>
                         <Card.Title fontSize="md">{title}</Card.Title>
                         <Card.Description>
-                            Current Selection: {selectedTeam ? `${selectedTeam.tag} ${selectedTeam.name}` : "None"}
+                            Current Selection: {selectedChampion ? `${selectedChampion.name}` : "None"}
                         </Card.Description>
                     </Card.Body>
 
@@ -55,15 +55,15 @@ export default function TeamPickEmCard({ pickemId, title, defaultId, teams }: Te
                 </Flex>
             </Card.Root>
 
-            <SelectPickemTeam
-                teams={teams}
+            <SelectPickemChampion
                 disclosure={selectDisclosure}
-                onTeamSelect={team => {
+                champions={champions}
+                onChampionSelect={champion => {
                     selectDisclosure.onClose()
 
-                    api.updatePickem(pickemId, team.id.toString(), session.data!.user.token)
+                    api.updatePickem(pickemId, champion.id, session.data!.user.token)
                         .then(() => {
-                            setSelectedId(team.id)
+                            setSelectedId(champion.id)
                         })
                         .catch((err) => {
                             toaster.create({

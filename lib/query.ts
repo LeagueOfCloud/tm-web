@@ -22,5 +22,6 @@ export const queryKeys = {
     config: "apiConfig",
     fetch: "apiFetch",
     settings: "apiSettings",
-    publicFetch: "apiPublicFetch"
+    publicFetch: "apiPublicFetch",
+    dataDragonChampions: "dataDragonChampions"
 }

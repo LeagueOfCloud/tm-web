@@ -6,7 +6,7 @@ import api from "@/lib/api"
 import { useSession } from "next-auth/react"
 import { toaster } from "../toaster"
 
-type PlayerPickemCard = {
+type PlayerPickemCardProps = {
     pickemId: string
     title: string
     score: number
@@ -14,7 +14,7 @@ type PlayerPickemCard = {
     players: PlayerResponse[]
 }
 
-export default function PlayerPickEmCard({ pickemId, title, defaultId, players }: PlayerPickemCard) {
+export default function PlayerPickEmCard({ pickemId, title, defaultId, players }: PlayerPickemCardProps) {
     const selectDisclosure = useDisclosure()
     const session = useSession()
     const [selectedId, setSelectedId] = useState<number | undefined>(defaultId ? parseInt(defaultId) : undefined)

@@ -1,5 +1,5 @@
 import MainLayout from "@/components/layouts/MainLayout";
-import { Box, Button, Center, Heading, Show, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, Box, Button, Center, Heading, Show, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 
 import useSettings from "@/lib/hooks/useSettings";
 import PlayerPickEmCard from "@/components/ui/pickems/player-card";
@@ -12,6 +12,9 @@ import { signIn, useSession } from "next-auth/react";
 import api from "@/lib/api";
 import Loader from "@/components/ui/loader";
 import TeamPickEmCard from "@/components/ui/pickems/team-card";
+import useChampions from "@/lib/hooks/useChampions";
+import ChampionPickemCard from "@/components/ui/pickems/champion-card";
+import MiscPickemCard from "@/components/ui/pickems/misc-card";
 
 export default function PickEms() {
     const { settings, loading } = useSettings()
@@ -19,6 +22,7 @@ export default function PickEms() {
     const session = useSession()
     const { data: players, loading: loadingPlayers } = usePublicFetch<PlayerResponse[]>("players")
     const { data: teams, loading: loadingTeams } = usePublicFetch<TeamResponse[]>("teams")
+    const { champions, loading: loadingChampions } = useChampions()
     const [defaultPickems, setDefaultPickems] = useState<PickEmResponse[]>([])
 
     useEffect(() => {
@@ -37,7 +41,7 @@ export default function PickEms() {
             const pickem_data = {
                 players: data.filter(p => p.type === "PLAYER"),
                 teams: data.filter(p => p.type === "TEAM"),
-                champion: data.filter(p => p.type === "CHAMPION"),
+                champions: data.filter(p => p.type === "CHAMPION"),
                 misc: data.filter(p => p.type === "MISC")
             }
 
@@ -47,7 +51,11 @@ export default function PickEms() {
 
     return (
         <MainLayout>
-            <Show when={!loading && !loadingPlayers && !loadingTeams} fallback={<Loader />}>
+            <Show when={!loading && !loadingPlayers && !loadingTeams && !loadingChampions} fallback={(
+                <AbsoluteCenter>
+                    <Loader />
+                </AbsoluteCenter>
+            )}>
                 <Box
                     height="100vh"
                     background={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems.png)`}
@@ -215,6 +223,19 @@ export default function PickEms() {
                             Champions
                         </Text>
 
+                        <SimpleGrid my={5} columns={3} gap={5}>
+                            {pickems?.champions.map(pickem => (
+                                <ChampionPickemCard
+                                    key={`pickems-champion-${pickem.id}-${defaultPickems}`}
+                                    pickemId={pickem.id}
+                                    title={pickem.title}
+                                    score={pickem.score}
+                                    champions={champions}
+                                    defaultId={defaultPickems.find(p => p.id === `${pickem.id}-${session.data?.user.id}`)?.value}
+                                />
+                            ))}
+                        </SimpleGrid>
+
                     </Box>
 
                     <Box
@@ -236,6 +257,19 @@ export default function PickEms() {
                         >
                             Miscellaneous
                         </Text>
+
+                        <SimpleGrid my={5} columns={3} gap={5}>
+                            {pickems?.misc.map(pickem => (
+                                <MiscPickemCard
+                                    key={`pickems-misc-${pickem.id}-${defaultPickems}`}
+                                    pickemId={pickem.id}
+                                    title={pickem.title}
+                                    score={pickem.score}
+                                    options={pickem.extras}
+                                    defaultSelection={defaultPickems.find(p => p.id === `${pickem.id}-${session.data?.user.id}`)?.value}
+                                />
+                            ))}
+                        </SimpleGrid>
 
                     </Box>
                 </Show>
