@@ -71,7 +71,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
                 <HStack gap={5}>
                     <HeaderButton to="/" isDefault>{"HOME"}</HeaderButton>
                     <HeaderButton to="#schedule">{"SCHEDULE"}</HeaderButton>
-                    <HeaderButton to="#dreamdraft">{"DREAM DRAFT"}</HeaderButton>
+                    <HeaderButton to="/dreamdraft">{"DREAM DRAFT"}</HeaderButton>
                     <HeaderButton to="/pickems">{"PICK'EMS"}</HeaderButton>
 
                     {session.data?.user.type === "admin" && (

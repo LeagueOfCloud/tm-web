@@ -27,12 +27,13 @@ export interface PlayerResponse {
     id: number
     name: string
     discord_id: string
-    avatar_url?: string
+    avatar_url: string
     team_id: number
     team_role: "top" | "jungle" | "mid" | "bot" | "sup" | "sub"
     team_name: string
     team_logo_url: string
     team_banner_url: string
+    cost: number
     team_tag: string
 }
 
@@ -49,4 +50,17 @@ export interface PickEmResponse {
     pickem_id: string
     user_id: number
     value: string
+}
+
+export interface DreamDraftSelection {
+    player_id: number
+    name: string
+    cost: number
+    tag: string
+    avatar_url: string
+}
+
+export interface DreamDraftResponse {
+    user_id: number
+    selection: DreamDraftSelection[]
 }

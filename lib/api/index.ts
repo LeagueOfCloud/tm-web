@@ -2,6 +2,7 @@ import { ProfileResponse, TeamResponse } from "@/types/db";
 import axios from "axios"
 import { API_URL, Query } from "./common";
 import pickems from "./pickems";
+import dreamdraft from "./dreamdraft";
 
 /*
 * RESOURCE GET METHODS
@@ -312,7 +313,8 @@ const api = {
     deleteRiotAccounts,
     deleteRiotAccountsMultiple,
     updateConfig,
-    ...pickems
+    ...pickems,
+    ...dreamdraft
 }
 
 export default api;

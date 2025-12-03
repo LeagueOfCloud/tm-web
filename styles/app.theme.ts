@@ -47,11 +47,21 @@ const config = defineConfig({
     },
     globalCss: {
         body: {
-            background: "#282c35",
+            background: "{colors.background}",
             backgroundImage: `url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/generic_background.png)`,
             backgroundSize: "cover",
             // fontFamily: '"barlow", sans-serif'
-            fontFamily: 'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'
+            fontFamily: 'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+            _scrollbar: {
+                width: "5px"
+            },
+            _scrollbarTrack: {
+                background: "{colors.background}"
+            },
+            _scrollbarThumb: {
+                background: "{colors.feature}",
+                rounded: "full"
+            }
         }
     }
 })

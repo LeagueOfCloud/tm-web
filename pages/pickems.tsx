@@ -1,5 +1,5 @@
 import MainLayout from "@/components/layouts/MainLayout";
-import { AbsoluteCenter, Box, Button, Center, Heading, Show, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, Box, Button, Center, Heading, HStack, Show, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 
 import useSettings from "@/lib/hooks/useSettings";
 import PlayerPickEmCard from "@/components/ui/pickems/player-card";
@@ -80,21 +80,37 @@ export default function PickEms() {
                                 MAKE YOUR TOURNAMENT PREDICTIONS
                             </Text>
 
-                            <Box position="relative" className="animBorderFill" mt="2em" cursor="pointer">
-                                <BorderFillButtonStg
-                                    svgProps={{
-                                        width: "200px"
-                                    }}
+                            <HStack mt="2em">
+                                <Box position="relative" className="animBorderFill" cursor="pointer">
+                                    <BorderFillButtonStg
+                                        svgProps={{
+                                            width: "200px"
+                                        }}
 
-                                    pathProps={{
-                                        stroke: "white",
-                                        fill: "var(--chakra-colors-ui-login-text)"
-                                    }}
-                                />
+                                        pathProps={{
+                                            stroke: "white",
+                                            fill: "var(--chakra-colors-ui-login-text)"
+                                        }}
+                                    />
 
-                                <Show
-                                    when={session.status === "authenticated"}
-                                    fallback={
+                                    <Show
+                                        when={session.status === "authenticated"}
+                                        fallback={
+                                            <Button
+                                                position="absolute"
+                                                top="50%"
+                                                left="50%"
+                                                transform="translate(-50%, -50%)"
+                                                color="black"
+                                                fontWeight="bold"
+                                                fontSize="md"
+                                                variant="plain"
+                                                onClick={() => signIn("discord")}
+                                            >
+                                                LOGIN TO VOTE
+                                            </Button>
+                                        }
+                                    >
                                         <Button
                                             position="absolute"
                                             top="50%"
@@ -104,12 +120,25 @@ export default function PickEms() {
                                             fontWeight="bold"
                                             fontSize="md"
                                             variant="plain"
-                                            onClick={() => signIn("discord")}
+                                            onClick={() => router.push("#players")}
                                         >
-                                            LOGIN TO VOTE
+                                            CAST YOUR VOTES
                                         </Button>
-                                    }
-                                >
+                                    </Show>
+                                </Box>
+
+                                <Box position="relative" className="animBorderFill" cursor="pointer">
+                                    <BorderFillButtonStg
+                                        svgProps={{
+                                            width: "200px"
+                                        }}
+
+                                        pathProps={{
+                                            stroke: "white",
+                                            fill: "var(--chakra-colors-ui-login-text)"
+                                        }}
+                                    />
+
                                     <Button
                                         position="absolute"
                                         top="50%"
@@ -119,12 +148,12 @@ export default function PickEms() {
                                         fontWeight="bold"
                                         fontSize="md"
                                         variant="plain"
-                                        onClick={() => router.push("#players")}
+                                        onClick={() => router.push("/pickems#leaderboard")}
                                     >
-                                        CAST YOUR VOTES
+                                        LEADERBOARD
                                     </Button>
-                                </Show>
-                            </Box>
+                                </Box>
+                            </HStack>
                         </VStack>
                     </Center>
 
