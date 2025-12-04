@@ -2,21 +2,26 @@ import MainLayout from "@/components/layouts/MainLayout";
 import BorderFillButtonStg from "@/components/svg/border-fill-button";
 import DreamDraftPlayerCard from "@/components/ui/dreamdraft/player-card";
 import Loader from "@/components/ui/loader";
+import { toaster } from "@/components/ui/toaster";
 import api from "@/lib/api";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import useSettings from "@/lib/hooks/useSettings";
-import { DreamDraftResponse, PlayerResponse } from "@/types/db";
-import { AbsoluteCenter, Box, Button, Center, Heading, HStack, ScrollArea, Show, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { PlayerResponse } from "@/types/db";
+import { AbsoluteCenter, ActionBar, Box, Button, Center, Heading, HStack, Portal, ScrollArea, Show, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
+import { LuSaveAll, LuTrash } from "react-icons/lu";
 
 export default function DreamDraft() {
     const session = useSession()
     const router = useRouter()
     const { data: players, loading: loadingPlayers } = usePublicFetch<PlayerResponse[]>("players")
     const { settings, loading: loadingSettings } = useSettings()
-    const [dreamDraft, setDreamDraft] = useState<DreamDraftResponse>()
+    const [originalDreamDraftIds, setOriginalDreamDraftIds] = useState<number[]>([])
+    const [dreamDraftIds, setDreamDraftIds] = useState<number[]>([])
+    const [changesExist, setChangesExist] = useState<boolean>(false)
+    const [submitting, setSubmitting] = useState<boolean>(false)
 
     const playerList = useMemo(() => {
         const groups = new Map<number, PlayerResponse[]>();
@@ -33,10 +38,21 @@ export default function DreamDraft() {
             .map(([, group]) => group);
     }, [players])
 
+    const remainingAp = useMemo(() => {
+        const totalCost = dreamDraftIds.reduce((prev, playerId) => prev + (players.find(p => p.id === playerId)?.cost ?? 0), 0)
+
+        return parseInt(settings.dd_max_budget) - totalCost
+    }, [settings, dreamDraftIds, players])
+
+    const selectedPlayers = useMemo(() => dreamDraftIds.map(playerId => players.find(p => p.id === playerId)).filter(p => p !== undefined), [dreamDraftIds, players])
+
     useEffect(() => {
         if (session.status === "authenticated") {
             api.getDreamDraft(session.data.user.id)
-                .then(res => setDreamDraft(res))
+                .then(res => {
+                    setDreamDraftIds(res.selection.map(s => s.player_id))
+                    setOriginalDreamDraftIds(res.selection.map(s => s.player_id))
+                })
                 .catch(err => {
                     console.warn("Could not fetch DreamDraft:", err)
                 })
@@ -168,17 +184,56 @@ export default function DreamDraft() {
                                     fontFamily="Berlin Sans FB"
                                     fontWeight="bold"
                                     fontSize="2xl"
+                                    borderBottom="1px solid white"
+                                    width="50%"
+                                    textAlign="center"
                                 >
                                     YOUR TEAM
                                 </Text>
 
                                 <Show
-                                    when={dreamDraft?.selection}
+                                    when={dreamDraftIds.length !== 0}
                                     fallback={(
                                         <Text>You have not created your team yet!</Text>
                                     )}
                                 >
-                                    Yo
+                                    <SimpleGrid columns={2} gap={5} p={5}>
+                                        {selectedPlayers.map(player => (
+                                            <DreamDraftPlayerCard
+                                                key={`dd-player-${player.id}`}
+                                                tag={player.team_tag}
+                                                selected={dreamDraftIds.includes(player.id)}
+                                                {...player}
+                                                boxProps={{
+                                                    boxSize: "150px"
+                                                }}
+
+                                                onSelect={(id) => {
+                                                    if (dreamDraftIds.includes(player.id)) {
+                                                        setDreamDraftIds([
+                                                            ...dreamDraftIds.filter(i => i !== id)
+                                                        ])
+                                                    } else {
+                                                        if (remainingAp - player.cost < 0) {
+                                                            toaster.create({
+                                                                type: "error",
+                                                                title: "Not Enough AP",
+                                                                description: "You do not have enough AP left to buy that player!"
+                                                            })
+                                                        } else if (dreamDraftIds.length === 5) {
+                                                            toaster.create({
+                                                                type: "error",
+                                                                title: "Player Limit Reached",
+                                                                description: "You can have up to 5 players in one team"
+                                                            })
+                                                        } else {
+                                                            setDreamDraftIds([...dreamDraftIds, id])
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                        ))}
+                                    </SimpleGrid>
                                 </Show>
                             </VStack>
 
@@ -189,13 +244,16 @@ export default function DreamDraft() {
                                     left={3}
                                     fontWeight="bold"
                                 >
-                                    AP LEFT: {settings.dd_max_budget}
+                                    AP LEFT: {remainingAp}
                                 </Text>
 
                                 <Text
                                     fontFamily="Berlin Sans FB"
                                     fontWeight="bold"
                                     fontSize="2xl"
+                                    borderBottom="1px solid white"
+                                    width="50%"
+                                    textAlign="center"
                                 >
                                     PLAYER ROSTER
                                 </Text>
@@ -207,7 +265,38 @@ export default function DreamDraft() {
                                                 {playerList.map(playerGroup => (
                                                     <HStack key={`dd-playergroup-${playerGroup[0].cost}`} gap={8} wrap="wrap" justifyContent="center">
                                                         {playerGroup.map(player => (
-                                                            <DreamDraftPlayerCard key={`dd-player-${player.id}`} tag={player.team_tag} {...player} selected={dreamDraft?.selection.find(v => v.player_id === player.id) !== undefined} />
+                                                            <DreamDraftPlayerCard
+                                                                key={`dd-player-${player.id}`}
+                                                                tag={player.team_tag}
+                                                                selected={dreamDraftIds.includes(player.id)}
+                                                                {...player}
+
+                                                                onSelect={(id) => {
+                                                                    if (dreamDraftIds.includes(player.id)) {
+                                                                        setChangesExist(true)
+                                                                        setDreamDraftIds([
+                                                                            ...dreamDraftIds.filter(i => i !== id)
+                                                                        ])
+                                                                    } else {
+                                                                        if (remainingAp - player.cost < 0) {
+                                                                            toaster.create({
+                                                                                type: "error",
+                                                                                title: "Not Enough AP",
+                                                                                description: "You do not have enough AP left to buy that player!"
+                                                                            })
+                                                                        } else if (dreamDraftIds.length === 5) {
+                                                                            toaster.create({
+                                                                                type: "error",
+                                                                                title: "Player Limit Reached",
+                                                                                description: "You can have up to 5 players in one team"
+                                                                            })
+                                                                        } else {
+                                                                            setChangesExist(true)
+                                                                            setDreamDraftIds([...dreamDraftIds, id])
+                                                                        }
+                                                                    }
+                                                                }}
+                                                            />
                                                         ))}
                                                     </HStack>
                                                 ))}
@@ -221,6 +310,67 @@ export default function DreamDraft() {
                     </Box>
                 </Show>
             </Show>
+
+            <ActionBar.Root open={changesExist}>
+                <Portal>
+                    <ActionBar.Positioner>
+                        <ActionBar.Content>
+                            <Button loading={submitting} loadingText="Saving..." onClick={() => {
+                                if (dreamDraftIds.length !== 5) {
+                                    return toaster.create({
+                                        type: "error",
+                                        title: "Invalid Team",
+                                        description: "You must have exactly 5 drafted players"
+                                    })
+                                }
+
+                                if (remainingAp < 0) {
+                                    return toaster.create({
+                                        type: "error",
+                                        title: "Invalid Team",
+                                        description: "Your team exceeds the maximum allowed team cost"
+                                    })
+                                }
+
+                                setSubmitting(true)
+
+                                if (session.status === "authenticated") {
+                                    api.updateDreamDraft(dreamDraftIds, session.data.user.token)
+                                        .then(res => {
+                                            setChangesExist(false)
+                                            setOriginalDreamDraftIds(dreamDraftIds)
+                                            toaster.create({
+                                                title: "Your DreamDraft was Saved!",
+                                                description: `${res}`,
+                                                type: "success"
+                                            })
+                                        })
+                                        .catch(err => {
+                                            toaster.create({
+                                                title: "Error Saving",
+                                                description: `${err}`,
+                                                type: "error"
+                                            })
+                                        })
+                                        .finally(() => setSubmitting(false))
+                                }
+
+                            }}>
+                                <LuSaveAll />
+                                Save Changes
+                            </Button>
+
+                            <Button onClick={() => {
+                                setDreamDraftIds(originalDreamDraftIds)
+                                setChangesExist(false)
+                            }}>
+                                <LuTrash />
+                                Discard Changes
+                            </Button>
+                        </ActionBar.Content>
+                    </ActionBar.Positioner>
+                </Portal>
+            </ActionBar.Root>
         </MainLayout>
     )
 }

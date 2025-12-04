@@ -1,4 +1,4 @@
-import { Circle, Text, VStack } from "@chakra-ui/react"
+import { Circle, StackProps, Text, VStack } from "@chakra-ui/react"
 
 type DreamDraftPlayerCardProps = {
     id: number
@@ -7,9 +7,11 @@ type DreamDraftPlayerCardProps = {
     tag: string
     cost: number
     selected?: boolean
+    onSelect: (id: number) => void
+    boxProps?: StackProps
 }
 
-export default function DreamDraftPlayerCard({ id, name, avatar_url, tag, cost, selected }: DreamDraftPlayerCardProps) {
+export default function DreamDraftPlayerCard({ id, name, avatar_url, tag, cost, selected, onSelect, boxProps }: DreamDraftPlayerCardProps) {
 
     return (
         <VStack
@@ -21,6 +23,9 @@ export default function DreamDraftPlayerCard({ id, name, avatar_url, tag, cost, 
             rounded="md"
             justifyContent="end"
             position="relative"
+            cursor="pointer"
+            onClick={() => onSelect(id)}
+            {...boxProps}
         >
             <Text
                 background="black"
@@ -32,7 +37,7 @@ export default function DreamDraftPlayerCard({ id, name, avatar_url, tag, cost, 
             </Text>
 
             <Circle
-                background="green"
+                background={selected ? "tomato" : "green"}
                 size="40px"
                 position="absolute"
                 top={-3}
