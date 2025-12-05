@@ -1,6 +1,5 @@
 import { RuneIcon } from "@/components/svg/runes"
-import { CURRENCY_NAME } from "@/lib/constants"
-import { Box, Circle, HStack, StackProps, Text, VStack } from "@chakra-ui/react"
+import { HStack, StackProps, Text, VStack } from "@chakra-ui/react"
 
 type DreamDraftPlayerCardProps = {
     id: number
