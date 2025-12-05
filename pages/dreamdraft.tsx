@@ -1,13 +1,15 @@
 import MainLayout from "@/components/layouts/MainLayout";
 import BorderFillButtonStg from "@/components/svg/border-fill-button";
+import { RuneIcon } from "@/components/svg/runes";
 import DreamDraftPlayerCard from "@/components/ui/dreamdraft/player-card";
 import Loader from "@/components/ui/loader";
 import { toaster } from "@/components/ui/toaster";
 import api from "@/lib/api";
+import { CURRENCY_NAME } from "@/lib/constants";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import useSettings from "@/lib/hooks/useSettings";
 import { PlayerResponse } from "@/types/db";
-import { AbsoluteCenter, ActionBar, Box, Button, Center, Heading, HStack, Portal, ScrollArea, Show, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, ActionBar, Badge, Box, Button, Center, Heading, HStack, Image, Portal, ScrollArea, Show, SimpleGrid, Span, Text, VStack } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -38,7 +40,7 @@ export default function DreamDraft() {
             .map(([, group]) => group);
     }, [players])
 
-    const remainingAp = useMemo(() => {
+    const remainingCurrency = useMemo(() => {
         const totalCost = dreamDraftIds.reduce((prev, playerId) => prev + (players.find(p => p.id === playerId)?.cost ?? 0), 0)
 
         return parseInt(settings.dd_max_budget) - totalCost
@@ -197,55 +199,74 @@ export default function DreamDraft() {
                                         <Text>You have not created your team yet!</Text>
                                     )}
                                 >
-                                    <SimpleGrid columns={2} gap={5} p={5}>
+                                    <VStack mt={5} gap={3} width="80%">
                                         {selectedPlayers.map(player => (
-                                            <DreamDraftPlayerCard
-                                                key={`dd-player-${player.id}`}
-                                                tag={player.team_tag}
-                                                selected={dreamDraftIds.includes(player.id)}
-                                                {...player}
-                                                boxProps={{
-                                                    boxSize: "150px"
+                                            <HStack
+                                                key={`dd-player-show-${player.id}`}
+                                                width="100%"
+                                                backgroundColor="rgba(0,0,0,0.9)"
+                                                backgroundImage={`url(${player.team_banner_url})`}
+                                                backgroundSize="cover"
+                                                backgroundPosition="center"
+                                                backgroundBlendMode="darken"
+                                                rounded="md"
+                                                alignItems="start"
+                                                cursor="pointer"
+                                                onClick={() => {
+                                                    setDreamDraftIds(dreamDraftIds.filter(i => i !== player.id))
+                                                    setChangesExist(true)
                                                 }}
+                                            >
+                                                <Image
+                                                    alt="player-avatar"
+                                                    src={player.avatar_url}
+                                                    boxSize="110px"
+                                                    roundedLeft="md"
+                                                />
 
-                                                onSelect={(id) => {
-                                                    if (dreamDraftIds.includes(player.id)) {
-                                                        setDreamDraftIds([
-                                                            ...dreamDraftIds.filter(i => i !== id)
-                                                        ])
-                                                    } else {
-                                                        if (remainingAp - player.cost < 0) {
-                                                            toaster.create({
-                                                                type: "error",
-                                                                title: "Not Enough AP",
-                                                                description: "You do not have enough AP left to buy that player!"
-                                                            })
-                                                        } else if (dreamDraftIds.length === 5) {
-                                                            toaster.create({
-                                                                type: "error",
-                                                                title: "Player Limit Reached",
-                                                                description: "You can have up to 5 players in one team"
-                                                            })
-                                                        } else {
-                                                            setDreamDraftIds([...dreamDraftIds, id])
-                                                        }
-                                                    }
-                                                }}
-                                            />
+                                                <Box p={2}>
+                                                    <Text fontSize="1.3em" fontWeight="bold">{player.team_tag.toUpperCase()} {player.name}</Text>
+                                                    <HStack mt={2}>
+                                                        <Text>You spent <Span color="limegreen" fontWeight="bold"><RuneIcon size="sm" mb={1} /> {player.cost}</Span> for the</Text>
+
+                                                        <Badge colorPalette="green">
+                                                            <Image alt="role-icon" src={`${process.env.NEXT_PUBLIC_CDN_URL}/assets/positions/${player.team_role.toLowerCase()}.png`} boxSize="20px" />
+                                                            {player.team_role.toUpperCase()}
+                                                        </Badge>
+
+                                                        <Text>of</Text>
+
+                                                        <Image
+                                                            alt="team-icon"
+                                                            boxSize="20px"
+                                                            src={player.team_logo_url}
+                                                            rounded="full"
+                                                        />
+                                                        <Span fontWeight="bold">{player.team_name}</Span>
+                                                    </HStack>
+                                                </Box>
+
+                                            </HStack>
                                         ))}
-                                    </SimpleGrid>
+                                    </VStack>
                                 </Show>
                             </VStack>
 
                             <VStack border="2px solid" borderColor="feature" rounded="lg" p={3} backdropFilter="blur(10px)" position="relative">
-                                <Text
+                                <HStack
                                     position="absolute"
                                     top={3}
                                     left={3}
-                                    fontWeight="bold"
+                                    fontWeight="medium"
+                                    rounded="lg"
+                                    background="#8a602aff"
+                                    px={2}
+                                    py={1}
                                 >
-                                    AP LEFT: {remainingAp}
-                                </Text>
+                                    <RuneIcon size="md" />
+
+                                    {remainingCurrency} {CURRENCY_NAME}
+                                </HStack>
 
                                 <Text
                                     fontFamily="Berlin Sans FB"
@@ -278,11 +299,11 @@ export default function DreamDraft() {
                                                                             ...dreamDraftIds.filter(i => i !== id)
                                                                         ])
                                                                     } else {
-                                                                        if (remainingAp - player.cost < 0) {
+                                                                        if (remainingCurrency - player.cost < 0) {
                                                                             toaster.create({
                                                                                 type: "error",
-                                                                                title: "Not Enough AP",
-                                                                                description: "You do not have enough AP left to buy that player!"
+                                                                                title: `Not Enough ${CURRENCY_NAME}`,
+                                                                                description: `You do not have enough ${CURRENCY_NAME} left to buy that player!`
                                                                             })
                                                                         } else if (dreamDraftIds.length === 5) {
                                                                             toaster.create({
@@ -324,7 +345,7 @@ export default function DreamDraft() {
                                     })
                                 }
 
-                                if (remainingAp < 0) {
+                                if (remainingCurrency < 0) {
                                     return toaster.create({
                                         type: "error",
                                         title: "Invalid Team",

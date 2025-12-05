@@ -1,4 +1,6 @@
-import { Circle, StackProps, Text, VStack } from "@chakra-ui/react"
+import { RuneIcon } from "@/components/svg/runes"
+import { CURRENCY_NAME } from "@/lib/constants"
+import { Box, Circle, HStack, StackProps, Text, VStack } from "@chakra-ui/react"
 
 type DreamDraftPlayerCardProps = {
     id: number
@@ -36,16 +38,20 @@ export default function DreamDraftPlayerCard({ id, name, avatar_url, tag, cost, 
                 {tag} {name}
             </Text>
 
-            <Circle
+            <HStack
                 background={selected ? "tomato" : "green"}
-                size="40px"
                 position="absolute"
                 top={-3}
                 left={-3}
-                fontSize="xs"
+                fontSize="sm"
+                fontWeight="medium"
+                p={1}
+                gap={0}
+                rounded="lg"
             >
-                {cost}AP
-            </Circle>
+                <RuneIcon mb={1} size="md" mr={1} />
+                <Text>{cost}</Text>
+            </HStack>
         </VStack>
     )
 }

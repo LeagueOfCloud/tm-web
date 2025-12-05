@@ -1,4 +1,4 @@
-import { PickEmResponse, PlayerResponse, TeamResponse } from "@/types/db"
+import { PlayerResponse, TeamResponse } from "@/types/db"
 
 export interface PickEms {
     id: string

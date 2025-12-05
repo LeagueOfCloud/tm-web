@@ -14,6 +14,10 @@ export const authOptions: NextAuthOptions = {
 
     secret: `${process.env.NEXTAUTH_SECRET}`,
 
+    jwt: {
+        maxAge: 60 * 60 * 24 * 7
+    },
+
     callbacks: {
         async signIn({ user }) {
             const connection = await mysql.createConnection({

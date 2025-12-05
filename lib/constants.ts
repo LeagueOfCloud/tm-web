@@ -9,3 +9,5 @@ export const BANNER_MAX_FILE_SIZE_MB = 50
 export const AVATAR_WIDTH = "200px"
 export const AVATAR_HEIGHT = "350px"
 export const AVATAR_MAX_FILE_SIZE_MB = 30
+
+export const CURRENCY_NAME = "Runes"
