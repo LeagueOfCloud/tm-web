@@ -1,5 +1,7 @@
+"use client"
+
 import MainLayout from "@/components/layouts/MainLayout";
-import { AbsoluteCenter, Box, Button, Center, Heading, HStack, Show, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, Box, Button, Center, Heading, HStack, Show, SimpleGrid, Text, useClipboard, VStack } from "@chakra-ui/react";
 
 import useSettings from "@/lib/hooks/useSettings";
 import PlayerPickEmCard from "@/components/ui/pickems/player-card";
@@ -15,6 +17,7 @@ import TeamPickEmCard from "@/components/ui/pickems/team-card";
 import useChampions from "@/lib/hooks/useChampions";
 import ChampionPickemCard from "@/components/ui/pickems/champion-card";
 import MiscPickemCard from "@/components/ui/pickems/misc-card";
+import { LuCheck, LuShare2 } from "react-icons/lu";
 
 export default function PickEms() {
     const { settings, loading } = useSettings()
@@ -24,15 +27,18 @@ export default function PickEms() {
     const { data: teams, loading: loadingTeams } = usePublicFetch<TeamResponse[]>("teams")
     const { champions, loading: loadingChampions } = useChampions()
     const [defaultPickems, setDefaultPickems] = useState<PickEmResponse[]>([])
+    const clipboard = useClipboard({ timeout: 2000 })
 
     useEffect(() => {
         if (session.status === "authenticated") {
+            clipboard.setValue(`${location.href}/${session.data.user.id}`)
             api.getPickems(session.data.user.id)
                 .then((res) => setDefaultPickems(res))
                 .catch((err) => {
                     console.warn(`PickEms could not be fetched: ${err}`)
                 })
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [session])
 
     const pickems = useMemo(() => {
@@ -62,16 +68,36 @@ export default function PickEms() {
                     backgroundSize="cover"
                 >
 
-                    <Center>
+                    <Center pt="25vh">
                         <VStack>
+                            {session.status === "authenticated" && (
+                                <HStack
+                                    mb="5vh"
+                                    fontFamily="Berlin Sans FB"
+                                    fontWeight="bold"
+                                    background={clipboard.copied ? "green" : "orange.500"}
+                                    px={3}
+                                    py={1}
+                                    rounded="lg"
+                                    cursor="pointer"
+                                    onClick={() => clipboard.copy()}
+                                >
+                                    {clipboard.copied ? <LuCheck /> : <LuShare2 />}
+                                    <Text>
+                                        {clipboard.copied ? "COPIED" : "SHARE"}
+                                    </Text>
+                                </HStack>
+                            )}
+
                             <Heading
-                                paddingTop="30vh"
                                 fontFamily="Berlin Sans FB Bold"
                                 fontSize="8em"
                                 textShadow="-1px 5px 0 rgba(69, 248, 130, 0.66)"
                             >
                                 {"PICK'EMS"}
                             </Heading>
+
+
                             <Text
                                 fontWeight="bold"
                                 mt="3em"
@@ -303,6 +329,6 @@ export default function PickEms() {
                     </Box>
                 </Show>
             </Show>
-        </MainLayout>
+        </MainLayout >
     )
 }

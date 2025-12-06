@@ -9,11 +9,11 @@ import { CURRENCY_NAME } from "@/lib/constants";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import useSettings from "@/lib/hooks/useSettings";
 import { PlayerResponse } from "@/types/db";
-import { AbsoluteCenter, ActionBar, Badge, Box, Button, Center, Heading, HStack, Image, Portal, ScrollArea, Show, SimpleGrid, Span, Text, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, ActionBar, Badge, Box, Button, Center, Heading, HStack, Image, Portal, ScrollArea, Show, SimpleGrid, Span, Text, useClipboard, VStack } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { LuSaveAll, LuTrash } from "react-icons/lu";
+import { LuCheck, LuSaveAll, LuShare2, LuTrash } from "react-icons/lu";
 
 export default function DreamDraft() {
     const session = useSession()
@@ -24,6 +24,7 @@ export default function DreamDraft() {
     const [dreamDraftIds, setDreamDraftIds] = useState<number[]>([])
     const [changesExist, setChangesExist] = useState<boolean>(false)
     const [submitting, setSubmitting] = useState<boolean>(false)
+    const clipboard = useClipboard({ timeout: 2000 })
 
     const playerList = useMemo(() => {
         const groups = new Map<number, PlayerResponse[]>();
@@ -50,6 +51,8 @@ export default function DreamDraft() {
 
     useEffect(() => {
         if (session.status === "authenticated") {
+            clipboard.setValue(`${location.href}/${session.data.user.id}`)
+            console.log("updated")
             api.getDreamDraft(session.data.user.id)
                 .then(res => {
                     setDreamDraftIds(res.selection.map(s => s.player_id))
@@ -59,6 +62,7 @@ export default function DreamDraft() {
                     console.warn("Could not fetch DreamDraft:", err)
                 })
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [session])
 
     return (
@@ -74,10 +78,28 @@ export default function DreamDraft() {
                     backgroundSize="cover"
                 >
 
-                    <Center>
+                    <Center mt="25vh">
                         <VStack>
+                            {session.status === "authenticated" && (
+                                <HStack
+                                    mb="5vh"
+                                    fontFamily="Berlin Sans FB"
+                                    fontWeight="bold"
+                                    background={clipboard.copied ? "green" : "orange.500"}
+                                    px={3}
+                                    py={1}
+                                    rounded="lg"
+                                    cursor="pointer"
+                                    onClick={() => clipboard.copy()}
+                                >
+                                    {clipboard.copied ? <LuCheck /> : <LuShare2 />}
+                                    <Text>
+                                        {clipboard.copied ? "COPIED" : "SHARE"}
+                                    </Text>
+                                </HStack>
+                            )}
+
                             <Heading
-                                paddingTop="30vh"
                                 fontFamily="Berlin Sans FB Bold"
                                 fontSize="8em"
                                 textShadow="-1px 5px 0 rgba(69, 248, 130, 0.66)"
