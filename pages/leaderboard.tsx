@@ -1,0 +1,216 @@
+"use client"
+
+import MainLayout from "@/components/layouts/MainLayout";
+import BorderFillButtonStg from "@/components/svg/border-fill-button";
+import LeaderboardCard from "@/components/ui/leaderboard-card";
+import Loader from "@/components/ui/loader";
+import { toaster } from "@/components/ui/toaster";
+import api from "@/lib/api";
+import { LeaderboardResponse } from "@/types/db";
+import { Box, Button, ButtonGroup, Center, Heading, HStack, IconButton, Pagination, Show, Text, VStack } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+
+export default function Leaderboard() {
+    const router = useRouter()
+    const [board, setBoard] = useState<string>("pickems")
+    const [currentPage, setCurrentPage] = useState<number>(1)
+    const [aproxTotalItems, setAproxTotalItems] = useState<number>(1)
+    const [loadingProfiles, setLoadingProfiles] = useState<boolean>(true)
+    const [profiles, setProfiles] = useState<LeaderboardResponse["items"]>([])
+
+    useEffect(() => {
+        const preselect = decodeURIComponent(location.hash.substring(1))
+
+        if (preselect === "dreamdraft") {
+            queueMicrotask(() => {
+                setBoard("dreamdraft")
+            })
+        }
+    }, [])
+
+    useEffect(() => {
+        queueMicrotask(() => {
+            setLoadingProfiles(true)
+        })
+        if (board === "pickems") {
+            api.getPickemsLeaderboard(currentPage)
+                .then(res => {
+                    setProfiles(res.items)
+                    setAproxTotalItems(res.pages * 8)
+                })
+                .catch((err) => [
+                    toaster.create({
+                        type: "error",
+                        title: "Could not fetch Leaderboard",
+                        description: `${err}`
+                    })
+                ])
+                .finally(() => setLoadingProfiles(false))
+        } else if (board === "dreamdraft") {
+            api.getDreamDraftLeaderboard(currentPage)
+                .then(res => {
+                    setProfiles(res.items)
+                    setAproxTotalItems(res.pages * 8)
+                })
+                .catch((err) => [
+                    toaster.create({
+                        type: "error",
+                        title: "Could not fetch Leaderboard",
+                        description: `${err}`
+                    })
+                ])
+                .finally(() => setLoadingProfiles(false))
+        }
+    }, [currentPage, board])
+
+    return (
+        <MainLayout>
+
+            <Box
+                height="100vh"
+                backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_leaderboard.png)`}
+                backgroundSize="100%"
+            >
+                <Center mt="25vh">
+                    <VStack>
+                        <Heading
+                            fontFamily="Berlin Sans FB Bold"
+                            fontSize="8em"
+                            textShadow="-1px 5px 0 rgba(69, 248, 130, 0.66)"
+                        >
+                            {"LEADERBOARD"}
+                        </Heading>
+                        <Text
+                            fontWeight="bold"
+                            mt="3em"
+                            fontSize="1.4em"
+                        >
+                            THE BEST TOURNAMENT PREDICTIONS
+                        </Text>
+
+                        <HStack mt="2em" gap={5}>
+                            <Box position="relative" className="animBorderFill" cursor="pointer">
+                                <BorderFillButtonStg
+                                    svgProps={{
+                                        width: "200px"
+                                    }}
+
+                                    pathProps={{
+                                        stroke: "white",
+                                        fill: "var(--chakra-colors-ui-login-text)"
+                                    }}
+                                />
+
+                                <Button
+                                    position="absolute"
+                                    top="50%"
+                                    left="50%"
+                                    transform="translate(-50%, -50%)"
+                                    color="black"
+                                    fontWeight="bold"
+                                    fontSize="md"
+                                    variant="plain"
+                                    onClick={() => {
+                                        setBoard("pickems")
+                                        router.push("#view")
+                                    }}
+                                >
+                                    {"PICK'EMS"}
+                                </Button>
+                            </Box>
+                            <Box position="relative" className="animBorderFill" cursor="pointer">
+                                <BorderFillButtonStg
+                                    svgProps={{
+                                        width: "200px"
+                                    }}
+
+                                    pathProps={{
+                                        stroke: "white",
+                                        fill: "var(--chakra-colors-ui-login-text)"
+                                    }}
+                                />
+
+                                <Button
+                                    position="absolute"
+                                    top="50%"
+                                    left="50%"
+                                    transform="translate(-50%, -50%)"
+                                    color="black"
+                                    fontWeight="bold"
+                                    fontSize="md"
+                                    variant="plain"
+                                    onClick={() => {
+                                        setBoard("dreamdraft")
+                                        router.push("#view")
+                                    }}
+                                >
+                                    {"DREAM DRAFT"}
+                                </Button>
+                            </Box>
+                        </HStack>
+                    </VStack>
+                </Center>
+            </Box>
+
+            <Box
+                mt="-25em"
+                pt="17em"
+                height="128vh"
+                id="view"
+                backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_leaderboard_1.png)`}
+                backgroundSize="100%"
+            >
+
+                <VStack height="80vh">
+                    <Show when={!loadingProfiles} fallback={<Loader />}>
+                        {profiles.map(profile => (
+                            <LeaderboardCard
+                                profile={profile}
+                                scoreColumn={
+                                    board === "pickems" ? "pickems_score" :
+                                        board === "dreamdraft" ? "dd_score" : "none"
+                                }
+                                redirect={
+                                    board === "pickems" ? `/pickems/${profile.id}` :
+                                        board === "dreamdraft" ? `/dreamdraft/${profile.id}` : "#"
+                                }
+                                key={`leaderboard-${profile.id}-${profile.rank}-${board}`}
+                            />
+                        ))}
+                    </Show>
+                </VStack>
+
+                <Center mt={5}>
+                    <Pagination.Root page={currentPage} pageSize={8} count={aproxTotalItems} onPageChange={(page) => {
+                        setLoadingProfiles(true)
+                        setCurrentPage(page.page)
+                    }}>
+                        <ButtonGroup>
+                            <Pagination.PrevTrigger asChild>
+                                <IconButton>
+                                    <LuChevronLeft />
+                                </IconButton>
+                            </Pagination.PrevTrigger>
+
+                            <Pagination.Items
+                                render={(page) => (
+                                    <IconButton variant={{ base: "ghost", _selected: "outline" }}>
+                                        {page.value}
+                                    </IconButton>
+                                )}
+                            />
+
+                            <Pagination.NextTrigger asChild>
+                                <IconButton>
+                                    <LuChevronRight />
+                                </IconButton>
+                            </Pagination.NextTrigger>
+                        </ButtonGroup>
+                    </Pagination.Root>
+                </Center>
+            </Box>
+        </MainLayout >
+    )
+}

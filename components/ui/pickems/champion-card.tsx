@@ -12,9 +12,10 @@ type ChampionPickemCardProps = {
     score: number
     defaultId?: string
     champions: Champion[]
+    disableSelect?: boolean
 }
 
-export default function ChampionPickemCard({ pickemId, title, defaultId, champions }: ChampionPickemCardProps) {
+export default function ChampionPickemCard({ pickemId, title, defaultId, champions, disableSelect }: ChampionPickemCardProps) {
     const selectDisclosure = useDisclosure()
     const session = useSession()
     const [selectedId, setSelectedId] = useState<string | undefined>(defaultId ?? undefined)
@@ -24,7 +25,7 @@ export default function ChampionPickemCard({ pickemId, title, defaultId, champio
     }, [selectedId, champions])
 
     return (
-        <Show when={session.status === "authenticated"}>
+        <>
             <Card.Root
                 flexDirection="row"
                 overflow="hidden"
@@ -47,11 +48,13 @@ export default function ChampionPickemCard({ pickemId, title, defaultId, champio
                         </Card.Description>
                     </Card.Body>
 
-                    <Card.Footer>
-                        <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
-                            Select
-                        </Button>
-                    </Card.Footer>
+                    <Show when={session.status === "authenticated" && !disableSelect}>
+                        <Card.Footer>
+                            <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
+                                Select
+                            </Button>
+                        </Card.Footer>
+                    </Show>
                 </Flex>
             </Card.Root>
 
@@ -74,6 +77,6 @@ export default function ChampionPickemCard({ pickemId, title, defaultId, champio
                         })
                 }}
             />
-        </Show>
+        </>
     )
 }

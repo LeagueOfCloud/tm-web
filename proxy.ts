@@ -11,7 +11,7 @@ export default withAuth(
         try {
             const settings = await api.getSettings()
 
-            if (settings.maintenance === "true" && req.nextauth.token?.type !== "admin") {
+            if (settings.maintenance === "true" && req.nextauth.token?.type !== "admin" && process.env.NODE_ENV === "production") {
                 return NextResponse.rewrite(new URL("maintenance", req.url))
             }
         } catch (e) {

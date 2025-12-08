@@ -12,9 +12,10 @@ type PlayerPickemCardProps = {
     score: number
     defaultId?: string
     players: PlayerResponse[]
+    disableSelect?: boolean
 }
 
-export default function PlayerPickEmCard({ pickemId, title, defaultId, players }: PlayerPickemCardProps) {
+export default function PlayerPickEmCard({ pickemId, title, defaultId, players, disableSelect }: PlayerPickemCardProps) {
     const selectDisclosure = useDisclosure()
     const session = useSession()
     const [selectedId, setSelectedId] = useState<number | undefined>(defaultId ? parseInt(defaultId) : undefined)
@@ -24,7 +25,7 @@ export default function PlayerPickEmCard({ pickemId, title, defaultId, players }
     }, [selectedId, players])
 
     return (
-        <Show when={session.status === "authenticated"}>
+        <>
             <Card.Root
                 flexDirection="row"
                 overflow="hidden"
@@ -47,11 +48,13 @@ export default function PlayerPickEmCard({ pickemId, title, defaultId, players }
                         </Card.Description>
                     </Card.Body>
 
-                    <Card.Footer>
-                        <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
-                            Select
-                        </Button>
-                    </Card.Footer>
+                    <Show when={session.status === "authenticated" && !disableSelect}>
+                        <Card.Footer>
+                            <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
+                                Select
+                            </Button>
+                        </Card.Footer>
+                    </Show>
                 </Flex>
             </Card.Root>
 
@@ -74,6 +77,6 @@ export default function PlayerPickEmCard({ pickemId, title, defaultId, players }
                         })
                 }}
             />
-        </Show>
+        </>
     )
 }

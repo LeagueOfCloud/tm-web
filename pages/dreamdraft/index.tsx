@@ -15,7 +15,11 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { LuCheck, LuSaveAll, LuShare2, LuTrash } from "react-icons/lu";
 
-export default function DreamDraft() {
+interface DreamDraftProps {
+    otherProfileId?: number
+}
+
+export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
     const session = useSession()
     const router = useRouter()
     const { data: players, loading: loadingPlayers } = usePublicFetch<PlayerResponse[]>("players")
@@ -25,6 +29,8 @@ export default function DreamDraft() {
     const [changesExist, setChangesExist] = useState<boolean>(false)
     const [submitting, setSubmitting] = useState<boolean>(false)
     const clipboard = useClipboard({ timeout: 2000 })
+
+    const allowSwap = useMemo(() => otherProfileId === undefined && session.status === "authenticated", [otherProfileId, session])
 
     const playerList = useMemo(() => {
         const groups = new Map<number, PlayerResponse[]>();
@@ -50,7 +56,18 @@ export default function DreamDraft() {
     const selectedPlayers = useMemo(() => dreamDraftIds.map(playerId => players.find(p => p.id === playerId)).filter(p => p !== undefined), [dreamDraftIds, players])
 
     useEffect(() => {
-        if (session.status === "authenticated") {
+        if (otherProfileId) {
+            clipboard.setValue(`${location.href}`)
+            console.log("updated")
+            api.getDreamDraft(otherProfileId)
+                .then(res => {
+                    setDreamDraftIds(res.selection.map(s => s.player_id))
+                    setOriginalDreamDraftIds(res.selection.map(s => s.player_id))
+                })
+                .catch(err => {
+                    console.warn("Could not fetch DreamDraft:", err)
+                })
+        } else if (session.status === "authenticated") {
             clipboard.setValue(`${location.href}/${session.data.user.id}`)
             console.log("updated")
             api.getDreamDraft(session.data.user.id)
@@ -80,7 +97,7 @@ export default function DreamDraft() {
 
                     <Center mt="25vh">
                         <VStack>
-                            {session.status === "authenticated" && (
+                            {(session.status === "authenticated" || otherProfileId) && (
                                 <HStack
                                     mb="5vh"
                                     fontFamily="Berlin Sans FB"
@@ -114,7 +131,7 @@ export default function DreamDraft() {
                                 MAKE YOUR PERFECT TEAM
                             </Text>
 
-                            <HStack mt="2em">
+                            <HStack mt="2em" gap={5}>
                                 <Box position="relative" className="animBorderFill" cursor="pointer">
                                     <BorderFillButtonStg
                                         svgProps={{
@@ -182,7 +199,7 @@ export default function DreamDraft() {
                                         fontWeight="bold"
                                         fontSize="md"
                                         variant="plain"
-                                        onClick={() => router.push("/dreamdraft#leaderboard")}
+                                        onClick={() => router.push("/leaderboard#dreamdraft")}
                                     >
                                         LEADERBOARD
                                     </Button>
@@ -192,166 +209,172 @@ export default function DreamDraft() {
                     </Center>
                 </Box>
 
-                <Show when={session.status === "authenticated"}>
-                    <Box
-                        height="125vh"
-                        backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_dreamdraft_1.png)`}
-                        backgroundSize="cover"
-                        mt="-15em"
-                        id="make-team"
-                        pt="15em"
-                        px={10}
-                    >
-                        <SimpleGrid columns={2} gap={5}>
-                            <VStack border="2px solid" borderColor="feature" rounded="lg" p={3} backdropFilter="blur(10px)">
-                                <Text
-                                    fontFamily="Berlin Sans FB"
-                                    fontWeight="bold"
-                                    fontSize="2xl"
-                                    borderBottom="1px solid white"
-                                    width="50%"
-                                    textAlign="center"
-                                >
-                                    YOUR TEAM
-                                </Text>
+                <Box
+                    height="125vh"
+                    backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_dreamdraft_1.png)`}
+                    backgroundSize="cover"
+                    mt="-15em"
+                    id="make-team"
+                    pt="15em"
+                    px={10}
+                >
+                    <SimpleGrid columns={2} gap={5}>
+                        <VStack border="2px solid" borderColor="feature" rounded="lg" p={3} backdropFilter="blur(10px)">
+                            <Text
+                                fontFamily="Berlin Sans FB"
+                                fontWeight="bold"
+                                fontSize="2xl"
+                                borderBottom="1px solid white"
+                                width="50%"
+                                textAlign="center"
+                            >
+                                YOUR TEAM
+                            </Text>
 
-                                <Show
-                                    when={dreamDraftIds.length !== 0}
-                                    fallback={(
-                                        <Text>You have not created your team yet!</Text>
-                                    )}
-                                >
-                                    <VStack mt={5} gap={3} width="80%">
-                                        {selectedPlayers.map(player => (
-                                            <HStack
-                                                key={`dd-player-show-${player.id}`}
-                                                width="100%"
-                                                backgroundColor="rgba(0,0,0,0.9)"
-                                                backgroundImage={`url(${player.team_banner_url})`}
-                                                backgroundSize="cover"
-                                                backgroundPosition="center"
-                                                backgroundBlendMode="darken"
-                                                rounded="md"
-                                                alignItems="start"
-                                                cursor="pointer"
-                                                onClick={() => {
-                                                    setDreamDraftIds(dreamDraftIds.filter(i => i !== player.id))
-                                                    setChangesExist(true)
-                                                }}
-                                            >
-                                                <Image
-                                                    alt="player-avatar"
-                                                    src={player.avatar_url}
-                                                    boxSize="110px"
-                                                    roundedLeft="md"
-                                                />
+                            <Show
+                                when={dreamDraftIds.length !== 0}
+                                fallback={(
+                                    <Text>You have not created your team yet!</Text>
+                                )}
+                            >
+                                <VStack mt={5} gap={3} width="80%">
+                                    {selectedPlayers.map(player => (
+                                        <HStack
+                                            key={`dd-player-show-${player.id}`}
+                                            width="100%"
+                                            backgroundColor="rgba(0,0,0,0.9)"
+                                            backgroundImage={`url(${player.team_banner_url})`}
+                                            backgroundSize="cover"
+                                            backgroundPosition="center"
+                                            backgroundBlendMode="darken"
+                                            rounded="md"
+                                            alignItems="start"
+                                            cursor="pointer"
+                                            onClick={() => {
+                                                if (!allowSwap) {
+                                                    return
+                                                }
 
-                                                <Box p={2}>
-                                                    <Text fontSize="1.3em" fontWeight="bold">{player.team_tag.toUpperCase()} {player.name}</Text>
-                                                    <HStack mt={2}>
-                                                        <Text>You spent <Span color="limegreen" fontWeight="bold"><RuneIcon size="sm" mb={1} /> {player.cost}</Span> for the</Text>
+                                                setDreamDraftIds(dreamDraftIds.filter(i => i !== player.id))
+                                                setChangesExist(true)
+                                            }}
+                                        >
+                                            <Image
+                                                alt="player-avatar"
+                                                src={player.avatar_url}
+                                                boxSize="110px"
+                                                roundedLeft="md"
+                                            />
 
-                                                        <Badge colorPalette="green">
-                                                            <Image alt="role-icon" src={`${process.env.NEXT_PUBLIC_CDN_URL}/assets/positions/${player.team_role.toLowerCase()}.png`} boxSize="20px" />
-                                                            {player.team_role.toUpperCase()}
-                                                        </Badge>
+                                            <Box p={2}>
+                                                <Text fontSize="1.3em" fontWeight="bold">{player.team_tag.toUpperCase()} {player.name}</Text>
+                                                <HStack mt={2}>
+                                                    <Text>You spent <Span color="limegreen" fontWeight="bold"><RuneIcon size="sm" mb={1} /> {player.cost}</Span> for the</Text>
 
-                                                        <Text>of</Text>
+                                                    <Badge colorPalette="green">
+                                                        <Image alt="role-icon" src={`${process.env.NEXT_PUBLIC_CDN_URL}/assets/positions/${player.team_role.toLowerCase()}.png`} boxSize="20px" />
+                                                        {player.team_role.toUpperCase()}
+                                                    </Badge>
 
-                                                        <Image
-                                                            alt="team-icon"
-                                                            boxSize="20px"
-                                                            src={player.team_logo_url}
-                                                            rounded="full"
-                                                        />
-                                                        <Span fontWeight="bold">{player.team_name}</Span>
-                                                    </HStack>
-                                                </Box>
+                                                    <Text>of</Text>
 
-                                            </HStack>
-                                        ))}
-                                    </VStack>
-                                </Show>
-                            </VStack>
+                                                    <Image
+                                                        alt="team-icon"
+                                                        boxSize="20px"
+                                                        src={player.team_logo_url}
+                                                        rounded="full"
+                                                    />
+                                                    <Span fontWeight="bold">{player.team_name}</Span>
+                                                </HStack>
+                                            </Box>
 
-                            <VStack border="2px solid" borderColor="feature" rounded="lg" p={3} backdropFilter="blur(10px)" position="relative">
-                                <HStack
-                                    position="absolute"
-                                    top={3}
-                                    left={3}
-                                    fontWeight="medium"
-                                    rounded="lg"
-                                    background="#8a602aff"
-                                    px={2}
-                                    py={1}
-                                >
-                                    <RuneIcon size="md" />
+                                        </HStack>
+                                    ))}
+                                </VStack>
+                            </Show>
+                        </VStack>
 
-                                    {remainingCurrency} {CURRENCY_NAME}
-                                </HStack>
+                        <VStack border="2px solid" borderColor="feature" rounded="lg" p={3} backdropFilter="blur(10px)" position="relative">
+                            <HStack
+                                position="absolute"
+                                top={3}
+                                left={3}
+                                fontWeight="medium"
+                                rounded="lg"
+                                background="#8a602aff"
+                                px={2}
+                                py={1}
+                            >
+                                <RuneIcon size="md" />
 
-                                <Text
-                                    fontFamily="Berlin Sans FB"
-                                    fontWeight="bold"
-                                    fontSize="2xl"
-                                    borderBottom="1px solid white"
-                                    width="50%"
-                                    textAlign="center"
-                                >
-                                    PLAYER ROSTER
-                                </Text>
+                                {remainingCurrency} {CURRENCY_NAME}
+                            </HStack>
 
-                                <ScrollArea.Root maxHeight="70vh">
-                                    <ScrollArea.Viewport>
-                                        <ScrollArea.Content p={5}>
-                                            <VStack gap={10} separator={<Box borderBottom="2px solid white" width="300px" />}>
-                                                {playerList.map(playerGroup => (
-                                                    <HStack key={`dd-playergroup-${playerGroup[0].cost}`} gap={8} wrap="wrap" justifyContent="center">
-                                                        {playerGroup.map(player => (
-                                                            <DreamDraftPlayerCard
-                                                                key={`dd-player-${player.id}`}
-                                                                tag={player.team_tag}
-                                                                selected={dreamDraftIds.includes(player.id)}
-                                                                {...player}
+                            <Text
+                                fontFamily="Berlin Sans FB"
+                                fontWeight="bold"
+                                fontSize="2xl"
+                                borderBottom="1px solid white"
+                                width="50%"
+                                textAlign="center"
+                            >
+                                PLAYER ROSTER
+                            </Text>
 
-                                                                onSelect={(id) => {
-                                                                    if (dreamDraftIds.includes(player.id)) {
-                                                                        setChangesExist(true)
-                                                                        setDreamDraftIds([
-                                                                            ...dreamDraftIds.filter(i => i !== id)
-                                                                        ])
+                            <ScrollArea.Root maxHeight="70vh">
+                                <ScrollArea.Viewport>
+                                    <ScrollArea.Content p={5}>
+                                        <VStack gap={10} separator={<Box borderBottom="2px solid white" width="300px" />}>
+                                            {playerList.map(playerGroup => (
+                                                <HStack key={`dd-playergroup-${playerGroup[0].cost}`} gap={8} wrap="wrap" justifyContent="center">
+                                                    {playerGroup.map(player => (
+                                                        <DreamDraftPlayerCard
+                                                            key={`dd-player-${player.id}`}
+                                                            tag={player.team_tag}
+                                                            selected={dreamDraftIds.includes(player.id)}
+                                                            {...player}
+
+                                                            onSelect={(id) => {
+                                                                if (!allowSwap) {
+                                                                    return
+                                                                }
+
+                                                                if (dreamDraftIds.includes(player.id)) {
+                                                                    setChangesExist(true)
+                                                                    setDreamDraftIds([
+                                                                        ...dreamDraftIds.filter(i => i !== id)
+                                                                    ])
+                                                                } else {
+                                                                    if (remainingCurrency - player.cost < 0) {
+                                                                        toaster.create({
+                                                                            type: "error",
+                                                                            title: `Not Enough ${CURRENCY_NAME}`,
+                                                                            description: `You do not have enough ${CURRENCY_NAME} left to buy that player!`
+                                                                        })
+                                                                    } else if (dreamDraftIds.length === 5) {
+                                                                        toaster.create({
+                                                                            type: "error",
+                                                                            title: "Player Limit Reached",
+                                                                            description: "You can have up to 5 players in one team"
+                                                                        })
                                                                     } else {
-                                                                        if (remainingCurrency - player.cost < 0) {
-                                                                            toaster.create({
-                                                                                type: "error",
-                                                                                title: `Not Enough ${CURRENCY_NAME}`,
-                                                                                description: `You do not have enough ${CURRENCY_NAME} left to buy that player!`
-                                                                            })
-                                                                        } else if (dreamDraftIds.length === 5) {
-                                                                            toaster.create({
-                                                                                type: "error",
-                                                                                title: "Player Limit Reached",
-                                                                                description: "You can have up to 5 players in one team"
-                                                                            })
-                                                                        } else {
-                                                                            setChangesExist(true)
-                                                                            setDreamDraftIds([...dreamDraftIds, id])
-                                                                        }
+                                                                        setChangesExist(true)
+                                                                        setDreamDraftIds([...dreamDraftIds, id])
                                                                     }
-                                                                }}
-                                                            />
-                                                        ))}
-                                                    </HStack>
-                                                ))}
-                                            </VStack>
-                                        </ScrollArea.Content>
-                                    </ScrollArea.Viewport>
-                                    <ScrollArea.Scrollbar />
-                                </ScrollArea.Root>
-                            </VStack>
-                        </SimpleGrid>
-                    </Box>
-                </Show>
+                                                                }
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </HStack>
+                                            ))}
+                                        </VStack>
+                                    </ScrollArea.Content>
+                                </ScrollArea.Viewport>
+                                <ScrollArea.Scrollbar />
+                            </ScrollArea.Root>
+                        </VStack>
+                    </SimpleGrid>
+                </Box>
             </Show>
 
             <ActionBar.Root open={changesExist}>

@@ -3,6 +3,7 @@ import axios from "axios"
 import { API_URL, Query } from "./common";
 import pickems from "./pickems";
 import dreamdraft from "./dreamdraft";
+import leaderboard from "./leaderboard";
 
 /*
 * RESOURCE GET METHODS
@@ -314,7 +315,8 @@ const api = {
     deleteRiotAccountsMultiple,
     updateConfig,
     ...pickems,
-    ...dreamdraft
+    ...dreamdraft,
+    ...leaderboard
 }
 
 export default api;

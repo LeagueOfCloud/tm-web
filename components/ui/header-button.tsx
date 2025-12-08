@@ -6,10 +6,9 @@ import { PropsWithChildren } from "react";
 
 type HeaderButtonProps = {
     to: string
-    isDefault?: boolean
 }
 
-export default function HeaderButton({ to, isDefault, children }: HeaderButtonProps & PropsWithChildren) {
+export default function HeaderButton({ to, children }: HeaderButtonProps & PropsWithChildren) {
     const router = useRouter()
 
     return (

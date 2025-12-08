@@ -1,5 +1,5 @@
 import Loader from "@/components/ui/loader";
-import { AbsoluteCenter, Box, Button, Center, Heading, IconButton, Text, useDisclosure, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, Box, Button, Center, Heading, IconButton, Show, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import MainLayout from "@/components/layouts/MainLayout";
 import { FaLock } from "react-icons/fa";
@@ -13,92 +13,92 @@ export default function Index() {
   const shamrockDisclosure = useDisclosure()
 
   return (
-    <>
-      {session.status === "loading" && <AbsoluteCenter><Loader /></AbsoluteCenter>}
-      {session.status === "authenticated" && (
-        <MainLayout>
+    <Show
+      when={session.status !== "loading"}
+      fallback={<AbsoluteCenter><Loader /></AbsoluteCenter>}
+    >
+      <MainLayout>
 
-          <Box
-            height="90vh"
-            backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_1.png)`}
-            backgroundSize="100%"
-          >
+        <Box
+          height="90vh"
+          backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_1.png)`}
+          backgroundSize="100%"
+        >
 
-            <Center>
-              <VStack>
-                <Heading
-                  paddingTop="30vh"
-                  fontFamily="Berlin Sans FB Bold"
-                  fontSize="8em"
-                  textShadow="-1px 5px 0 rgba(69, 248, 130, .66)"
-                >
-                  LOCKED // OUT
-                </Heading>
-                <Text
+          <Center>
+            <VStack>
+              <Heading
+                paddingTop="30vh"
+                fontFamily="Berlin Sans FB Bold"
+                fontSize="8em"
+                textShadow="-1px 5px 0 rgba(69, 248, 130, .66)"
+              >
+                LOCKED // OUT
+              </Heading>
+              <Text
+                fontWeight="bold"
+                mt="3em"
+                fontSize="1.4em"
+              >
+                LEAGUE OF LEGENDS TOURNAMENT
+              </Text>
+
+              <Box position="relative" className="animBorderFill" mt="2em" cursor="pointer">
+                <BorderFillButtonStg
+                  svgProps={{
+                    width: "200px"
+                  }}
+
+                  pathProps={{
+                    stroke: "white",
+                    fill: "var(--chakra-colors-ui-login-text)"
+                  }}
+                />
+
+                <Button
+                  position="absolute"
+                  top="50%"
+                  left="50%"
+                  transform="translate(-50%, -50%)"
+                  color="black"
                   fontWeight="bold"
-                  mt="3em"
-                  fontSize="1.4em"
+                  fontSize="md"
+                  variant="plain"
+                  onClick={() => router.push("/#schedule")}
                 >
-                  LEAGUE OF LEGENDS TOURNAMENT
-                </Text>
+                  VIEW SCHEDULE
+                </Button>
+              </Box>
+            </VStack>
+          </Center>
 
-                <Box position="relative" className="animBorderFill" mt="2em" cursor="pointer">
-                  <BorderFillButtonStg
-                    svgProps={{
-                      width: "200px"
-                    }}
+        </Box>
 
-                    pathProps={{
-                      stroke: "white",
-                      fill: "var(--chakra-colors-ui-login-text)"
-                    }}
-                  />
+        <Box
+          height="100vh"
+          backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_2.png)`}
+          backgroundSize="100%"
+          mt="-10em"
+        >
 
-                  <Button
-                    position="absolute"
-                    top="50%"
-                    left="50%"
-                    transform="translate(-50%, -50%)"
-                    color="black"
-                    fontWeight="bold"
-                    fontSize="md"
-                    variant="plain"
-                    onClick={() => router.push("/#schedule")}
-                  >
-                    VIEW SCHEDULE
-                  </Button>
-                </Box>
-              </VStack>
-            </Center>
+        </Box>
 
-          </Box>
+        <IconButton
+          position="absolute"
+          left={0}
+          top={"230px"}
+          background="orange.500"
+          roundedRight="md"
+          border="none"
+          size="2xs"
+          height="80px"
+          onClick={shamrockDisclosure.onOpen}
+        >
+          <FaLock />
+        </IconButton>
 
-          <Box
-            height="100vh"
-            backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_2.png)`}
-            backgroundSize="100%"
-            mt="-10em"
-          >
-
-          </Box>
-
-          <IconButton
-            position="absolute"
-            left={0}
-            top={"230px"}
-            background="orange.500"
-            roundedRight="md"
-            border="none"
-            size="2xs"
-            height="80px"
-            onClick={shamrockDisclosure.onOpen}
-          >
-            <FaLock />
-          </IconButton>
-
-          <Shamrock isOpen={shamrockDisclosure.open} onClose={shamrockDisclosure.onClose} />
-        </MainLayout>
-      )}
-    </>
+        <Shamrock isOpen={shamrockDisclosure.open} onClose={shamrockDisclosure.onClose} />
+      </MainLayout>
+    </Show>
   );
 }

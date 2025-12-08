@@ -64,3 +64,17 @@ export interface DreamDraftResponse {
     user_id: number
     selection: DreamDraftSelection[]
 }
+
+export interface LeaderboardResponse {
+    items: {
+        id: number
+        name: string
+        discord_id: string
+        avatar_url: string
+        pickems_score: number
+        dd_score: number
+        rank: number
+    }[]
+    pages: number
+    page: number
+}

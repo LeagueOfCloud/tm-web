@@ -11,9 +11,10 @@ type MiscPickemCardProps = {
     score: number
     defaultSelection?: string
     options: string[]
+    disableSelect?: boolean
 }
 
-export default function MiscPickemCard({ pickemId, title, defaultSelection, options }: MiscPickemCardProps) {
+export default function MiscPickemCard({ pickemId, title, defaultSelection, options, disableSelect }: MiscPickemCardProps) {
     const selectDisclosure = useDisclosure()
     const session = useSession()
     const [selected, setSelected] = useState<string | undefined>(defaultSelection ?? undefined)
@@ -23,7 +24,7 @@ export default function MiscPickemCard({ pickemId, title, defaultSelection, opti
     }, [selected, options])
 
     return (
-        <Show when={session.status === "authenticated"}>
+        <>
             <Card.Root
                 flexDirection="row"
                 overflow="hidden"
@@ -46,11 +47,13 @@ export default function MiscPickemCard({ pickemId, title, defaultSelection, opti
                         </Card.Description>
                     </Card.Body>
 
-                    <Card.Footer>
-                        <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
-                            Select
-                        </Button>
-                    </Card.Footer>
+                    <Show when={session.status === "authenticated" && !disableSelect}>
+                        <Card.Footer>
+                            <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
+                                Select
+                            </Button>
+                        </Card.Footer>
+                    </Show>
                 </Flex>
             </Card.Root>
 
@@ -75,6 +78,6 @@ export default function MiscPickemCard({ pickemId, title, defaultSelection, opti
                         })
                 }}
             />
-        </Show>
+        </>
     )
 }
