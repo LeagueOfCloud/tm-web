@@ -1,3 +1,4 @@
+import { getCdnImage } from "@/lib/helpers";
 import { AbsoluteCenter, Box, Heading, Image, Link, Text, VStack } from "@chakra-ui/react";
 import { signIn } from "next-auth/react";
 
@@ -5,13 +6,13 @@ export default function Maintenance() {
     return (
         <Box
             height="100vh"
-            backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/maintenance_background.png)`}
+            backgroundImage={`url(${getCdnImage("assets/maintenance_background.png")})`}
             backgroundSize="cover"
             backgroundPosition="center center"
         >
             <AbsoluteCenter>
                 <VStack textAlign="center">
-                    <Image alt="maintenance" src={`${process.env.NEXT_PUBLIC_CDN_URL}/assets/maintenance.png`} height="300px" draggable={false} />
+                    <Image alt="maintenance" src={getCdnImage("assets/maintenance.png")} height="300px" draggable={false} />
 
                     <Heading size="3xl">Maintenance</Heading>
 

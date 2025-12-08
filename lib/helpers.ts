@@ -52,3 +52,7 @@ export function ellipsise(text: string, maxLength: number, endLength = 0, repeat
     }
     return text.slice(0, maxLength) + symbol.repeat(repeat) + text.slice(text.length - endLength - 1, text.length)
 }
+
+export function getCdnImage(imagePath: string) {
+    return `${process.env.NEXT_PUBLIC_CDN_URL}/${imagePath}?v=${process.env.NEXT_PUBLIC_IMAGE_VERSION}`
+}

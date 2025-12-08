@@ -6,6 +6,7 @@ import { FaLock } from "react-icons/fa";
 import Shamrock from "@/components/shamrock";
 import BorderFillButtonStg from "@/components/svg/border-fill-button";
 import { useRouter } from "next/router";
+import { getCdnImage } from "@/lib/helpers";
 
 export default function Index() {
   const session = useSession()
@@ -21,7 +22,7 @@ export default function Index() {
 
         <Box
           height="90vh"
-          backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_1.png)`}
+          backgroundImage={`url(${getCdnImage("assets/background_1.png")})`}
           backgroundSize="100%"
         >
 
@@ -76,7 +77,7 @@ export default function Index() {
 
         <Box
           height="100vh"
-          backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_2.png)`}
+          backgroundImage={`url(${getCdnImage("assets/background_2.png")})`}
           backgroundSize="100%"
           mt="-10em"
         >

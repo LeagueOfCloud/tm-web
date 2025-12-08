@@ -18,6 +18,7 @@ import useChampions from "@/lib/hooks/useChampions";
 import ChampionPickemCard from "@/components/ui/pickems/champion-card";
 import MiscPickemCard from "@/components/ui/pickems/misc-card";
 import { LuCheck, LuShare2 } from "react-icons/lu";
+import { getCdnImage } from "@/lib/helpers";
 
 interface PickEmsProps {
     otherProfileId?: number
@@ -75,7 +76,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
             )}>
                 <Box
                     height="100vh"
-                    background={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems.png)`}
+                    background={`url(${getCdnImage("assets/background_pickems.png")})`}
                     backgroundSize="cover"
                 >
 
@@ -198,7 +199,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
 
                 <Box
                     height="125vh"
-                    backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_1.png)`}
+                    backgroundImage={`url(${getCdnImage("assets/background_pickems_1.png")})`}
                     backgroundSize="cover"
                     mt="-15em"
                     id="players"
@@ -234,7 +235,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
 
                 <Box
                     height="100vh"
-                    backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_2.png)`}
+                    backgroundImage={`url(${getCdnImage("assets/background_pickems_2.png")})`}
                     backgroundSize="cover"
                     id="teams"
                     mt="-11em"
@@ -270,7 +271,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
 
                 <Box
                     height="100vh"
-                    backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_3.png)`}
+                    backgroundImage={`url(${getCdnImage("assets/background_pickems_3.png")})`}
                     backgroundSize="cover"
                     id="champions"
                     mt="-2em"
@@ -306,7 +307,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
 
                 <Box
                     height="100vh"
-                    backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickems_4.png)`}
+                    backgroundImage={`url(${getCdnImage("assets/background_pickems_4.png")})`}
                     backgroundSize="cover"
                     backgroundPosition="bottom"
                     id="misc"

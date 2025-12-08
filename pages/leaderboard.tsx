@@ -6,6 +6,7 @@ import LeaderboardCard from "@/components/ui/leaderboard-card";
 import Loader from "@/components/ui/loader";
 import { toaster } from "@/components/ui/toaster";
 import api from "@/lib/api";
+import { getCdnImage } from "@/lib/helpers";
 import { LeaderboardResponse } from "@/types/db";
 import { Box, Button, ButtonGroup, Center, Heading, HStack, IconButton, Pagination, Show, Text, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -70,7 +71,7 @@ export default function Leaderboard() {
 
             <Box
                 height="100vh"
-                backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_leaderboard.png)`}
+                backgroundImage={`url(${getCdnImage("assets/background_leaderboard.png")})`}
                 backgroundSize="100%"
             >
                 <Center mt="25vh">
@@ -159,7 +160,7 @@ export default function Leaderboard() {
                 pt="20em"
                 height="128vh"
                 id="view"
-                backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_leaderboard_1.png)`}
+                backgroundImage={`url(${getCdnImage("assets/background_leaderboard_1.png")})`}
                 backgroundSize="100%"
             >
 

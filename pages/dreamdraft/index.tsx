@@ -6,6 +6,7 @@ import Loader from "@/components/ui/loader";
 import { toaster } from "@/components/ui/toaster";
 import api from "@/lib/api";
 import { CURRENCY_NAME } from "@/lib/constants";
+import { getCdnImage } from "@/lib/helpers";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import useSettings from "@/lib/hooks/useSettings";
 import { PlayerResponse } from "@/types/db";
@@ -91,7 +92,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
             )}>
                 <Box
                     height="100vh"
-                    background={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_dreamdraft.png)`}
+                    background={`url(${getCdnImage("assets/background_dreamdraft.png")})`}
                     backgroundSize="cover"
                 >
 
@@ -211,7 +212,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
 
                 <Box
                     height="125vh"
-                    backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_dreamdraft_1.png)`}
+                    backgroundImage={`url(${getCdnImage("assets/background_dreamdraft_1.png")})`}
                     backgroundSize="cover"
                     mt="-15em"
                     id="make-team"
