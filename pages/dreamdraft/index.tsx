@@ -200,7 +200,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                                         fontWeight="bold"
                                         fontSize="md"
                                         variant="plain"
-                                        onClick={() => router.push("/leaderboard#dreamdraft")}
+                                        onClick={() => router.push("/dreamdraft/leaderboard")}
                                     >
                                         LEADERBOARD
                                     </Button>

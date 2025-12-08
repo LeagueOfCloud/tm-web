@@ -13,23 +13,17 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
-export default function Leaderboard() {
+interface LeaderboardProps {
+    title: string
+    board: string
+}
+
+export default function Leaderboard({ title, board }: LeaderboardProps) {
     const router = useRouter()
-    const [board, setBoard] = useState<string>("pickems")
     const [currentPage, setCurrentPage] = useState<number>(1)
     const [aproxTotalItems, setAproxTotalItems] = useState<number>(1)
     const [loadingProfiles, setLoadingProfiles] = useState<boolean>(true)
     const [profiles, setProfiles] = useState<LeaderboardResponse["items"]>([])
-
-    useEffect(() => {
-        const preselect = decodeURIComponent(location.hash.substring(1))
-
-        if (preselect === "dreamdraft") {
-            queueMicrotask(() => {
-                setBoard("dreamdraft")
-            })
-        }
-    }, [])
 
     useEffect(() => {
         queueMicrotask(() => {
@@ -74,9 +68,17 @@ export default function Leaderboard() {
                 backgroundImage={`url(${getCdnImage("assets/background_leaderboard.png")})`}
                 backgroundSize="100%"
             >
-                <Center mt="25vh">
+                <Center mt="20vh">
                     <VStack>
                         <Heading
+                            fontFamily="Berlin Sans FB Bold"
+                            fontSize="8em"
+                            textShadow="-1px 5px 0 rgba(69, 248, 130, 0.66)"
+                        >
+                            {title.toUpperCase()}
+                        </Heading>
+                        <Heading
+                            mt=".8em"
                             fontFamily="Berlin Sans FB Bold"
                             fontSize="8em"
                             textShadow="-1px 5px 0 rgba(69, 248, 130, 0.66)"
@@ -114,40 +116,10 @@ export default function Leaderboard() {
                                     fontSize="md"
                                     variant="plain"
                                     onClick={() => {
-                                        setBoard("pickems")
                                         router.push("#view")
                                     }}
                                 >
-                                    {"PICK'EMS"}
-                                </Button>
-                            </Box>
-                            <Box position="relative" className="animBorderFill" cursor="pointer">
-                                <BorderFillButtonStg
-                                    svgProps={{
-                                        width: "200px"
-                                    }}
-
-                                    pathProps={{
-                                        stroke: "white",
-                                        fill: "var(--chakra-colors-ui-login-text)"
-                                    }}
-                                />
-
-                                <Button
-                                    position="absolute"
-                                    top="50%"
-                                    left="50%"
-                                    transform="translate(-50%, -50%)"
-                                    color="black"
-                                    fontWeight="bold"
-                                    fontSize="md"
-                                    variant="plain"
-                                    onClick={() => {
-                                        setBoard("dreamdraft")
-                                        router.push("#view")
-                                    }}
-                                >
-                                    {"DREAM DRAFT"}
+                                    {"VIEW RANKINGS"}
                                 </Button>
                             </Box>
                         </HStack>

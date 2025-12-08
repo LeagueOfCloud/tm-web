@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image, Text, Link, SimpleGrid } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image, Text, Link, SimpleGrid, Menu } from "@chakra-ui/react";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { LuPencilLine } from "react-icons/lu";
 import useSettings from "@/lib/hooks/useSettings";
@@ -72,10 +72,34 @@ export default function MainLayout({ children }: PropsWithChildren) {
 
                 <HStack gap={5}>
                     <HeaderButton to="/">{"HOME"}</HeaderButton>
+
                     <HeaderButton to="#schedule">{"SCHEDULE"}</HeaderButton>
-                    <HeaderButton to="/dreamdraft">{"DREAM DRAFT"}</HeaderButton>
-                    <HeaderButton to="/pickems">{"PICK'EMS"}</HeaderButton>
-                    <HeaderButton to="/leaderboard">{"LEADERBOARD"}</HeaderButton>
+
+                    <HeaderButton
+                        to="/dreamdraft"
+                        asMenu
+                        menuRender={() => (
+                            <>
+                                <Menu.Item value="dd-create" cursor="pointer" onClick={() => router.push("/dreamdraft")}>Make Your Draft</Menu.Item>
+                                <Menu.Item value="dd-leaderboard" cursor="pointer" onClick={() => router.push("/dreamdraft/leaderboard")}>Leaderboard</Menu.Item>
+                            </>
+                        )}
+                    >
+                        {"DREAM DRAFT"}
+                    </HeaderButton>
+
+                    <HeaderButton
+                        to="/pickems"
+                        asMenu
+                        menuRender={() => (
+                            <>
+                                <Menu.Item value="pickems-create" cursor="pointer" onClick={() => router.push("/pickems")}>Your Predictions</Menu.Item>
+                                <Menu.Item value="pickems-leaderboard" cursor="pointer" onClick={() => router.push("/pickems/leaderboard")}>Leaderboard</Menu.Item>
+                            </>
+                        )}
+                    >
+                        {"PICK'EMS"}
+                    </HeaderButton>
 
                     {session.data?.user.type === "admin" && (
                         <HeaderButton to="/admin">{"ADMIN"}</HeaderButton>
@@ -146,7 +170,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
                             <Link href="/schedule">Schedule</Link>
                             <Link href="/pickems">{"Pick'Ems"}</Link>
                             <Link onClick={() => signIn("discord")}>Sign In</Link>
-                            <Link href="/leaderboard">Leaderboard</Link>
+                            <Link href="/profile">Profile</Link>
                             <Link onClick={() => signOut()}>Sign Out</Link>
                             <Link href="/about">About</Link>
                         </SimpleGrid>

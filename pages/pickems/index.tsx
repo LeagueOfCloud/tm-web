@@ -186,7 +186,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                                         fontWeight="bold"
                                         fontSize="md"
                                         variant="plain"
-                                        onClick={() => router.push("/leaderboard#pickems")}
+                                        onClick={() => router.push("/pickems/leaderboard")}
                                     >
                                         LEADERBOARD
                                     </Button>
