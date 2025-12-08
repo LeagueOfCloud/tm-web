@@ -27,7 +27,8 @@ const config = defineConfig({
                     loginText: { value: "#44f980" },
                     loginBackground: { value: "#04160aff" },
                     headerBackground: { value: "#18202a" }
-                }
+                },
+                footerBackground: { value: "#141414ff" }
             }
         },
         semanticTokens: {

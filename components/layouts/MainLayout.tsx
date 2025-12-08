@@ -1,14 +1,15 @@
 "use client"
 
-import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image, Text, Link, SimpleGrid } from "@chakra-ui/react";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { LuPencilLine } from "react-icons/lu";
 import useSettings from "@/lib/hooks/useSettings";
 import Loader from "../ui/loader";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import HeaderButton from "../ui/header-button";
 import BorderFillButtonStg from "../svg/border-fill-button";
+import { FaGithub } from "react-icons/fa";
 
 const SCROLL_HEIGHT_REVEAL = 200
 
@@ -51,6 +52,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
         <Flex
             direction="column"
             width="100%"
+            minHeight="100vh"
         >
             <HStack
                 position="fixed"
@@ -119,7 +121,38 @@ export default function MainLayout({ children }: PropsWithChildren) {
                 </HStack>
             </HStack>
 
-            {children}
+            <Flex flex="1" direction="column">
+                {children}
+            </Flex>
+
+            <Flex
+                p={8}
+                justifyContent="space-evenly"
+                background="footerBackground"
+                id="footer"
+            >
+                <Box>
+                    <Heading>{settings.tournament_name}</Heading>
+                    <Text color="gray.400" fontSize="sm">Platform by League of Cloud</Text>
+                    <Icon cursor="pointer" as={FaGithub} onClick={() => window.open("https://github.com/LeagueOfCloud", "_blank")} />
+                </Box>
+
+                <Flex>
+                    <Box>
+                        <Heading>Useful Links</Heading>
+                        <SimpleGrid columns={2} gap={1} fontSize="sm" color="gray.400">
+                            <Link href="/">Home</Link>
+                            <Link href="/dreamdraft">DreamDraft</Link>
+                            <Link href="/schedule">Schedule</Link>
+                            <Link href="/pickems">{"Pick'Ems"}</Link>
+                            <Link onClick={() => signIn("discord")}>Sign In</Link>
+                            <Link href="/leaderboard">Leaderboard</Link>
+                            <Link onClick={() => signOut()}>Sign Out</Link>
+                            <Link href="/about">About</Link>
+                        </SimpleGrid>
+                    </Box>
+                </Flex>
+            </Flex>
         </Flex>
     )
 }

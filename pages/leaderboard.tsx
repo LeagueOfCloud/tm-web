@@ -156,7 +156,7 @@ export default function Leaderboard() {
 
             <Box
                 mt="-25em"
-                pt="17em"
+                pt="20em"
                 height="128vh"
                 id="view"
                 backgroundImage={`url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_leaderboard_1.png)`}
