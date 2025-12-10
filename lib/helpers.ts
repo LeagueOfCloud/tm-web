@@ -1,4 +1,5 @@
 import { PlayerResponse, TeamResponse } from "@/types/db"
+import { DateTime } from "luxon"
 
 export interface PickEms {
     id: string
@@ -55,4 +56,8 @@ export function ellipsise(text: string, maxLength: number, endLength = 0, repeat
 
 export function getCdnImage(imagePath: string) {
     return `${process.env.NEXT_PUBLIC_CDN_URL}/${imagePath}?v=${process.env.NEXT_PUBLIC_IMAGE_VERSION}`
+}
+
+export function formatTimeFromMs(millis: number) {
+    return DateTime.fromMillis(millis, { zone: "utc" }).toFormat("fff")
 }

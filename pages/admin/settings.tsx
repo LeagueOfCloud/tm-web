@@ -78,7 +78,10 @@ export default function AdminConfig() {
             )}
 
             {!loadingConfig && (
-                <chakra.form onSubmit={onSubmit}>
+                <chakra.form onSubmit={(e) => {
+                    form.clearErrors()
+                    onSubmit(e)
+                }}>
                     <VStack alignItems="start">
                         <Field.Root invalid={!!form.formState.errors.tournament_name} maxWidth="300px" required>
                             <Field.Label>Tournament Name <Field.RequiredIndicator /></Field.Label>

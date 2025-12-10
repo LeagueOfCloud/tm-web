@@ -5,7 +5,7 @@ import { PropsWithChildren } from "react";
 import { FaCog, FaUsers } from "react-icons/fa";
 import { FaComputer, FaWebAwesome } from "react-icons/fa6";
 import { LuLogOut, LuStepBack } from "react-icons/lu";
-import { SiRiotgames } from "react-icons/si";
+import { SiLeagueoflegends, SiRiotgames } from "react-icons/si";
 import Loader from "../ui/loader";
 
 export function SidebarButton({ children, ...props }: ButtonProps & PropsWithChildren) {
@@ -53,7 +53,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                             <Icon as={FaWebAwesome} />
                             Dashboard
                         </SidebarButton>
-                        
+
                         <SidebarButton onClick={() => router.push("/admin/teams")}>
                             <Icon as={FaUsers} />
                             Manage Teams
@@ -67,6 +67,11 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                         <SidebarButton onClick={() => router.push("/admin/riot-accounts")}>
                             <Icon as={SiRiotgames} />
                             Riot Accounts
+                        </SidebarButton>
+
+                        <SidebarButton onClick={() => router.push("/admin/matches")}>
+                            <Icon as={SiLeagueoflegends} />
+                            Matches
                         </SidebarButton>
 
                         <SidebarButton onClick={() => router.push("/admin/settings")}>

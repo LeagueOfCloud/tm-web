@@ -78,3 +78,17 @@ export interface LeaderboardResponse {
     pages: number
     page: number
 }
+
+export interface TournamentMatchResponse {
+    id: number
+    team_1_id: number
+    team_2_id: number
+    team_1_name: string
+    team_2_name: string
+    start_date: number
+    end_date?: number
+    winner_team_id?: number
+    winner_team_name?: string
+    tournament_match_id?: string
+    lobby_code?: string
+}

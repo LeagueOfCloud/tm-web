@@ -4,6 +4,7 @@ import { API_URL, Query } from "./common";
 import pickems from "./pickems";
 import dreamdraft from "./dreamdraft";
 import leaderboard from "./leaderboard";
+import tournament from "./tournament";
 
 /*
 * RESOURCE GET METHODS
@@ -316,7 +317,8 @@ const api = {
     updateConfig,
     ...pickems,
     ...dreamdraft,
-    ...leaderboard
+    ...leaderboard,
+    ...tournament
 }
 
 export default api;
