@@ -73,7 +73,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
                 <HStack gap={5}>
                     <HeaderButton to="/">{"HOME"}</HeaderButton>
 
-                    <HeaderButton to="#schedule">{"SCHEDULE"}</HeaderButton>
+                    <HeaderButton to="/schedule">{"SCHEDULE"}</HeaderButton>
 
                     <HeaderButton
                         to="/dreamdraft"

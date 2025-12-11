@@ -65,7 +65,7 @@ export default function Index() {
                   fontWeight="bold"
                   fontSize="md"
                   variant="plain"
-                  onClick={() => router.push("/#schedule")}
+                  onClick={() => router.push("/schedule")}
                 >
                   VIEW SCHEDULE
                 </Button>
