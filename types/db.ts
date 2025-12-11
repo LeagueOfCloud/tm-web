@@ -85,6 +85,9 @@ export interface TournamentMatchResponse {
     team_2_id: number
     team_1_name: string
     team_2_name: string
+    map: string
+    pick_type: string
+    team_size: number
     start_date: number
     end_date?: number
     winner_team_id?: number

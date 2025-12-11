@@ -54,8 +54,11 @@ export default function AdminMatchesManager() {
                         { key: "id", header: "Match ID", render: m => `#${m.id}` },
                         { key: "team_1_name", header: "Team 1", render: m => m.team_1_name },
                         { key: "team_2_name", header: "Team 2", render: m => m.team_2_name },
-                        { key: "start_date", header: "Start Date", render: m => formatTimeFromMs(m.start_date) },
-                        { key: "end_date", header: "End Date", render: m => m.end_date ? formatTimeFromMs(m.end_date) : "-" },
+                        { key: "map", header: "Map", render: m => m.map },
+                        { key: "pick_type", header: "Pick Type", render: m => m.pick_type },
+                        { key: "team_size", header: "Team Size", render: m => m.team_size },
+                        { key: "start_date", header: "Start Date (UTC)", render: m => formatTimeFromMs(m.start_date) },
+                        { key: "end_date", header: "End Date (UTC)", render: m => m.end_date ? formatTimeFromMs(m.end_date) : "-" },
                         { key: "winner_team_name", header: "Winner Team", render: m => m.winner_team_name ?? "-" },
                         { key: "tournament_match_id", header: "Riot Match ID", render: m => m.tournament_match_id ?? "-" },
                         {
@@ -78,7 +81,7 @@ export default function AdminMatchesManager() {
                                             loading={generatingLobby}
                                             onClick={() => {
                                                 setGeneratingLobby(true)
-                                                api.createTournamentLobby(m.id, session.data?.user.token)
+                                                api.createTournamentLobby(m.id, { map: m.map, pick_type: m.pick_type, team_size: m.team_size }, session.data?.user.token)
                                                     .then(res => {
                                                         refreshTournamentMatches()
                                                         toaster.create({

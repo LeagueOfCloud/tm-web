@@ -1,9 +1,9 @@
 import axios from "axios";
 import { API_URL } from "./common";
 
-async function createTournamentLobby(id: number, token?: string): Promise<string> {
+async function createTournamentLobby(id: number, payload: object, token?: string): Promise<string> {
     return new Promise((resolve, reject) => {
-        axios.post(`${API_URL}/tournament/create-lobby/${id}`, {}, { headers: { Authorization: token } })
+        axios.post(`${API_URL}/tournament/create-lobby/${id}`, payload, { headers: { Authorization: token } })
             .then(res => {
                 const data = res.data;
 

@@ -59,5 +59,5 @@ export function getCdnImage(imagePath: string) {
 }
 
 export function formatTimeFromMs(millis: number) {
-    return DateTime.fromMillis(millis, { zone: "utc" }).toFormat("fff")
+    return DateTime.fromMillis(millis, { zone: "utc" }).toFormat("ff")
 }

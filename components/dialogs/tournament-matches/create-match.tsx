@@ -18,6 +18,9 @@ interface NewMatchForm {
     team_1_id: number
     team_2_id: number
     date: number
+    map: string
+    pick_type: string
+    team_size: number
 }
 
 export default function CreateTournamentMatch({ disclosure, teams, token, onDone }: CreateTournamentMatchProps) {
@@ -29,6 +32,38 @@ export default function CreateTournamentMatch({ disclosure, teams, token, onDone
             items: teams.map(t => ({ label: t.name, value: t.id.toString() }))
         })
     }, [teams])
+
+    const mapCollection = useMemo(() => {
+        return createListCollection({
+            items: [
+                { label: "Summoner's Rift", value: "SUMMONERS_RIFT" },
+                { label: "Howling Abyss", value: "HOWLING_ABYSS" }
+            ]
+        })
+    }, [])
+
+    const pickTypeCollection = useMemo(() => {
+        return createListCollection({
+            items: [
+                { label: "Blind Pick", value: "BLIND_PICK" },
+                { label: "Draft Mode", value: "DRAFT_MODE" },
+                { label: "All Random", value: "ALL_RANDOM" },
+                { label: "Tournament Draft", value: "TOURNAMENT_DRAFT" }
+            ]
+        })
+    }, [])
+
+    const teamSizeCollection = useMemo(() => {
+        return createListCollection({
+            items: [
+                { label: "1", value: "1" },
+                { label: "2", value: "2" },
+                { label: "3", value: "3" },
+                { label: "4", value: "4" },
+                { label: "5", value: "5" }
+            ]
+        })
+    }, [])
 
     const onSubmit = form.handleSubmit((data) => {
         let isInvalid = false;
@@ -54,6 +89,27 @@ export default function CreateTournamentMatch({ disclosure, teams, token, onDone
             })
             form.setError("team_2_id", {
                 message: "Teams must be different"
+            })
+        }
+
+        if (!data.map) {
+            isInvalid = true
+            form.setError("map", {
+                message: "Map is required"
+            })
+        }
+
+        if (!data.pick_type) {
+            isInvalid = true
+            form.setError("pick_type", {
+                message: "Pick Type is required"
+            })
+        }
+
+        if (!data.team_size || data.team_size > 5 || data.team_size < 1) {
+            isInvalid = true
+            form.setError("team_size", {
+                message: "Team Size must be between 1 and 5"
             })
         }
 
@@ -165,6 +221,90 @@ export default function CreateTournamentMatch({ disclosure, teams, token, onDone
                                             </Select.Positioner>
                                         </Select.Root>
                                         <Field.ErrorText>{form.formState.errors.team_2_id?.message}</Field.ErrorText>
+                                    </Field.Root>
+
+                                    <Field.Root invalid={!!form.formState.errors.map} required>
+                                        <Field.Label>
+                                            Map <Field.RequiredIndicator />
+                                        </Field.Label>
+                                        <Select.Root collection={mapCollection} size="md" variant="subtle" onSelect={(e) => form.setValue("map", e.value)}>
+                                            <Select.HiddenSelect />
+                                            <Select.Control>
+                                                <Select.Trigger cursor="pointer">
+                                                    <Select.ValueText placeholder="Select Map" />
+                                                </Select.Trigger>
+                                                <Select.IndicatorGroup>
+                                                    <Select.Indicator />
+                                                </Select.IndicatorGroup>
+                                            </Select.Control>
+                                            <Select.Positioner>
+                                                <Select.Content>
+                                                    {mapCollection.items.map(map => (
+                                                        <Select.Item item={map} key={`select-map-${map.value}`} cursor="pointer">
+                                                            {map.label}
+                                                            <Select.ItemIndicator />
+                                                        </Select.Item>
+                                                    ))}
+                                                </Select.Content>
+                                            </Select.Positioner>
+                                        </Select.Root>
+                                        <Field.ErrorText>{form.formState.errors.map?.message}</Field.ErrorText>
+                                    </Field.Root>
+
+                                    <Field.Root invalid={!!form.formState.errors.pick_type} required>
+                                        <Field.Label>
+                                            Pick Type <Field.RequiredIndicator />
+                                        </Field.Label>
+                                        <Select.Root collection={pickTypeCollection} size="md" variant="subtle" onSelect={(e) => form.setValue("pick_type", e.value)}>
+                                            <Select.HiddenSelect />
+                                            <Select.Control>
+                                                <Select.Trigger cursor="pointer">
+                                                    <Select.ValueText placeholder="Select Pick Type" />
+                                                </Select.Trigger>
+                                                <Select.IndicatorGroup>
+                                                    <Select.Indicator />
+                                                </Select.IndicatorGroup>
+                                            </Select.Control>
+                                            <Select.Positioner>
+                                                <Select.Content>
+                                                    {pickTypeCollection.items.map(pickType => (
+                                                        <Select.Item item={pickType} key={`select-pick-type-${pickType.value}`} cursor="pointer">
+                                                            {pickType.label}
+                                                            <Select.ItemIndicator />
+                                                        </Select.Item>
+                                                    ))}
+                                                </Select.Content>
+                                            </Select.Positioner>
+                                        </Select.Root>
+                                        <Field.ErrorText>{form.formState.errors.pick_type?.message}</Field.ErrorText>
+                                    </Field.Root>
+
+                                    <Field.Root invalid={!!form.formState.errors.team_size} required>
+                                        <Field.Label>
+                                            Team Size <Field.RequiredIndicator />
+                                        </Field.Label>
+                                        <Select.Root collection={teamSizeCollection} size="md" variant="subtle" onSelect={(e) => form.setValue("team_size", parseInt(e.value))}>
+                                            <Select.HiddenSelect />
+                                            <Select.Control>
+                                                <Select.Trigger cursor="pointer">
+                                                    <Select.ValueText placeholder="Select Team Size" />
+                                                </Select.Trigger>
+                                                <Select.IndicatorGroup>
+                                                    <Select.Indicator />
+                                                </Select.IndicatorGroup>
+                                            </Select.Control>
+                                            <Select.Positioner>
+                                                <Select.Content>
+                                                    {teamSizeCollection.items.map(teamSize => (
+                                                        <Select.Item item={teamSize} key={`select-team-size-${teamSize.value}`} cursor="pointer">
+                                                            {teamSize.label}
+                                                            <Select.ItemIndicator />
+                                                        </Select.Item>
+                                                    ))}
+                                                </Select.Content>
+                                            </Select.Positioner>
+                                        </Select.Root>
+                                        <Field.ErrorText>{form.formState.errors.team_size?.message}</Field.ErrorText>
                                     </Field.Root>
 
                                     <Field.Root invalid={!!form.formState.errors.date} required>
