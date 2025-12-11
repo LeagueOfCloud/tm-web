@@ -225,6 +225,7 @@ export default function ManagePlayers() {
                             )
                         }
                     },
+                    { key: "cost", header: "Cost", render: p => p.cost },
                     {
                         key: "edit",
                         header: "Edit",

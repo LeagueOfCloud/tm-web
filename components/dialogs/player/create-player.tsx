@@ -13,6 +13,7 @@ export default function CreatePlayerModal({ teams, token, isOpen, setOpen, onEnd
     const [avatarFile, setAvatarFile] = useState<File>();
     const [teamId, setTeamId] = useState<number>();
     const [teamRole, setTeamRole] = useState<string>();
+    const [cost, setCost] = useState<number>();
     const [isSubmitting, setSubmitting] = useState<boolean>(false);
 
     const teamsCollection = useMemo(() => {
@@ -116,6 +117,14 @@ export default function CreatePlayerModal({ teams, token, isOpen, setOpen, onEnd
                                         </Select.Positioner>
                                     </Select.Root>
                                 </Field.Root>
+
+                                <Field.Root required>
+                                    <Field.Label>
+                                        Cost <Field.RequiredIndicator />
+                                    </Field.Label>
+                                    <Input placeholder="10" type="number" variant="subtle" onChange={(e) => setCost(parseInt(e.target.value))} min={0} autoComplete="off" />
+                                </Field.Root>
+
                             </SimpleGrid>
 
                             <Field.Root mt={2} required>
@@ -154,7 +163,8 @@ export default function CreatePlayerModal({ teams, token, isOpen, setOpen, onEnd
                                     name: playerName,
                                     discord_id: discordId,
                                     team_id: teamId,
-                                    team_role: teamRole
+                                    team_role: teamRole,
+                                    cost:cost
                                 }, avatarFile).then(res => {
                                     toaster.create({
                                         title: "Player Created",

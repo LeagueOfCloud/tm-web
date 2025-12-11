@@ -17,6 +17,7 @@ type EditTeamModalProps = {
         discord_id: string
         team_id: number
         team_role: string
+        cost: number
     }
     setOpen: (state: boolean) => void
     onEnd: () => void
@@ -28,6 +29,7 @@ export default function EditPlayerModal({ teams, token, isOpen, setOpen, onEnd, 
     const [teamId, setTeamId] = useState<number>(defaultValues.team_id);
     const [teamRole, setTeamRole] = useState<string>(defaultValues.team_role);
     const [avatarFile, setAvatarFile] = useState<File>();
+    const [cost, setCost] = useState<number>(defaultValues.cost);
     const [isSubmitting, setSubmitting] = useState<boolean>(false);
 
     const teamsCollection = useMemo(() => {
@@ -132,6 +134,14 @@ export default function EditPlayerModal({ teams, token, isOpen, setOpen, onEnd, 
                                         </Select.Positioner>
                                     </Select.Root>
                                 </Field.Root>
+
+                                <Field.Root required>
+                                    <Field.Label>
+                                        Cost <Field.RequiredIndicator />
+                                    </Field.Label>
+                                    <Input defaultValue={defaultValues.cost} placeholder="10" type="number" variant="subtle" onChange={(e) => setCost(parseInt(e.target.value))} min={0} autoComplete="off" />
+                                </Field.Root>
+
                             </SimpleGrid>
 
                             <Field.Root mt={2} required>
@@ -167,7 +177,8 @@ export default function EditPlayerModal({ teams, token, isOpen, setOpen, onEnd, 
                                     discord_id: discordId,
                                     team_id: teamId,
                                     team_role: teamRole,
-                                    new_avatar: avatarFile ? true : false
+                                    new_avatar: avatarFile ? true : false,
+                                    cost:cost
                                 }, avatarFile).then(res => {
                                     toaster.create({
                                         title: "Player Updated",
