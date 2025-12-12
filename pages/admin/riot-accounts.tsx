@@ -69,12 +69,13 @@ export default function ManageRiotAccounts() {
                             </HStack>
                         )
                     },
-                    { key: "player_id", header: "Owner", render: a => players.find(p => p.id === a.player_id)?.name },
+                    { key: "player_id", header: "Owner", render: a => a.player_name },
                     {
                         key: "puuid", header: "Account PUUID", render: a => (
                             <Code>{ellipsise(a.account_puuid, 5, 5, 20, "*")}</Code>
                         )
                     },
+                    { key: "processed_matches", header: "Processed Matches", render: a => a.processed_matches },
                     {
                         key: "edit_account", header: "Actions", render: a => (
                             <HStack>

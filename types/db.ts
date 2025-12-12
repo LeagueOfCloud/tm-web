@@ -42,6 +42,8 @@ export interface RiotAccountResponse {
     account_name: string
     account_puuid: string
     player_id: number
+    player_name: string
+    processed_matches: number
     is_primary: "true" | "false"
 }
 
