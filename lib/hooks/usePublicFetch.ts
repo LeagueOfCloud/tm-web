@@ -9,6 +9,7 @@ export default function usePublicFetch<T>(path: string) {
     queryKey: [queryKeys.publicFetch, path],
     queryFn: async () => {
       const res = await api.getPublic<T>(path);
+      console.log("Fetched public data from", path, res);
       return res;
     }
   });
