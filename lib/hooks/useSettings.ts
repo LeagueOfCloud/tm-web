@@ -7,6 +7,7 @@ export default function useSettings() {
 
   const query = useQuery({
     queryKey: [queryKeys.settings],
+    refetchInterval: 30000,
     queryFn: async () => {
       const res = await api.getSettings();
       return res;

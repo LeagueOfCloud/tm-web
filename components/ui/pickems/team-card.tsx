@@ -13,9 +13,10 @@ type TeamPickemCardProps = {
     defaultId?: string
     teams: TeamResponse[]
     disableSelect?: boolean
+    locked?: boolean
 }
 
-export default function TeamPickEmCard({ pickemId, title, defaultId, teams, disableSelect }: TeamPickemCardProps) {
+export default function TeamPickEmCard({ pickemId, title, defaultId, teams, disableSelect, locked }: TeamPickemCardProps) {
     const selectDisclosure = useDisclosure()
     const session = useSession()
     const [selectedId, setSelectedId] = useState<number | undefined>(defaultId ? parseInt(defaultId) : undefined)
@@ -50,9 +51,18 @@ export default function TeamPickEmCard({ pickemId, title, defaultId, teams, disa
 
                     <Show when={session.status === "authenticated" && !disableSelect}>
                         <Card.Footer>
-                            <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
-                                Select
-                            </Button>
+                            <Show
+                                when={!locked}
+                                fallback={(
+                                    <Button width="100%" colorPalette="red" variant="surface" disabled={true}>
+                                        {"Pick'Ems are Locked"}
+                                    </Button>
+                                )}
+                            >
+                                <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
+                                    Select
+                                </Button>
+                            </Show>
                         </Card.Footer>
                     </Show>
                 </Flex>

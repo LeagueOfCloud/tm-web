@@ -12,9 +12,10 @@ type MiscPickemCardProps = {
     defaultSelection?: string
     options: string[]
     disableSelect?: boolean
+    locked?: boolean
 }
 
-export default function MiscPickemCard({ pickemId, title, defaultSelection, options, disableSelect }: MiscPickemCardProps) {
+export default function MiscPickemCard({ pickemId, title, defaultSelection, options, disableSelect, locked }: MiscPickemCardProps) {
     const selectDisclosure = useDisclosure()
     const session = useSession()
     const [selected, setSelected] = useState<string | undefined>(defaultSelection ?? undefined)
@@ -49,9 +50,18 @@ export default function MiscPickemCard({ pickemId, title, defaultSelection, opti
 
                     <Show when={session.status === "authenticated" && !disableSelect}>
                         <Card.Footer>
-                            <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
-                                Select
-                            </Button>
+                            <Show
+                                when={!locked}
+                                fallback={(
+                                    <Button width="100%" colorPalette="red" variant="surface" disabled={true}>
+                                        {"Pick'Ems are Locked"}
+                                    </Button>
+                                )}
+                            >
+                                <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
+                                    Select
+                                </Button>
+                            </Show>
                         </Card.Footer>
                     </Show>
                 </Flex>

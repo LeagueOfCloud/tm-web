@@ -13,9 +13,10 @@ type ChampionPickemCardProps = {
     defaultId?: string
     champions: Champion[]
     disableSelect?: boolean
+    locked?: boolean
 }
 
-export default function ChampionPickemCard({ pickemId, title, defaultId, champions, disableSelect }: ChampionPickemCardProps) {
+export default function ChampionPickemCard({ pickemId, title, defaultId, champions, disableSelect, locked }: ChampionPickemCardProps) {
     const selectDisclosure = useDisclosure()
     const session = useSession()
     const [selectedId, setSelectedId] = useState<string | undefined>(defaultId ?? undefined)
@@ -50,9 +51,18 @@ export default function ChampionPickemCard({ pickemId, title, defaultId, champio
 
                     <Show when={session.status === "authenticated" && !disableSelect}>
                         <Card.Footer>
-                            <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
-                                Select
-                            </Button>
+                            <Show
+                                when={!locked}
+                                fallback={(
+                                    <Button width="100%" colorPalette="red" variant="surface" disabled={true}>
+                                        {"Pick'Ems are Locked"}
+                                    </Button>
+                                )}
+                            >
+                                <Button width="100%" colorPalette="blue" variant="surface" onClick={selectDisclosure.onOpen}>
+                                    Select
+                                </Button>
+                            </Show>
                         </Card.Footer>
                     </Show>
                 </Flex>

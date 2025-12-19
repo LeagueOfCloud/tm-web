@@ -56,10 +56,11 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
 
     const selectedPlayers = useMemo(() => dreamDraftIds.map(playerId => players.find(p => p.id === playerId)).filter(p => p !== undefined), [dreamDraftIds, players])
 
+    const dreamDraftUnlocked = useMemo(() => settings.dd_unlocked === "true", [settings])
+
     useEffect(() => {
         if (otherProfileId) {
             clipboard.setValue(`${location.href}`)
-            console.log("updated")
             api.getDreamDraft(otherProfileId)
                 .then(res => {
                     setDreamDraftIds(res.selection.map(s => s.player_id))
@@ -70,7 +71,6 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                 })
         } else if (session.status === "authenticated") {
             clipboard.setValue(`${location.href}/${session.data.user.id}`)
-            console.log("updated")
             api.getDreamDraft(session.data.user.id)
                 .then(res => {
                     setDreamDraftIds(res.selection.map(s => s.player_id))
@@ -219,8 +219,39 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                     pt="15em"
                     px={10}
                 >
+                    <Show when={!dreamDraftUnlocked}>
+                        <Center mb={5}>
+                            <Text
+                                fontFamily="Berlin Sans FB Bold"
+                                color="white"
+                                fontSize="1.5em"
+                                background="tomato"
+                                p={3}
+                                rounded="md"
+                            >
+                                {"DREAMDRAFT IS CURRENTLY LOCKED"}
+                            </Text>
+                        </Center>
+                    </Show>
+
                     <SimpleGrid columns={2} gap={5}>
-                        <VStack border="2px solid" borderColor="feature" rounded="lg" p={3} backdropFilter="blur(10px)">
+                        <VStack border="2px solid" borderColor="feature" rounded="lg" p={3} backdropFilter="blur(10px)" position="relative">
+                            <HStack
+                                position="absolute"
+                                top={3}
+                                right={3}
+                                fontWeight="medium"
+                                rounded="lg"
+                                background="#640960ff"
+                                px={2}
+                                py={1}
+                            >
+                                Team Value:
+
+                                <RuneIcon size="md" />
+                                {parseInt(settings.dd_max_budget) - remainingCurrency} {CURRENCY_NAME}
+                            </HStack>
+
                             <Text
                                 fontFamily="Berlin Sans FB"
                                 fontWeight="bold"
@@ -252,7 +283,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                                             alignItems="start"
                                             cursor="pointer"
                                             onClick={() => {
-                                                if (!allowSwap) {
+                                                if (!allowSwap || !dreamDraftUnlocked) {
                                                     return
                                                 }
 
@@ -336,7 +367,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                                                             {...player}
 
                                                             onSelect={(id) => {
-                                                                if (!allowSwap) {
+                                                                if (!allowSwap || !dreamDraftUnlocked) {
                                                                     return
                                                                 }
 

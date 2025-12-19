@@ -34,6 +34,8 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
     const [defaultPickems, setDefaultPickems] = useState<PickEmResponse[]>([])
     const clipboard = useClipboard({ timeout: 2000 })
 
+    const pickemsUnlocked = useMemo(() => settings.pickem_unlocked === "true", [settings])
+
     useEffect(() => {
         if (otherProfileId) {
             clipboard.setValue(`${location.href}`)
@@ -227,6 +229,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                                 players={players}
                                 defaultId={defaultPickems.find(p => p.id === `${pickem.id}-${otherProfileId ?? session.data?.user.id}`)?.value}
                                 disableSelect={otherProfileId !== undefined}
+                                locked={!pickemsUnlocked}
                             />
                         ))}
                     </SimpleGrid>
@@ -263,6 +266,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                                 teams={teams}
                                 defaultId={defaultPickems.find(p => p.id === `${pickem.id}-${otherProfileId ?? session.data?.user.id}`)?.value}
                                 disableSelect={otherProfileId !== undefined}
+                                locked={!pickemsUnlocked}
                             />
                         ))}
                     </SimpleGrid>
@@ -299,6 +303,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                                 champions={champions}
                                 defaultId={defaultPickems.find(p => p.id === `${pickem.id}-${otherProfileId ?? session.data?.user.id}`)?.value}
                                 disableSelect={otherProfileId !== undefined}
+                                locked={!pickemsUnlocked}
                             />
                         ))}
                     </SimpleGrid>
@@ -335,6 +340,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                                 options={pickem.extras}
                                 defaultSelection={defaultPickems.find(p => p.id === `${pickem.id}-${otherProfileId ?? session.data?.user.id}`)?.value}
                                 disableSelect={otherProfileId !== undefined}
+                                locked={!pickemsUnlocked}
                             />
                         ))}
                     </SimpleGrid>
