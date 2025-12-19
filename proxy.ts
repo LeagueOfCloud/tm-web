@@ -22,8 +22,12 @@ export default withAuth(
     {
         callbacks: {
             authorized: ({ token, req }) => {
-                if (req.nextUrl.pathname.startsWith("/admin")) {
+                const pathName = req.nextUrl.pathname
+
+                if (pathName.startsWith("/admin")) {
                     return token?.type === "admin"
+                } else if (pathName.startsWith("/profile")) {
+                    return token !== null
                 }
 
                 return true
