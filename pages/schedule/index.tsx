@@ -137,7 +137,7 @@ const pastMatches = useMemo(() => {
                                         <VStack key={dayKey} align="stretch" spaceY={4}>
                                             <HStack justify="center" my={4}>
                                                 <Text color="white" fontSize="sm" opacity={0.7}>─────────────</Text>
-                                                <Heading fontFamily="Berlin Sans FB Bold" size="2xl" color="white" textAlign="center" minW="fit-content">{dayKey}</Heading>
+                                                <Heading  size="2xl" color="white" textAlign="center" minW="fit-content">{dayKey}</Heading>
                                                 <Text color="white" fontSize="sm" opacity={0.7}>─────────────</Text>
                                             </HStack>
                                             {dayMatches.map((match) => {
@@ -155,18 +155,18 @@ const pastMatches = useMemo(() => {
                                                                     overflow="hidden"
                                                                 >
                                                                     <Image
-                                                                        src={`(${getCdnImage(`${match.team_1_logo}`)})`}
+                                                                        src={match.team_1_logo}
                                                                         alt={match.team_1_name}
                                                                         boxSize="110px"
                                                                         objectFit="cover"
                                                                     />
                                                                 </Box>
-                                                                <Text fontFamily="Berlin Sans FB Bold" fontWeight="bold" fontSize="lg">{match.team_1_name}</Text>
+                                                                <Box w="7vw" overflow="auto"> <Text fontWeight="bold" fontSize="lg" whiteSpace="normal" overflowWrap="break-word"  textAlign="center"> {match.team_1_name} </Text> </Box>
                                                             </VStack>
 
                                                             <VStack>
-                                                                <Text fontFamily="Berlin Sans FB Bold" fontWeight="bold" fontSize="4xl" color="white" textShadow="-1px 2px 0 rgba(69, 248, 130, 0.5)">VS</Text>
-                                                                <Text fontFamily="Berlin Sans FB Bold" fontSize="md" color="gray.400">{timeStr}</Text>
+                                                                <Text fontWeight="bold" fontSize="4xl" color="white" textShadow="-1px 2px 0 rgba(69, 248, 130, 0.5)">VS</Text>
+                                                                <Text fontSize="md" color="gray.400">{timeStr}</Text>
                                                             </VStack>
 
                                                             <VStack align="center">
@@ -176,13 +176,13 @@ const pastMatches = useMemo(() => {
                                                                     overflow="hidden"
                                                                 >
                                                                     <Image
-                                                                        src={`url(${getCdnImage(`${match.team_2_logo}`)})`}
+                                                                        src={match.team_2_logo}
                                                                         alt={match.team_2_name}
                                                                         boxSize="110px"
                                                                         objectFit="cover"
                                                                     />
                                                                 </Box>
-                                                                <Text fontFamily="Berlin Sans FB Bold" fontWeight="bold" fontSize="lg">{match.team_2_name}</Text>
+                                                                <Box w="7vw" overflow="auto"> <Text fontWeight="bold" fontSize="lg" whiteSpace="normal" overflowWrap="break-word"  textAlign="center"> {match.team_2_name} </Text> </Box>
                                                             </VStack>
                                                         </HStack>
                                                     </VStack>
@@ -211,7 +211,7 @@ const pastMatches = useMemo(() => {
                                         <VStack key={dayKey} align="stretch" spaceY={4}>
                                             <HStack justify="center" my={4}>
                                                 <Text color="white" fontSize="sm" opacity={0.7}>─────────────</Text>
-                                                <Heading fontFamily="Berlin Sans FB Bold" size="2xl" color="white" textAlign="center" minW="fit-content">{dayKey}</Heading>
+                                                <Heading size="2xl" color="white" textAlign="center" minW="fit-content">{dayKey}</Heading>
                                                 <Text color="white" fontSize="sm" opacity={0.7}>─────────────</Text>
                                             </HStack>
                                             {dayMatches.map((match) => {
@@ -228,18 +228,18 @@ const pastMatches = useMemo(() => {
                                                                     overflow="hidden"
                                                                 >
                                                                     <Image
-                                                                        src={`url(${getCdnImage(`${match.team_1_logo}`)})`}
+                                                                        src={match.team_1_logo}
                                                                         alt={match.team_1_name}
                                                                         boxSize="110px"
                                                                         objectFit="cover"
                                                                     />
                                                                 </Box>
-                                                                <Text fontFamily="Berlin Sans FB Bold" fontWeight="bold" fontSize="lg">{match.team_1_name}</Text>
+                                                                <Box w="7vw" overflow="auto"> <Text fontWeight="bold" fontSize="lg" whiteSpace="normal" overflowWrap="break-word" textAlign="center"> {match.team_1_name} </Text> </Box>
                                                             </VStack>
 
                                                             <VStack>
-                                                                <Text fontFamily="Berlin Sans FB Bold" fontWeight="bold" fontSize="4xl" color="white" textShadow="-1px 2px 0 rgba(69, 248, 130, 0.5)">VS</Text>
-                                                                <Text fontFamily="Berlin Sans FB Bold" fontSize="md" color="gray.400">{timeStr}</Text>
+                                                                <Text fontWeight="bold" fontSize="4xl" color="white" textShadow="-1px 2px 0 rgba(69, 248, 130, 0.5)">VS</Text>
+                                                                <Text fontSize="md" color="gray.400">{timeStr}</Text>
                                                             </VStack>
 
                                                             <VStack align="center">
@@ -249,13 +249,13 @@ const pastMatches = useMemo(() => {
                                                                     overflow="hidden"
                                                                 >
                                                                     <Image
-                                                                        src={`url(${getCdnImage(`${match.team_2_logo}`)})`}
+                                                                        src={match.team_2_logo}
                                                                         alt={match.team_2_name}
                                                                         boxSize="110px"
                                                                         objectFit="cover"
                                                                     />
                                                                 </Box>
-                                                                <Text fontFamily="Berlin Sans FB Bold" fontWeight="bold" fontSize="lg">{match.team_2_name}</Text>
+                                                                <Box w="7vw" overflow="auto"> <Text fontWeight="bold" fontSize="lg" whiteSpace="normal" overflowWrap="break-word" textAlign="center"> {match.team_2_name} </Text> </Box>
                                                             </VStack>
                                                         </HStack>
                                                     </VStack>
