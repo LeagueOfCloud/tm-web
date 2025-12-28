@@ -67,13 +67,13 @@ export default function MainLayout({ children }: PropsWithChildren) {
                 zIndex={100}
             >
                 <Heading size="xl">
-                    {settings.tournament_name.toUpperCase()}
+                    {settings.tournament_name?.toUpperCase()}
                 </Heading>
 
                 <HStack gap={5}>
                     <HeaderButton to="/">{"HOME"}</HeaderButton>
 
-                    <HeaderButton to="#schedule">{"SCHEDULE"}</HeaderButton>
+                    <HeaderButton to="/schedule">{"SCHEDULE"}</HeaderButton>
 
                     <HeaderButton
                         to="/dreamdraft"
