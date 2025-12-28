@@ -98,11 +98,14 @@ export interface TournamentMatchResponse {
 
 export interface ScheduledMatch {
     match_id: number,
+    team_1_id: number,
     team_1_name: string,
     team_1_logo: string,
     team_1_tag: string,
+    team_2_id: number,
     team_2_name: string,
     team_2_logo: string,
     team_2_tag: string,
     start_date: number,
+    winner_team_id?: number,
 }
