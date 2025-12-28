@@ -15,9 +15,9 @@ export default function SchedulePage() {
     const MatchesRef = useRef<HTMLDivElement>(null)
     const [showPast, setShowPast] = useState(false);
 
-    const sortedMatches = useMemo(() => {
-        return [...matches].sort((a, b) => (a.start_date ?? 0) - (b.start_date ?? 0))
-    }, [matches])
+    const sortedMatches = [...matches].sort(
+            (a, b) => new Date(a.start_date ?? 0).getTime() - new Date(b.start_date ?? 0).getTime()
+        )
 
     const now = useMemo(() => new Date().getTime(), [])
 
@@ -28,67 +28,37 @@ export default function SchedulePage() {
         })
     }, [sortedMatches, now])
 
-    //Told ai to mock some shit for me who knows but yeah remove it 
     const pastMatches = useMemo(() => {
-        return sortedMatches
-            .filter(m => {
+        return sortedMatches.filter(m => {
                 const start = new Date(m.start_date).getTime()
                 return start < now
             })
-            .map((m, index) => {
-                // 🔧 MOCK TEAM IDS (if not present)
-                const team1Id = m.team_1_id ?? index * 2 + 1
-                const team2Id = m.team_2_id ?? index * 2 + 2
-
-                // 🔧 MOCK WINNER: team 1 wins if match_id even, team 2 if odd
-                const mockedWinnerTeamId = m.match_id % 2 === 0 ? team1Id : team2Id
-
-                return {
-                    ...m,
-                    team_1_id: team1Id,
-                    team_2_id: team2Id,
-                    winner_team_id: mockedWinnerTeamId
-                }
-            })
     }, [sortedMatches, now])
 
+    function GroupMatchesByDay(matches: ScheduledMatch[]) {
+        return useMemo(() => {
+            const grouped = new Map<string, ScheduledMatch[]>()
 
+            for (const match of matches) {
+                const date = new Date(match.start_date ?? 0)
+                const dayKey = date.toLocaleDateString('en-GB', {
+                    weekday: 'long',
+                    month: 'short',
+                    day: 'numeric'
+                })
 
-    const upcomingMatchesByDay = useMemo(() => {
-        const grouped = new Map<string, ScheduledMatch[]>()
-
-        for (const match of upcomingMatches) {
-            const date = new Date(match.start_date ?? 0)
-            const dayKey = date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })
-
-            if (!grouped.has(dayKey)) {
-                grouped.set(dayKey, [])
+                if (!grouped.has(dayKey)) {
+                    grouped.set(dayKey, [])
+                }
+                grouped.get(dayKey)!.push(match)
             }
-            grouped.get(dayKey)!.push(match)
-        }
 
-        return grouped
-    }, [upcomingMatches])
+            return grouped
+        }, [matches])
+    }
 
-    const pastMatchesByDay = useMemo(() => {
-        const grouped = new Map<string, ScheduledMatch[]>()
-
-        for (const match of pastMatches) {
-            const date = new Date(match.start_date ?? 0)
-            const dayKey = date.toLocaleDateString('en-US', {
-                weekday: 'long',
-                month: 'short',
-                day: 'numeric'
-            })
-
-            if (!grouped.has(dayKey)) {
-                grouped.set(dayKey, [])
-            }
-            grouped.get(dayKey)!.push(match)
-        }
-
-        return grouped
-    }, [pastMatches])
+    const upcomingMatchesByDay = GroupMatchesByDay(upcomingMatches)
+    const pastMatchesByDay = GroupMatchesByDay(pastMatches)
 
     return (
         <MainLayout>
@@ -153,11 +123,11 @@ export default function SchedulePage() {
                 h="auto"
                 padding={6}
                 alignSelf="center"
-                onClick={() => {setShowPast(prev => !prev);}}
+                onClick={() => { setShowPast(prev => !prev); }}
             >
                 <VStack justify="center">
                     <Icon boxSize={4}>
-                      {!showPast ? <SlArrowUp /> : <SlArrowDown />}
+                        {!showPast ? <SlArrowUp /> : <SlArrowDown />}
                     </Icon>
                     <Text
                         fontWeight="bold"
@@ -195,8 +165,12 @@ export default function SchedulePage() {
                                                     {dayMatches.map((match) => {
                                                         const start = match.start_date ? new Date(match.start_date) : undefined
                                                         const timeStr = start ? start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : "TBD"
-                                                        const team1Won = match.winner_team_id === match.team_1_id
+                                                        let team1Won = match.winner_team_id === match.team_1_id
                                                         const team2Won = match.winner_team_id === match.team_2_id
+                                                        if (!team1Won && !team2Won) {
+                                                            team1Won = true
+                                                        }
+
 
                                                         return (
                                                             <VStack key={`match-${match.match_id}`} py={3}>
