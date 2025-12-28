@@ -2,6 +2,7 @@
 
 * {
     scroll-behavior: smooth;
+    text-rendering: optimizeLegibility !important;
 }
 
 .animBorderFill:hover > svg > path {

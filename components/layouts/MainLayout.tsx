@@ -135,6 +135,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
                                 transform="translate(-50%, -50%)"
                                 color="ui.loginText"
                                 variant="plain"
+                                fontWeight="semibold"
                                 onClick={() => router.push("/profile")}
                             >
                                 <Image alt="avatar" src={session.data.user.avatar_url} height="25px" rounded="full" />

@@ -16,8 +16,8 @@ export default function SchedulePage() {
     const [showPast, setShowPast] = useState(false);
 
     const sortedMatches = [...matches].sort(
-            (a, b) => new Date(a.start_date ?? 0).getTime() - new Date(b.start_date ?? 0).getTime()
-        )
+        (a, b) => new Date(a.start_date ?? 0).getTime() - new Date(b.start_date ?? 0).getTime()
+    )
 
     const now = useMemo(() => new Date().getTime(), [])
 
@@ -30,9 +30,9 @@ export default function SchedulePage() {
 
     const pastMatches = useMemo(() => {
         return sortedMatches.filter(m => {
-                const start = new Date(m.start_date).getTime()
-                return start < now
-            })
+            const start = new Date(m.start_date).getTime()
+            return start < now
+        })
     }, [sortedMatches, now])
 
     function GroupMatchesByDay(matches: ScheduledMatch[]) {
@@ -139,7 +139,7 @@ export default function SchedulePage() {
                 </VStack>
             </Button>
 
-            <Box p={6} id="view" background={`url(${getCdnImage("assets/background_schedule_loop.png")})`} mt={"-18em"} pt="20em">
+            <Box p={6} id="view" background={`url(${getCdnImage("assets/background_schedule_loop.png")})`} mt={"-20em"} pt="20em">
                 <VStack align="stretch" spaceY={6}>
                     <Box ref={MatchesRef}>
                         {(loadingMatches) ? (

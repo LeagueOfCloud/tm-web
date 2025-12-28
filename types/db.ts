@@ -108,6 +108,6 @@ export interface ScheduledMatch {
     team_2_name: string,
     team_2_logo: string,
     team_2_tag: string,
-    start_date: number,
+    start_date: string,
     winner_team_id?: number,
 }

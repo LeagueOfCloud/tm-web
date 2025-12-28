@@ -10,6 +10,7 @@ const config = defineConfig({
                 white: { value: "#fff" },
                 feature: { value: "#5767f2" },
                 featureAlter: { value: "#45f882" },
+                featureBlack: { value: "#20202A" },
                 secondary: { value: "#7b818a" },
                 featureBackground: { value: "#32363f" },
                 successGreen: { value: "#01d69e" },
