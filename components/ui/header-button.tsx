@@ -1,5 +1,6 @@
 "use client"
 
+import { barlow, poppins } from "@/styles/fonts";
 import { Link, Menu, Portal } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { PropsWithChildren, ReactNode } from "react";
@@ -17,7 +18,7 @@ export default function HeaderButton({ to, asMenu, children, menuRender }: Heade
         return (
             <Menu.Root>
                 <Menu.Trigger
-                    fontWeight="bold"
+                    fontWeight="700"
                     fontSize="15px"
                     _hover={{
                         textDecoration: "none",
@@ -45,6 +46,8 @@ export default function HeaderButton({ to, asMenu, children, menuRender }: Heade
                         borderColor: "successGreen",
                         transition: "all 300ms ease-in-out"
                     }}
+                    className={barlow.className}
+                    letterSpacing="0.8px"
                 >
                     {children}
                 </Menu.Trigger>
@@ -53,6 +56,7 @@ export default function HeaderButton({ to, asMenu, children, menuRender }: Heade
                         <Menu.Content
                             background="featureBackground"
                             rounded="none"
+                            className={poppins.className}
                         >
                             {menuRender()}
                         </Menu.Content>
@@ -65,7 +69,7 @@ export default function HeaderButton({ to, asMenu, children, menuRender }: Heade
     return (
         <Link
             onClick={() => router.push(to)}
-            fontWeight="bold"
+            fontWeight="700"
             fontSize="15px"
             position="relative"
             transition="all 150ms ease-in-out"
@@ -90,6 +94,8 @@ export default function HeaderButton({ to, asMenu, children, menuRender }: Heade
                 },
                 color: "successGreen"
             }}
+            className={barlow.className}
+            letterSpacing="0.8px"
         >
             {children}
         </Link>
