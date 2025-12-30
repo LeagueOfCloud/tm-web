@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import HeaderButton from "../ui/header-button";
 import BorderFillButtonStg from "../svg/border-fill-button";
 import { FaGithub } from "react-icons/fa";
+import { barlow, poppins } from "@/styles/fonts";
 
 const SCROLL_HEIGHT_REVEAL = 200
 
@@ -66,8 +67,8 @@ export default function MainLayout({ children }: PropsWithChildren) {
                 background={headerBackgroundVisible ? "ui.headerBackground" : "transparent"}
                 zIndex={100}
             >
-                <Heading size="xl">
-                    {settings.tournament_name?.toUpperCase()}
+                <Heading size="2xl" fontWeight="bold" letterSpacing="0.8px" className={barlow.className}>
+                    {settings?.tournament_name.toUpperCase()}
                 </Heading>
 
                 <HStack gap={5}>
@@ -155,6 +156,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
                 justifyContent="space-evenly"
                 background="footerBackground"
                 id="footer"
+                className={poppins.className}
             >
                 <Box>
                     <Heading>{settings.tournament_name}</Heading>

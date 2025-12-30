@@ -1,3 +1,4 @@
+import { barlow, poppins } from "@/styles/fonts";
 import { LeaderboardResponse } from "@/types/db";
 import { Avatar, Box, Center, HStack, Icon, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -45,6 +46,7 @@ export default function LeaderboardCard({ profile, scoreColumn, redirect }: Lead
                     <Text
                         fontWeight="bold"
                         fontSize="1.5em"
+                        className={barlow.className}
                     >
                         #{profile.rank}
                     </Text>
@@ -71,10 +73,11 @@ export default function LeaderboardCard({ profile, scoreColumn, redirect }: Lead
                                 profile.rank === 2 ? "xl" :
                                     profile.rank === 3 ? "lg" : "md"
                         }
+                        className={barlow.className}
                     >
                         {profile.name.toUpperCase()}
                     </Text>
-                    <Box>Score: {profile[scoreColumn]}</Box>
+                    <Box className={poppins.className}>Score: {profile[scoreColumn]}pts</Box>
                 </Box>
             </HStack>
 

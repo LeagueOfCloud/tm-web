@@ -1,6 +1,7 @@
 import { Champion } from "@/types/riot"
 import { Box, HStack, Image, Text, UseDisclosureReturn } from "@chakra-ui/react"
 import SelectPickemCommon from "./select-common"
+import { barlow } from "@/styles/fonts"
 
 type SelectPickemChampionProps = {
     champions: Champion[]
@@ -41,8 +42,8 @@ export default function SelectPickemChampion({ champions, onChampionSelect, disc
                         p={4}
                         textAlign="center"
                     >
-                        <Text fontSize="lg" fontWeight="bold" fontFamily="Berlin Sans FB">{champion.name}</Text>
-                        <Text mt={3} fontSize="lg" fontWeight="bold" fontFamily="Berlin Sans FB">{champion.title}</Text>
+                        <Text fontSize="lg" fontWeight="bold" className={barlow.className} letterSpacing="1px">{champion.name}</Text>
+                        <Text mt={3} fontSize="lg" fontWeight="bold" className={barlow.className}>{champion.title}</Text>
                     </Box>
                 </HStack>
             )}

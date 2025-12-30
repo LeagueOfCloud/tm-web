@@ -9,6 +9,7 @@ import { CURRENCY_NAME } from "@/lib/constants";
 import { getCdnImage } from "@/lib/helpers";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import useSettings from "@/lib/hooks/useSettings";
+import { barlow } from "@/styles/fonts";
 import { PlayerResponse } from "@/types/db";
 import { AbsoluteCenter, ActionBar, Badge, Box, Button, Center, Heading, HStack, Image, Portal, ScrollArea, Show, SimpleGrid, Span, Text, useClipboard, VStack } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
@@ -212,11 +213,11 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
 
                 <Box
                     height="125vh"
-                    backgroundImage={`url(${getCdnImage("assets/background_dreamdraft_1.png")})`}
+                    backgroundImage={`url(${getCdnImage("assets/backgrounds/dreamdraft/dreamdraft_1_1.png")})`}
                     backgroundSize="cover"
-                    mt="-15em"
+                    mt="-20em"
                     id="make-team"
-                    pt="15em"
+                    pt="20em"
                     px={10}
                 >
                     <Show when={!dreamDraftUnlocked}>
@@ -235,7 +236,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                     </Show>
 
                     <SimpleGrid columns={2} gap={5}>
-                        <VStack border="2px solid" borderColor="feature" rounded="lg" p={3} backdropFilter="blur(10px)" position="relative">
+                        <VStack border="2px solid" borderColor="feature" rounded="lg" p={3} backdropFilter="blur(2px)" position="relative">
                             <HStack
                                 position="absolute"
                                 top={3}
@@ -253,7 +254,8 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                             </HStack>
 
                             <Text
-                                fontFamily="Berlin Sans FB"
+                                className={barlow.className}
+                                letterSpacing="2px"
                                 fontWeight="bold"
                                 fontSize="2xl"
                                 borderBottom="1px solid white"
@@ -299,7 +301,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                                             />
 
                                             <Box p={2}>
-                                                <Text fontSize="1.3em" fontWeight="bold">{player.team_tag.toUpperCase()} {player.name}</Text>
+                                                <Text className={barlow.className} letterSpacing="0.8px" fontSize="1.3em" fontWeight="bold">{player.team_tag.toUpperCase()} {player.name}</Text>
                                                 <HStack mt={2}>
                                                     <Text>You spent <Span color="limegreen" fontWeight="bold"><RuneIcon size="sm" mb={1} /> {player.cost}</Span> for the</Text>
 
@@ -326,7 +328,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                             </Show>
                         </VStack>
 
-                        <VStack border="2px solid" borderColor="feature" rounded="lg" p={3} backdropFilter="blur(10px)" position="relative">
+                        <VStack border="2px solid" borderColor="feature" rounded="lg" p={3} backdropFilter="blur(2px)" position="relative">
                             <HStack
                                 position="absolute"
                                 top={3}
@@ -343,7 +345,8 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                             </HStack>
 
                             <Text
-                                fontFamily="Berlin Sans FB"
+                                className={barlow.className}
+                                letterSpacing="2px"
                                 fontWeight="bold"
                                 fontSize="2xl"
                                 borderBottom="1px solid white"

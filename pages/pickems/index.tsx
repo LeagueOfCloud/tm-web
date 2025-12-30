@@ -7,7 +7,7 @@ import useSettings from "@/lib/hooks/useSettings";
 import PlayerPickEmCard from "@/components/ui/pickems/player-card";
 import BorderFillButtonStg from "@/components/svg/border-fill-button";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import { PickEmResponse, PlayerResponse, TeamResponse } from "@/types/db";
 import { signIn, useSession } from "next-auth/react";
@@ -19,9 +19,25 @@ import ChampionPickemCard from "@/components/ui/pickems/champion-card";
 import MiscPickemCard from "@/components/ui/pickems/misc-card";
 import { LuCheck, LuShare2 } from "react-icons/lu";
 import { getCdnImage } from "@/lib/helpers";
+import { barlow } from "@/styles/fonts";
 
 interface PickEmsProps {
     otherProfileId?: number
+}
+
+function HeaderText({ children }: PropsWithChildren) {
+    return (
+        <Text
+            fontSize="2em"
+            className={barlow.className}
+            borderBottom="2px solid white"
+            width="30%"
+            textTransform="uppercase"
+            letterSpacing="0.8px"
+        >
+            {children}
+        </Text>
+    )
 }
 
 export default function PickEms({ otherProfileId }: PickEmsProps) {
@@ -201,23 +217,14 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
 
                 <Box
                     height="125vh"
-                    backgroundImage={`url(${getCdnImage("assets/background_pickems_1.png")})`}
+                    backgroundImage={`url(${getCdnImage("assets/backgrounds/pickems/pickems_1.png")})`}
                     backgroundSize="cover"
                     mt="-15em"
                     id="players"
                     pt="15em"
                     px={10}
                 >
-                    <Text
-                        fontSize="2.5em"
-                        fontFamily="Berlin Sans FB Bold"
-                        textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
-                        borderBottom="2px solid white"
-                        width="30%"
-                        boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
-                    >
-                        Players
-                    </Text>
+                    <HeaderText>Players</HeaderText>
 
                     <SimpleGrid my={5} columns={3} gap={5}>
                         {pickems?.players.map(pickem => (
@@ -238,23 +245,14 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
 
                 <Box
                     height="100vh"
-                    backgroundImage={`url(${getCdnImage("assets/background_pickems_2.png")})`}
+                    backgroundImage={`url(${getCdnImage("assets/backgrounds/pickems/pickems_2.png")})`}
                     backgroundSize="cover"
                     id="teams"
                     mt="-11em"
-                    pt="15em"
+                    pt="10em"
                     px={10}
                 >
-                    <Text
-                        fontSize="2.5em"
-                        fontFamily="Berlin Sans FB Bold"
-                        textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
-                        borderBottom="2px solid white"
-                        width="30%"
-                        boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
-                    >
-                        Teams
-                    </Text>
+                    <HeaderText>Teams</HeaderText>
 
                     <SimpleGrid my={5} columns={3} gap={5}>
                         {pickems?.teams.map(pickem => (
@@ -275,23 +273,14 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
 
                 <Box
                     height="100vh"
-                    backgroundImage={`url(${getCdnImage("assets/background_pickems_3.png")})`}
+                    backgroundImage={`url(${getCdnImage("assets/backgrounds/pickems/pickems_3.png")})`}
                     backgroundSize="cover"
                     id="champions"
-                    mt="-2em"
-                    pt="5em"
+                    mt="-12em"
+                    pt="15em"
                     px={10}
                 >
-                    <Text
-                        fontSize="2.5em"
-                        fontFamily="Berlin Sans FB Bold"
-                        textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
-                        borderBottom="2px solid white"
-                        width="30%"
-                        boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
-                    >
-                        Champions
-                    </Text>
+                    <HeaderText>Champions</HeaderText>
 
                     <SimpleGrid my={5} columns={3} gap={5}>
                         {pickems?.champions.map(pickem => (
@@ -311,24 +300,15 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                 </Box>
 
                 <Box
-                    height="100vh"
-                    backgroundImage={`url(${getCdnImage("assets/background_pickems_4.png")})`}
+                    height="115vh"
+                    backgroundImage={`url(${getCdnImage("assets/backgrounds/pickems/pickems_4.png")})`}
                     backgroundSize="cover"
-                    backgroundPosition="bottom"
                     id="misc"
-                    pt="5em"
+                    mt="-10em"
+                    pt="15em"
                     px={10}
                 >
-                    <Text
-                        fontSize="2.5em"
-                        fontFamily="Berlin Sans FB Bold"
-                        textShadow="-1px 4px 0 rgba(87, 103, 242, .66)"
-                        borderBottom="2px solid white"
-                        width="30%"
-                        boxShadow="0px 3px 0 rgba(87, 103, 242, .66)"
-                    >
-                        Miscellaneous
-                    </Text>
+                    <HeaderText>Miscellaneous</HeaderText>
 
                     <SimpleGrid my={5} columns={3} gap={5}>
                         {pickems?.misc.map(pickem => (

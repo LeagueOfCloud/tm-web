@@ -1,5 +1,6 @@
 import { HStack, Text, UseDisclosureReturn } from "@chakra-ui/react"
 import SelectPickemCommon from "./select-common"
+import { barlow } from "@/styles/fonts"
 
 type SelectPickemMiscProps = {
     options: string[]
@@ -31,7 +32,7 @@ export default function SelectPickemMisc({ options, onOptionSelect, disclosure }
                     p={5}
                     justifyContent="center"
                 >
-                    <Text fontSize="xl" fontWeight="bold" fontFamily="Berlin Sans FB">{option}</Text>
+                    <Text fontSize="xl" fontWeight="bold" className={barlow.className} letterSpacing="1px">{option}</Text>
                 </HStack>
             )}
             filterFn={(option, filter) => `${option}`.toLowerCase().includes(filter)}

@@ -65,7 +65,7 @@ export default function Leaderboard({ title, board }: LeaderboardProps) {
 
             <Box
                 height="100vh"
-                backgroundImage={`url(${getCdnImage("assets/background_leaderboard.png")})`}
+                backgroundImage={`url(${getCdnImage("assets/backgrounds/leaderboard/leaderboard_header_1.png")})`}
                 backgroundSize="100%"
             >
                 <Center mt="20vh">
@@ -130,10 +130,11 @@ export default function Leaderboard({ title, board }: LeaderboardProps) {
             <Box
                 mt="-25em"
                 pt="20em"
-                height="128vh"
+                height="130vh"
                 id="view"
-                backgroundImage={`url(${getCdnImage("assets/background_leaderboard_1.png")})`}
-                backgroundSize="100%"
+                backgroundImage={`url(${getCdnImage("assets/backgrounds/leaderboard/leaderboard_1.png")})`}
+                backgroundSize="cover"
+                backgroundPosition="center top"
             >
 
                 <VStack height="80vh">

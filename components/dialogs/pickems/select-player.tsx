@@ -1,6 +1,7 @@
 import { PlayerResponse } from "@/types/db"
 import { Box, HStack, Image, Text, UseDisclosureReturn } from "@chakra-ui/react"
 import SelectPickemCommon from "./select-common"
+import { barlow } from "@/styles/fonts"
 
 type SelectPickemPlayerProps = {
     players: PlayerResponse[]
@@ -40,8 +41,8 @@ export default function SelectPickemPlayer({ players, onPlayerSelect, disclosure
                         p={4}
                         textAlign="center"
                     >
-                        <Text fontSize="lg" fontWeight="bold" fontFamily="Berlin Sans FB">{player.team_tag} {player.name}</Text>
-                        <Text mt={3} fontSize="lg" fontWeight="bold" fontFamily="Berlin Sans FB">{player.team_role.toUpperCase()} for {player.team_name}</Text>
+                        <Text fontSize="lg" fontWeight="bold" className={barlow.className} letterSpacing="1px">{player.team_tag} {player.name}</Text>
+                        <Text mt={3} fontSize="lg" fontWeight="bold" className={barlow.className}>{player.team_role.toUpperCase()} for {player.team_name}</Text>
                     </Box>
                 </HStack>
             )}
