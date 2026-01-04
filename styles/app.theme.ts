@@ -27,7 +27,8 @@ const config = defineConfig({
                 ui: {
                     loginText: { value: "#44f980" },
                     loginBackground: { value: "#04160aff" },
-                    headerBackground: { value: "#18202a" }
+                    headerBackground: { value: "#18202a" },
+                    scheduleBoxBackground: { value: "#0d1214ff" }
                 },
                 footerBackground: { value: "#141414ff" }
             }

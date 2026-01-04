@@ -1,0 +1,39 @@
+.scheduleBox:hover {
+    & > svg > path {
+        animation: scheduleBoxFill 1s forwards;
+    }
+
+    & > div.date {
+        & > p {
+            color: black;
+        }
+
+        & > svg > path {
+            animation: scheduleDateFill 200ms forwards;
+        }
+    }
+
+    & img.teamLogo {
+        border-color: var(--chakra-colors-feature-alter)
+    }
+}
+
+@keyframes scheduleBoxFill {
+    from {
+        stroke-dashoffset: 2425;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes scheduleDateFill {
+    from {
+        fill: var(--chakra-colors-gray-900);
+    }
+
+    to {
+        fill: var(--chakra-colors-feature-alter)
+    }
+}
