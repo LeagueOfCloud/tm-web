@@ -1,4 +1,4 @@
-import { Box, Center, HStack, Image, Text } from "@chakra-ui/react";
+import { Box, Center, HStack, Image, Text, useBreakpointValue } from "@chakra-ui/react";
 import { ScheduledMatchBox, ScheduledMatchDate } from "../svg/scheduled-match-box";
 import { barlow } from "@/styles/fonts";
 import styles from "@/styles/schedule.module.css"
@@ -18,15 +18,38 @@ export default function ScheduledMatchCard({ match }: ScheduledMatchCardProps) {
         }
     }, [match])
 
+    const teamLogoSize = useBreakpointValue({
+        base: "70px",
+        lg: "100px"
+    })
+    const teamNameSize = useBreakpointValue({
+        base: "md",
+        lg: "2xl"
+    })
+    const teamNameWidth = useBreakpointValue({
+        base: "200px",
+        lg: "300px"
+    })
+    const timeFadeLineTop = useBreakpointValue({
+        base: "48%",
+        lg: "45%"
+    })
+
     return (
-        <Box position="relative" width="65%" p={5} className={styles.scheduleBox}>
+        <Box position="relative" width={{
+            base: "900px",
+            lg: "1190px"
+        }} p={5} className={styles.scheduleBox}>
             <ScheduledMatchBox fill="ui.scheduleBoxBackground" strokeDashoffset={2425} position="absolute" />
 
-            <HStack position="relative" height="160px" px="80px" justifyContent="space-between" width="100%">
+            <HStack position="relative" height={{
+                base: "130px",
+                lg: "160px"
+            }} px="80px" justifyContent="space-between" width="100%">
                 <Image
                     src={match.team_1_logo}
                     alt="team logo"
-                    height="100px"
+                    height={teamLogoSize}
                     rounded="xl"
                     border="5px solid"
                     borderColor="gray.600"
@@ -35,10 +58,10 @@ export default function ScheduledMatchCard({ match }: ScheduledMatchCardProps) {
                 />
 
                 <HStack className={barlow.className}>
-                    <Box textAlign="end" width="300px">
+                    <Box textAlign="end" width={teamNameWidth}>
                         <Text fontSize="sm" color="featureAlter" fontWeight="bold">BLUE TEAM</Text>
                         <Text
-                            fontSize="2xl"
+                            fontSize={teamNameSize}
                             fontWeight="800"
                             textTransform="uppercase"
                             letterSpacing="1px"
@@ -52,12 +75,18 @@ export default function ScheduledMatchCard({ match }: ScheduledMatchCardProps) {
                             <Text position="absolute" left="50%" transform="translateX(-50%)" top="-25px" fontWeight="bolder" letterSpacing="1px" color="featureAlter">{winner} WIN</Text>
                         )}
                         <Text
-                            p={5}
+                            p={{
+                                base: 3,
+                                lg: 5
+                            }}
                             mx={5}
                             border="5px solid"
                             borderColor="gray.600"
                             rounded="xl"
-                            fontSize="3xl"
+                            fontSize={{
+                                base: "lg",
+                                lg: "3xl"
+                            }}
                             fontWeight="700"
                             position="relative"
                             _after={{
@@ -66,7 +95,7 @@ export default function ScheduledMatchCard({ match }: ScheduledMatchCardProps) {
                                 height: "3px",
                                 position: "absolute",
                                 left: "50%",
-                                top: "45%",
+                                top: timeFadeLineTop,
                                 transform: "translate(-50%, -50%)",
                                 backgroundImage: "linear-gradient(90deg,rgba(0, 0, 0, 0) 0%, var(--chakra-colors-feature-alter) 25%, rgba(69, 248, 130, 0) 39% 61%, var(--chakra-colors-feature-alter) 75%, rgba(0, 0, 0, 0) 100%)",
                             }}
@@ -75,12 +104,13 @@ export default function ScheduledMatchCard({ match }: ScheduledMatchCardProps) {
                         </Text>
                     </Box>
 
-                    <Box textAlign="start" width="300px">
+                    <Box textAlign="start" width={teamNameWidth}>
                         <Text fontSize="sm" color="featureAlter" fontWeight="bold">RED TEAM</Text>
                         <Text
-                            fontSize="2xl"
+                            fontSize={teamNameSize}
                             fontWeight="800"
                             textTransform="uppercase"
+                            letterSpacing="1px"
                         >
                             {match.team_2_name}
                         </Text>
@@ -90,7 +120,7 @@ export default function ScheduledMatchCard({ match }: ScheduledMatchCardProps) {
                 <Image
                     src={match.team_2_logo}
                     alt="team logo 2"
-                    height="100px"
+                    height={teamLogoSize}
                     rounded="xl"
                     border="5px solid"
                     borderColor="gray.600"
@@ -102,13 +132,22 @@ export default function ScheduledMatchCard({ match }: ScheduledMatchCardProps) {
 
             <Center position="relative" className={styles.date}>
                 <ScheduledMatchDate
-                    height="30px"
+                    width={{
+                        base: "300px",
+                        lg: "400px"
+                    }}
                     position="absolute"
-                    bottom="-30px"
+                    bottom={{
+                        base: "-13px",
+                        lg: "-30px"
+                    }}
                     fill="ui.scheduleBoxBackground"
                 />
                 <Text
-                    bottom="calc(-30px + 0.4em)"
+                    bottom={{
+                        base: "calc(-13px + 0.3em)",
+                        lg: "calc(-30px + 0.4em)"
+                    }}
                     position="absolute"
                     className={barlow.className}
                     textTransform="uppercase"
