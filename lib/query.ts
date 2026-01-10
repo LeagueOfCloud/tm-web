@@ -23,5 +23,6 @@ export const queryKeys = {
     fetch: "apiFetch",
     settings: "apiSettings",
     publicFetch: "apiPublicFetch",
-    dataDragonChampions: "dataDragonChampions"
+    dataDragonChampions: "dataDragonChampions",
+    champSelectLobbies: "champSelectLobbies"
 }

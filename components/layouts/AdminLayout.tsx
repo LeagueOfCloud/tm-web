@@ -7,6 +7,7 @@ import { FaComputer, FaWebAwesome } from "react-icons/fa6";
 import { LuLogOut, LuStepBack } from "react-icons/lu";
 import { SiLeagueoflegends, SiRiotgames } from "react-icons/si";
 import Loader from "../ui/loader";
+import { PiExcludeFill } from "react-icons/pi";
 
 export function SidebarButton({ children, ...props }: ButtonProps & PropsWithChildren) {
 
@@ -72,6 +73,11 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                         <SidebarButton onClick={() => router.push("/admin/matches")}>
                             <Icon as={SiLeagueoflegends} />
                             Matches
+                        </SidebarButton>
+
+                        <SidebarButton onClick={() => router.push("/admin/champselect")}>
+                            <Icon as={PiExcludeFill} />
+                            Champion Select
                         </SidebarButton>
 
                         <SidebarButton onClick={() => router.push("/admin/settings")}>

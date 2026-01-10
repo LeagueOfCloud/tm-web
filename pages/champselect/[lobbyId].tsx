@@ -43,6 +43,7 @@ const turnOrder = [
 
 export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProps) {
     const [lobbyData, setLobbyData] = useState<LobbyState>()
+    const [preBans, setPreBans] = useState<string[]>([])
     const [blueBans, setBlueBans] = useState<string[]>([])
     const [redBans, setRedBans] = useState<string[]>([])
     const [bluePicks, setBluePicks] = useState<string[]>([])
@@ -98,7 +99,9 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
             queueMicrotask(() => {
                 setRedPicks(lobbyData.redTeamChampions)
                 setBluePicks(lobbyData.blueTeamChampions)
-                setBlueBans(lobbyData.bans)
+                setBlueBans(lobbyData.blueTeamBans)
+                setRedBans(lobbyData.redTeamBans)
+                setPreBans(lobbyData.preBans)
 
                 if (lobbyData.connectionId === lobbyData.blueCaptain) {
                     setCaptain("blue")

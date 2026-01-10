@@ -5,6 +5,7 @@ import pickems from "./pickems";
 import dreamdraft from "./dreamdraft";
 import leaderboard from "./leaderboard";
 import tournament from "./tournament";
+import champselect from "./champselect";
 
 /*
 * RESOURCE GET METHODS
@@ -318,7 +319,8 @@ const api = {
     ...pickems,
     ...dreamdraft,
     ...leaderboard,
-    ...tournament
+    ...tournament,
+    ...champselect
 }
 
 export default api;

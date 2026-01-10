@@ -61,3 +61,7 @@ export function getCdnImage(imagePath: string) {
 export function formatTimeFromMs(millis: number) {
     return DateTime.fromMillis(millis, { zone: "utc" }).toFormat("ff")
 }
+
+export function fixLobbyId(lobbyId: string) {
+    return lobbyId.split("#")[1]
+}

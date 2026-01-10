@@ -3,9 +3,21 @@ export type LobbyState = {
     blueCaptain: string
     redCaptain: string
     spectators: string[]
-    bans: string[]
+    preBans: string[]
+    blueTeamBans: string[]
+    redTeamBans: string[]
     blueTeamChampions: string[]
     redTeamChampions: string[]
     state: string
     turn: number
+    lobbyId?: string
+    TTL?: number
+}
+
+export type LobbiesResponse = {
+    lobbies: LobbyState[]
+}
+
+export type LobbyResponse = {
+    lobbyId: string
 }
