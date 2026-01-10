@@ -3,7 +3,7 @@ import { queryKeys } from "../query";
 import axios from "axios";
 import { Champion } from "@/types/riot";
 
-export default function useChampions(patch = "15.23.1") {
+export default function useChampions(patch = "16.1.1") {
     const queryClient = useQueryClient();
 
     const query = useQuery({

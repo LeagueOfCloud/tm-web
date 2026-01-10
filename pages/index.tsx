@@ -1,3 +1,5 @@
+"use client"
+
 import Loader from "@/components/ui/loader";
 import { AbsoluteCenter, Box, Button, Center, Heading, HStack, IconButton, Image, Show, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
@@ -9,7 +11,7 @@ import { useRouter } from "next/router";
 import { getCdnImage } from "@/lib/helpers";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import { ScheduledMatch } from "@/types/db";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SwordIcon } from "@/components/svg/sword";
 import { DateTime } from "luxon";
 import { barlow, poppins } from "@/styles/fonts";
@@ -19,12 +21,17 @@ export default function Index() {
   const session = useSession()
   const router = useRouter()
   const shamrockDisclosure = useDisclosure()
+  const [host, setHost] = useState<string>("")
 
   const { data: scheduleData, loading: loadingSchedule } = usePublicFetch<ScheduledMatch[]>("schedule")
 
   const lastMatch = useMemo(() => {
     return scheduleData.findLast(m => new Date(m.start_date).getTime() < new Date().getTime() && m.winner_team_id)
   }, [scheduleData])
+
+  useEffect(() => {
+    queueMicrotask(() => setHost(location.host.split(":")[0]))
+  }, [])
 
   return (
     <Show
@@ -189,9 +196,26 @@ export default function Index() {
                 {lastMatch !== undefined && DateTime.fromJSDate(new Date(lastMatch.start_date)).toFormat("LLLL dd, yyyy | hh:mm a")}
               </Text>
             </Show>
-
           </Center>
+        </Box>
 
+        <Box
+          height="100vh"
+          backgroundImage={`url(${getCdnImage("assets/background_landing_1.png")})`}
+          backgroundSize="100%"
+          mt="-6em"
+          pt="10em"
+          id="live"
+        >
+          <Center>
+            <iframe
+              key={`twitch-iframe-${host}`}
+              src={`https://player.twitch.tv/?channel=${process.env.NEXT_PUBLIC_TWITCH_CHANNEL_NAME}&parent=${host}`}
+              height="720"
+              width="1280"
+              allowFullScreen>
+            </iframe>
+          </Center>
         </Box>
 
         <IconButton
