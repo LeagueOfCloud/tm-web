@@ -1,4 +1,5 @@
 import { PlayerResponse, TeamResponse } from "@/types/db"
+import { HoverSettings } from "@/types/ws"
 import { DateTime } from "luxon"
 
 export interface PickEms {
@@ -65,3 +66,28 @@ export function formatTimeFromMs(millis: number) {
 export function fixLobbyId(lobbyId: string) {
     return lobbyId.split("#")[1]
 }
+
+export function getHoverSettings(
+    turnOrder: string[],
+    turn: number
+): HoverSettings | null {
+    const current = turnOrder[turn];
+    if (!current || current === "Waiting") return null;
+
+    const team = current.startsWith("Blue") ? "blue" : "red";
+    const type = current.includes("Ban") ? "ban" : "pick";
+
+    let position = 0;
+
+    for (let i = 0; i < turn; i++) {
+        if (
+            turnOrder[i].startsWith(team === "blue" ? "Blue" : "Red") &&
+            turnOrder[i].includes(type === "ban" ? "Ban" : "Pick")
+        ) {
+            position++;
+        }
+    }
+
+    return { team, type, position };
+}
+

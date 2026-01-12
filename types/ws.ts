@@ -21,3 +21,9 @@ export type LobbiesResponse = {
 export type LobbyResponse = {
     lobbyId: string
 }
+
+export type HoverSettings = {
+    team: "blue" | "red"
+    type: "pick" | "ban"
+    position: number
+}
