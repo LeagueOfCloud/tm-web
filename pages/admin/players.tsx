@@ -62,7 +62,7 @@ export default function ManagePlayers() {
     }
 
     return (
-        <AdminLayout>
+        <AdminLayout title="Players">
             <ButtonGroup>
                 <Button onClick={() => createPlayerDisclosure.onOpen()} colorPalette="blue"><Icon as={LuPlus} /> Add Player</Button>
                 <Button onClick={() => {

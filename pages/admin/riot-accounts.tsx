@@ -36,7 +36,7 @@ export default function ManageRiotAccounts() {
     }
 
     return (
-        <AdminLayout>
+        <AdminLayout title="Riot Accounts">
             <ButtonGroup>
                 <Button onClick={createRiotAccountDisclosure.onOpen} colorPalette="blue"><Icon as={LuPlus} /> Add Riot Account</Button>
                 <Button onClick={() => {

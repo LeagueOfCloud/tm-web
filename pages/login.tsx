@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 
 export default function Login({ callbackUrl }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     return (
-        <MainLayout>
+        <MainLayout title="Login">
             <Center mt="10em">
                 <VStack>
                     <Text color="tomato" fontSize="xl" fontWeight="bold">ACCESS DENIED</Text>

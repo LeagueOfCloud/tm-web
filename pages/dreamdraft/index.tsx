@@ -85,7 +85,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
     }, [session])
 
     return (
-        <MainLayout>
+        <MainLayout title="Dream Draft">
             <Show when={!loadingPlayers && !loadingSettings} fallback={(
                 <AbsoluteCenter>
                     <Loader />

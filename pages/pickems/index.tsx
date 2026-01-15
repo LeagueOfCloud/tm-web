@@ -86,7 +86,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
     }, [settings])
 
     return (
-        <MainLayout>
+        <MainLayout title="Pick'Ems">
             <Show when={!loading && !loadingPlayers && !loadingTeams && !loadingChampions} fallback={(
                 <AbsoluteCenter>
                     <Loader />

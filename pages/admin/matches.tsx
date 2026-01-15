@@ -29,7 +29,7 @@ export default function AdminMatchesManager() {
                 <Loader />
             </AbsoluteCenter>
         )}>
-            <AdminLayout>
+            <AdminLayout title="Matches">
                 <ButtonGroup>
                     <Button onClick={createMatchDisclosure.onOpen} colorPalette="blue"><Icon as={LuPlus} /> Add Match</Button>
                     <Button onClick={() => {

@@ -8,6 +8,8 @@ import { LuLogOut, LuStepBack } from "react-icons/lu";
 import { SiLeagueoflegends, SiRiotgames } from "react-icons/si";
 import Loader from "../ui/loader";
 import { PiExcludeFill } from "react-icons/pi";
+import Head from "next/head";
+import useSettings from "@/lib/hooks/useSettings";
 
 export function SidebarButton({ children, ...props }: ButtonProps & PropsWithChildren) {
 
@@ -18,12 +20,23 @@ export function SidebarButton({ children, ...props }: ButtonProps & PropsWithChi
     )
 }
 
-export default function AdminLayout({ children }: PropsWithChildren) {
+type AdminLayoutProps = {
+    title?: string
+}
+
+export default function AdminLayout({ title, children }: AdminLayoutProps & PropsWithChildren) {
     const session = useSession();
     const router = useRouter();
+    const { settings } = useSettings()
 
     return (
         <>
+            <Head>
+                <title>
+                    {title ? `${title} - Admin - ${settings?.tournament_name}` : `Admin - ${settings?.tournament_name}`}
+                </title>
+            </Head>
+
             {session.status !== "authenticated" && (
                 <AbsoluteCenter>
                     <Loader />

@@ -21,7 +21,7 @@ export default function AdminChampSelect() {
     const [selectedLobbies, setSelectedLobbies] = useState<LobbyState[]>([])
 
     return (
-        <AdminLayout>
+        <AdminLayout title="Champion Select">
             <Show when={session.status === "authenticated"} fallback={(
                 <AbsoluteCenter>
                     <Loader />

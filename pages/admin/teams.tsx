@@ -35,7 +35,7 @@ export default function ManageTeams() {
     }
 
     return (
-        <AdminLayout>
+        <AdminLayout title="Teams">
             <ButtonGroup>
                 <Button onClick={createTeamDisclosure.onOpen} colorPalette="blue"><Icon as={LuPlus} /> Create Team</Button>
                 <Button onClick={() => {

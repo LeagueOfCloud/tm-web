@@ -10,7 +10,7 @@ export default function Profile() {
     const [showToken, setShowToken] = useState<boolean>(false)
 
     return (
-        <MainLayout>
+        <MainLayout title="Profile">
             <Show when={session.status === "authenticated"}>
                 <Center
                     mt="9em"

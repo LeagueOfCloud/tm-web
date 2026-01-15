@@ -37,7 +37,7 @@ export default function SchedulePage() {
     }, [sortedMatches, now])
 
     return (
-        <MainLayout>
+        <MainLayout title="Schedule">
             <Box
                 height="100vh"
                 zIndex={1}

@@ -61,8 +61,7 @@ export default function Leaderboard({ title, board }: LeaderboardProps) {
     }, [currentPage, board])
 
     return (
-        <MainLayout>
-
+        <MainLayout title={`${title} - Leaderboard`}>
             <Box
                 height="100vh"
                 backgroundImage={`url(${getCdnImage("assets/backgrounds/leaderboard/leaderboard_header_1.png")})`}

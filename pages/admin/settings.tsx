@@ -91,7 +91,7 @@ export default function AdminConfig() {
     });
 
     return (
-        <AdminLayout>
+        <AdminLayout title="Settings">
             <Show when={!loadingConfig} fallback={
                 <Center width="100%" height="100%">
                     <Loader size="xl" />

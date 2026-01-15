@@ -10,6 +10,7 @@ import Loader from "@/components/ui/loader"
 import { toaster } from "@/components/ui/toaster"
 import { ImBlocked } from "react-icons/im";
 import { getCdnImage, getHoverSettings } from "@/lib/helpers"
+import Head from "next/head"
 
 type ChampSelectLobbyProps = {
     lobbyId: string
@@ -231,271 +232,290 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
         })
 
         return () => ws.getSocket().close()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const titleState = useMemo(() => {
+        const turnState = turnOrder[turn]
+
+        if (turnState === "Waiting") {
+            return "Waiting..."
+        } else if (turnState === undefined) {
+            return "Finished"
+        } else {
+            return `${teamTurn?.toUpperCase()} is ${turnType?.toUpperCase()}ING`
+        }
+    }, [turn, teamTurn, turnType])
+
     return (
-        <Flex
-            direction="row"
-            ref={root}
-        >
-            <VStack gap={0}>
-                {Array(5).fill(1).map((_, i) => (
-                    <Box
-                        key={`blue-champion-${i}`}
-                        height="20vh"
-                        width="300px"
-                        background="gray.900"
-                        boxShadow="inset 0px -8px 0px 0px var(--chakra-colors-feature)"
-                        backgroundImage={
-                            bluePicks[i] ? `url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${bluePicks[i]}_0.jpg)` :
-                                hoverSettings?.team == "blue" && hoverSettings?.type == "pick" && hoverSettings?.position === i && hover !== null ?
-                                    `linear-gradient(to right, rgba(255, 255, 255, 0.3)), url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${hover}_0.jpg)`
-                                    :
-                                    `url(${getCdnImage("assets/champselect/champselect_blue_" + roleOrder[i] + ".png")})`
-                        }
-                        backgroundSize="cover"
-                    />
-                ))}
-            </VStack>
+        <>
+            <Head>
+                <title>{`${titleState} - Champion Select`}</title>
+            </Head>
 
-            <VStack flex={1} gap={0}>
-                <Box
-                    width="100%"
-                    className={barlow.className}
-                    fontSize="3xl"
-                    textAlign="center"
-                    position="relative"
-                    height="2em"
-                >
+            <Flex
+                direction="row"
+                ref={root}
+            >
+                <VStack gap={0}>
+                    {Array(5).fill(1).map((_, i) => (
+                        <Box
+                            key={`blue-champion-${i}`}
+                            height="20vh"
+                            width="300px"
+                            background="gray.900"
+                            boxShadow="inset 0px -8px 0px 0px var(--chakra-colors-feature)"
+                            backgroundImage={
+                                bluePicks[i] ? `url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${bluePicks[i]}_0.jpg)` :
+                                    hoverSettings?.team == "blue" && hoverSettings?.type == "pick" && hoverSettings?.position === i && hover !== null ?
+                                        `linear-gradient(to right, rgba(255, 255, 255, 0.3)), url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${hover}_0.jpg)`
+                                        :
+                                        `url(${getCdnImage("assets/champselect/champselect_blue_" + roleOrder[i] + ".png")})`
+                            }
+                            backgroundSize="cover"
+                        />
+                    ))}
+                </VStack>
+
+                <VStack flex={1} gap={0}>
                     <Box
-                        position="absolute"
-                        background={teamTurn === "blue" ? "feature" : teamTurn === "red" ? "tomato" : "gray.900"}
-                        top="0"
-                        bottom="0"
                         width="100%"
-                        className={ANIMATION_KEYS.timerBox}
-                        left="50%"
-                        transform="translateX(-50%)"
-                    />
+                        className={barlow.className}
+                        fontSize="3xl"
+                        textAlign="center"
+                        position="relative"
+                        height="2em"
+                    >
+                        <Box
+                            position="absolute"
+                            background={teamTurn === "blue" ? "feature" : teamTurn === "red" ? "tomato" : "gray.900"}
+                            top="0"
+                            bottom="0"
+                            width="100%"
+                            className={ANIMATION_KEYS.timerBox}
+                            left="50%"
+                            transform="translateX(-50%)"
+                        />
 
-                    <Show when={lobbyData} fallback={
-                        <Text position="absolute" width="50%" top="50%" left="50%" transform="translate(-50%, -50%)">
-                            Connecting...
-                        </Text>
-                    }>
-                        <Show when={turn > 0} fallback={
+                        <Show when={lobbyData} fallback={
                             <Text position="absolute" width="50%" top="50%" left="50%" transform="translate(-50%, -50%)">
-                                Waiting...
+                                Connecting...
                             </Text>
                         }>
-                            <VStack position="absolute" width="50%" top="50%" left="50%" transform="translate(-50%, -50%)" ref={timerRef}>
-                                <Text>
-                                    30
+                            <Show when={turn > 0} fallback={
+                                <Text position="absolute" width="50%" top="50%" left="50%" transform="translate(-50%, -50%)">
+                                    Waiting...
                                 </Text>
-                            </VStack>
+                            }>
+                                <VStack position="absolute" width="50%" top="50%" left="50%" transform="translate(-50%, -50%)" ref={timerRef}>
+                                    <Text>
+                                        30
+                                    </Text>
+                                </VStack>
+                            </Show>
                         </Show>
-                    </Show>
-                </Box>
+                    </Box>
 
-                <Box
-                    p={5}
-                    background="gray.900"
-                    width="90%"
-                    height="70vh"
-                    mt={2}
-                >
-                    <Input
-                        placeholder="Search"
-                        variant="subtle"
-                        background="blackAlpha.700"
-                        width="30%"
-                        mb={2}
-                        onChange={(e) => setChampionFilter(e.target.value)}
-                    />
-
-                    <SimpleGrid
-                        columns={10}
-                        maxHeight="90%"
-                        gap={4}
-                        overflow="auto"
+                    <Box
+                        p={5}
+                        background="gray.900"
+                        width="90%"
+                        height="70vh"
+                        mt={2}
                     >
-                        <Show when={!loadingChampions} fallback={
-                            <Center>
-                                <Loader />
-                            </Center>
-                        }>
-                            {champions.filter(champ => `${champ.name} ${champ.id}`.toLowerCase().includes(championFilter.toLowerCase())).map(champ => {
-                                const isSelected = redBans.concat(blueBans).concat(bluePicks).concat(redPicks).concat(preBans).includes(champ.id)
+                        <Input
+                            placeholder="Search"
+                            variant="subtle"
+                            background="blackAlpha.700"
+                            width="30%"
+                            mb={2}
+                            onChange={(e) => setChampionFilter(e.target.value)}
+                        />
 
-                                return (
-                                    <VStack
-                                        key={`champion-select-${champ.id}`}
-                                        textAlign="center"
-                                        cursor={isSelected ? "disabled" : "pointer"}
-                                        filter={isSelected ? "grayscale(1)" : "grayscale(0)"}
-                                        onClick={() => {
-                                            if (isSelected) {
-                                                return
-                                            }
+                        <SimpleGrid
+                            columns={10}
+                            maxHeight="90%"
+                            gap={4}
+                            overflow="auto"
+                        >
+                            <Show when={!loadingChampions} fallback={
+                                <Center>
+                                    <Loader />
+                                </Center>
+                            }>
+                                {champions.filter(champ => `${champ.name} ${champ.id}`.toLowerCase().includes(championFilter.toLowerCase())).map(champ => {
+                                    const isSelected = redBans.concat(blueBans).concat(bluePicks).concat(redPicks).concat(preBans).includes(champ.id)
 
-                                            if (captain) {
-                                                if (teamTurn === captain) {
-                                                    setSelectedChampionId(champ.id)
-                                                    websocket?.sendMessage({
-                                                        action: "Hover",
-                                                        ChampionId: champ.id
-                                                    })
+                                    return (
+                                        <VStack
+                                            key={`champion-select-${champ.id}`}
+                                            textAlign="center"
+                                            cursor={isSelected ? "disabled" : "pointer"}
+                                            filter={isSelected ? "grayscale(1)" : "grayscale(0)"}
+                                            onClick={() => {
+                                                if (isSelected) {
+                                                    return
                                                 }
-                                            }
-                                        }}
-                                    >
-                                        <Image alt="champion icon" src={champ.square_url} boxSize="100px" border="1px solid" borderColor={selectedChampionId === champ.id ? "gold" : "transparent"} />
-                                        <Text>{champ.name}</Text>
-                                    </VStack>
-                                )
-                            })}
-                        </Show>
-                    </SimpleGrid>
-                </Box>
 
-                <Show when={captain !== null}>
-                    <Button
-                        onClick={() => {
-                            if (!started) {
-                                websocket?.sendMessage({
-                                    action: "Start"
-                                })
-                            } else {
-                                if (started && captain && turn < turnOrder.length && selectedChampionId !== null) {
-                                    if (captain === "blue" && turnOrder[turn].startsWith("BlueTeam")) {
-                                        if (turnOrder[turn].endsWith("Ban")) {
-                                            websocket?.sendMessage({
-                                                "action": "BanChampion",
-                                                "ChampionId": selectedChampionId
-                                            })
-                                        } else {
-                                            websocket?.sendMessage({
-                                                "action": "SelectChampion",
-                                                "ChampionId": selectedChampionId
-                                            })
-                                        }
-                                    } else if (captain == "red" && turnOrder[turn].startsWith("RedTeam")) {
-                                        if (turnOrder[turn].endsWith("Ban")) {
-                                            websocket?.sendMessage({
-                                                "action": "BanChampion",
-                                                "ChampionId": selectedChampionId
-                                            })
-                                        } else {
-                                            websocket?.sendMessage({
-                                                "action": "SelectChampion",
-                                                "ChampionId": selectedChampionId
-                                            })
+                                                if (captain) {
+                                                    if (teamTurn === captain) {
+                                                        setSelectedChampionId(champ.id)
+                                                        websocket?.sendMessage({
+                                                            action: "Hover",
+                                                            ChampionId: champ.id
+                                                        })
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            <Image alt="champion icon" src={champ.square_url} boxSize="100px" border="1px solid" borderColor={selectedChampionId === champ.id ? "gold" : "transparent"} />
+                                            <Text>{champ.name}</Text>
+                                        </VStack>
+                                    )
+                                })}
+                            </Show>
+                        </SimpleGrid>
+                    </Box>
+
+                    <Show when={captain !== null}>
+                        <Button
+                            onClick={() => {
+                                if (!started) {
+                                    websocket?.sendMessage({
+                                        action: "Start"
+                                    })
+                                } else {
+                                    if (started && captain && turn < turnOrder.length && selectedChampionId !== null) {
+                                        if (captain === "blue" && turnOrder[turn].startsWith("BlueTeam")) {
+                                            if (turnOrder[turn].endsWith("Ban")) {
+                                                websocket?.sendMessage({
+                                                    "action": "BanChampion",
+                                                    "ChampionId": selectedChampionId
+                                                })
+                                            } else {
+                                                websocket?.sendMessage({
+                                                    "action": "SelectChampion",
+                                                    "ChampionId": selectedChampionId
+                                                })
+                                            }
+                                        } else if (captain == "red" && turnOrder[turn].startsWith("RedTeam")) {
+                                            if (turnOrder[turn].endsWith("Ban")) {
+                                                websocket?.sendMessage({
+                                                    "action": "BanChampion",
+                                                    "ChampionId": selectedChampionId
+                                                })
+                                            } else {
+                                                websocket?.sendMessage({
+                                                    "action": "SelectChampion",
+                                                    "ChampionId": selectedChampionId
+                                                })
+                                            }
                                         }
                                     }
                                 }
+                            }}
+                            variant="plain"
+                            background="gray.900"
+                            outline="none"
+                            size="xl"
+                            px={10}
+                            textTransform="uppercase"
+                            cursor={!started ? "pointer" : teamTurn === captain ? "pointer" : "disabled"}
+                        >
+                            {!started && "Start"}
+                            {started && (
+                                <Show
+                                    when={teamTurn === captain}
+                                    fallback={`Enemy team is ${turnType === "ban" ? "banning" : "picking"}...`}
+                                >
+                                    {turnType} champion
+                                </Show>
+                            )}
+                        </Button>
+                    </Show>
+
+                    <HStack px={5} width="100%" mt={20} justifyContent="space-between">
+                        <HStack gap={0}>
+                            {Array(5).fill(1).map((_, i) => {
+                                const champId = blueBans[i] ?? i
+
+                                return (
+                                    <Center
+                                        key={`blue-ban-${champId}`}
+                                        backgroundImage={
+                                            hoverSettings?.team == "blue" && hoverSettings?.type == "ban" && hoverSettings?.position === i && hover !== null ?
+                                                `
+                                                linear-gradient(to right, rgba(0,0,0,0.2)), 
+                                                url(${champions.find(c => c.id === hover)?.square_url})
+                                            `
+                                                :
+                                                `
+                                                linear-gradient(to right, rgba(0,0,0,0.6)), 
+                                                url(${champions.find(c => c.id === champId)?.square_url})
+                                            `
+                                        }
+                                        backgroundSize="cover"
+                                        boxSize="50px"
+                                    >
+                                        <Icon as={ImBlocked} fontSize="2xl" color="tomato" />
+                                    </Center>
+                                )
+                            })}
+                        </HStack>
+
+                        <Spacer />
+
+                        <HStack gap={0}>
+                            {Array(5).fill(1).map((_, i) => {
+                                const champId = redBans[i] ?? i
+
+                                return (
+                                    <Center
+                                        key={`red-ban-${champId}`}
+                                        backgroundImage={
+                                            hoverSettings?.team == "red" && hoverSettings?.type == "ban" && hoverSettings?.position === i && hover !== null ?
+                                                `
+                                                linear-gradient(to right, rgba(0,0,0,0.2)), 
+                                                url(${champions.find(c => c.id === hover)?.square_url})
+                                            `
+                                                :
+                                                `
+                                                linear-gradient(to right, rgba(0,0,0,0.6)), 
+                                                url(${champions.find(c => c.id === champId)?.square_url})
+                                            `
+                                        }
+                                        backgroundSize="cover"
+                                        boxSize="50px"
+                                    >
+                                        <Icon as={ImBlocked} fontSize="2xl" color="tomato" />
+                                    </Center>
+                                )
+                            })}
+                        </HStack>
+                    </HStack>
+                </VStack>
+
+                <VStack gap={0}>
+                    {Array(5).fill(1).map((_, i) => (
+                        <Box
+                            key={`red-champion-${i}`}
+                            height="20vh"
+                            width="300px"
+                            background="gray.900"
+                            boxShadow="inset 0px -8px 0px 0px tomato"
+                            backgroundImage={
+                                redPicks[i] ? `url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${redPicks[i]}_0.jpg)` :
+                                    hoverSettings?.team == "red" && hoverSettings?.type == "pick" && hoverSettings?.position === i && hover !== null ?
+                                        `linear-gradient(to right, rgba(255, 255, 255, 0.3)), url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${hover}_0.jpg)`
+                                        :
+                                        `url(${getCdnImage("assets/champselect/champselect_red_" + roleOrder[i] + ".png")})`
                             }
-                        }}
-                        variant="plain"
-                        background="gray.900"
-                        outline="none"
-                        size="xl"
-                        px={10}
-                        textTransform="uppercase"
-                        cursor={!started ? "pointer" : teamTurn === captain ? "pointer" : "disabled"}
-                    >
-                        {!started && "Start"}
-                        {started && (
-                            <Show
-                                when={teamTurn === captain}
-                                fallback={`Enemy team is ${turnType === "ban" ? "banning" : "picking"}...`}
-                            >
-                                {turnType} champion
-                            </Show>
-                        )}
-                    </Button>
-                </Show>
-
-                <HStack px={5} width="100%" mt={20} justifyContent="space-between">
-                    <HStack gap={0}>
-                        {Array(5).fill(1).map((_, i) => {
-                            const champId = blueBans[i] ?? i
-
-                            return (
-                                <Center
-                                    key={`blue-ban-${champId}`}
-                                    backgroundImage={
-                                        hoverSettings?.team == "blue" && hoverSettings?.type == "ban" && hoverSettings?.position === i && hover !== null ?
-                                            `
-                                                linear-gradient(to right, rgba(0,0,0,0.2)), 
-                                                url(${champions.find(c => c.id === hover)?.square_url})
-                                            `
-                                            :
-                                            `
-                                                linear-gradient(to right, rgba(0,0,0,0.6)), 
-                                                url(${champions.find(c => c.id === champId)?.square_url})
-                                            `
-                                    }
-                                    backgroundSize="cover"
-                                    boxSize="50px"
-                                >
-                                    <Icon as={ImBlocked} fontSize="2xl" color="tomato" />
-                                </Center>
-                            )
-                        })}
-                    </HStack>
-
-                    <Spacer />
-
-                    <HStack gap={0}>
-                        {Array(5).fill(1).map((_, i) => {
-                            const champId = redBans[i] ?? i
-
-                            return (
-                                <Center
-                                    key={`red-ban-${champId}`}
-                                    backgroundImage={
-                                        hoverSettings?.team == "red" && hoverSettings?.type == "ban" && hoverSettings?.position === i && hover !== null ?
-                                            `
-                                                linear-gradient(to right, rgba(0,0,0,0.2)), 
-                                                url(${champions.find(c => c.id === hover)?.square_url})
-                                            `
-                                            :
-                                            `
-                                                linear-gradient(to right, rgba(0,0,0,0.6)), 
-                                                url(${champions.find(c => c.id === champId)?.square_url})
-                                            `
-                                    }
-                                    backgroundSize="cover"
-                                    boxSize="50px"
-                                >
-                                    <Icon as={ImBlocked} fontSize="2xl" color="tomato" />
-                                </Center>
-                            )
-                        })}
-                    </HStack>
-                </HStack>
-            </VStack>
-
-            <VStack gap={0}>
-                {Array(5).fill(1).map((_, i) => (
-                    <Box
-                        key={`red-champion-${i}`}
-                        height="20vh"
-                        width="300px"
-                        background="gray.900"
-                        boxShadow="inset 0px -8px 0px 0px tomato"
-                        backgroundImage={
-                            redPicks[i] ? `url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${redPicks[i]}_0.jpg)` :
-                                hoverSettings?.team == "red" && hoverSettings?.type == "pick" && hoverSettings?.position === i && hover !== null ?
-                                    `linear-gradient(to right, rgba(255, 255, 255, 0.3)), url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${hover}_0.jpg)`
-                                    :
-                                    `url(${getCdnImage("assets/champselect/champselect_red_" + roleOrder[i] + ".png")})`
-                        }
-                        backgroundSize="cover"
-                    />
-                ))}
-            </VStack>
-        </Flex>
+                            backgroundSize="cover"
+                        />
+                    ))}
+                </VStack>
+            </Flex>
+        </>
     )
 }
 
