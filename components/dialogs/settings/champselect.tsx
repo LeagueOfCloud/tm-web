@@ -1,6 +1,6 @@
 import { AdminSettings } from "@/types/form"
 import { Champion } from "@/types/riot"
-import { Button, ButtonGroup, Checkbox, CloseButton, Dialog, Field, Portal, SimpleGrid, Spacer, UseDisclosureReturn } from "@chakra-ui/react"
+import { Button, ButtonGroup, Checkbox, CloseButton, Dialog, Portal, SimpleGrid, Spacer, Text, UseDisclosureReturn } from "@chakra-ui/react"
 import { UseFormReturn } from "react-hook-form"
 
 type ChampSelectSettingsDialogProps = {
@@ -12,6 +12,7 @@ type ChampSelectSettingsDialogProps = {
 }
 
 export default function ChampSelectSettingsDialog({ form, disclosure, champions, onSave, isSaving }: ChampSelectSettingsDialogProps) {
+    console.log(champions)
 
     return (
         <Dialog.Root open={disclosure.open} onOpenChange={(e) => disclosure.setOpen(e.open)} variant="settings" size="xl">
@@ -27,26 +28,25 @@ export default function ChampSelectSettingsDialog({ form, disclosure, champions,
                         </Dialog.CloseTrigger>
 
                         <Dialog.Body>
-                            <Field.Root>
-                                <Field.Label>Pre-Banned Champions</Field.Label>
-                                <SimpleGrid mt={2} columns={5} gapX={10} gapY={3}>
-                                    {champions.map(champion => (
-                                        <Checkbox.Root key={`champselect-settings-champ-toggle-${champion.id}`} defaultChecked={JSON.parse(form.getValues("banned_champions") ?? "[]").includes(champion.id)} onCheckedChange={(e) => {
-                                            const currValue = JSON.parse(form.getValues("banned_champions") ?? "[]")
-                                            if (e.checked) {
-                                                form.setValue("banned_champions", JSON.stringify([...currValue, champion.id]))
-                                            } else {
-                                                form.setValue("banned_champions", JSON.stringify(currValue.filter(c => c !== champion.id)))
-                                            }
-                                        }}>
-                                            <Checkbox.HiddenInput />
-                                            <Checkbox.Label>{champion.name}</Checkbox.Label>
-                                            <Spacer width="300%" />
-                                            <Checkbox.Control cursor="pointer" />
-                                        </Checkbox.Root>
-                                    ))}
-                                </SimpleGrid>
-                            </Field.Root>
+                            <Text fontWeight="medium">Pre-banned Champions</Text>
+                            <SimpleGrid mt={3} columns={5} gapX={10} gapY={3}>
+                                {champions.map(champion => (
+                                    <Checkbox.Root key={`champ-toggle-${champion.id}`} defaultChecked={JSON.parse(form.getValues("banned_champions") ?? "[]").includes(champion.id)} onCheckedChange={(e) => {
+                                        const currValue = JSON.parse(form.getValues("banned_champions") ?? "[]")
+                                        console.log(champion.id)
+                                        if (e.checked) {
+                                            form.setValue("banned_champions", JSON.stringify([...currValue, champion.id]))
+                                        } else {
+                                            form.setValue("banned_champions", JSON.stringify(currValue.filter(c => c !== champion.id)))
+                                        }
+                                    }}>
+                                        <Checkbox.HiddenInput />
+                                        <Checkbox.Label>{champion.name}</Checkbox.Label>
+                                        <Spacer width="300%" />
+                                        <Checkbox.Control cursor="pointer" />
+                                    </Checkbox.Root>
+                                ))}
+                            </SimpleGrid>
                         </Dialog.Body>
 
                         <Dialog.Footer>
