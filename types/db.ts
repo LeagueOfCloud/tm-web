@@ -110,4 +110,5 @@ export interface ScheduledMatch {
     team_2_tag: string,
     start_date: string,
     winner_team_id?: number,
+    vod_url?: string,
 }
