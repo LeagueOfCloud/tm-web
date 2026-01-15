@@ -17,6 +17,12 @@ export const dialogRecipe = defineSlotRecipe({
                     backgroundImage: `url(${process.env.NEXT_PUBLIC_CDN_URL}/assets/background_pickem_select.png)`,
                     backgroundSize: "cover"
                 }
+            },
+            settings: {
+                content: {
+                    rounded: "none",
+                    backgroundColor: "#0d0d11"
+                }
             }
         }
     }
