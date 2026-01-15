@@ -3,12 +3,19 @@ import useConfig from "@/lib/hooks/useConfig";
 import { AdminSettings } from "@/types/form";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
-import { Button, Center, chakra, Field, Input, Switch, Textarea, VStack } from "@chakra-ui/react";
+import { Center, HStack, Show, useDisclosure } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { toaster } from "@/components/ui/toaster";
 import Loader from "@/components/ui/loader";
 import { deformPickems, formatPickems } from "@/lib/helpers";
+import TournamentSettingsDialog from "@/components/dialogs/settings/tournament";
+import DreamDraftSettingsDialog from "@/components/dialogs/settings/dreamdraft";
+import PickemsSettingsDialog from "@/components/dialogs/settings/pickems";
+import ChampSelectSettingsDialog from "@/components/dialogs/settings/champselect";
+import useChampions from "@/lib/hooks/useChampions";
+import SettingsBox from "@/components/ui/settings-box";
+import { LuBan, LuMedal, LuPointer, LuTrophy } from "react-icons/lu";
 
 export default function AdminConfig() {
     const session = useSession();
@@ -17,6 +24,12 @@ export default function AdminConfig() {
     const form = useForm<AdminSettings>({
         defaultValues: config,
     });
+    const { champions } = useChampions()
+
+    const tournamentSettingsDisclosure = useDisclosure()
+    const dreamDraftSettingsDisclosure = useDisclosure()
+    const pickEmsSettingsDisclosure = useDisclosure()
+    const champSelectSettingsDisclosure = useDisclosure()
 
     useEffect(() => {
         Object.entries(config).map(([key, value]) => {
@@ -34,12 +47,19 @@ export default function AdminConfig() {
     }
 
     const onSubmit = form.handleSubmit((data) => {
-        let isInvalid = false;
+        let isInvalid = false
 
         if (data.tournament_name.length < 3 || data.tournament_name.length > 20) {
-            isInvalid = true;
+            isInvalid = true
             form.setError("tournament_name", {
                 message: "Tournament name must be within 3 and 20 characters."
+            })
+        }
+
+        if (data.dd_max_budget <= 0) {
+            isInvalid = true
+            form.setError("dd_max_budget", {
+                message: "Max budget must be greater than zero."
             })
         }
 
@@ -47,9 +67,10 @@ export default function AdminConfig() {
             return;
         }
 
+        setSaving(true);
+
         data.pickem_categories = JSON.stringify(formatPickems(data.pickem_categories))
 
-        setSaving(true);
         api.updateConfig(session.data?.user.token, data)
             .then((message) => {
                 toaster.create({
@@ -71,90 +92,46 @@ export default function AdminConfig() {
 
     return (
         <AdminLayout>
-            {loadingConfig && (
+            <Show when={!loadingConfig} fallback={
                 <Center width="100%" height="100%">
                     <Loader size="xl" />
                 </Center>
-            )}
+            }>
+                <HStack wrap="wrap">
+                    <SettingsBox
+                        title="Tournament"
+                        description="Manage tournament related settings and configuration"
+                        icon={<LuTrophy size="30px" />}
+                        onClick={() => tournamentSettingsDisclosure.onOpen()}
+                    />
 
-            {!loadingConfig && (
-                <chakra.form onSubmit={(e) => {
-                    form.clearErrors()
-                    onSubmit(e)
-                }}>
-                    <VStack alignItems="start">
-                        <Field.Root invalid={!!form.formState.errors.tournament_name} maxWidth="300px" required>
-                            <Field.Label>Tournament Name <Field.RequiredIndicator /></Field.Label>
-                            <Input {...form.register("tournament_name", { required: true })} />
-                            <Field.ErrorText>{form.formState.errors.tournament_name?.message}</Field.ErrorText>
-                        </Field.Root>
+                    <SettingsBox
+                        title="Dream Draft"
+                        description="Handle the Dream Draft status & configuration"
+                        icon={<LuMedal size="30px" />}
+                        onClick={() => dreamDraftSettingsDisclosure.onOpen()}
+                    />
 
-                        <Field.Root invalid={!!form.formState.errors.maintenance} maxWidth="300px">
-                            <Switch.Root
-                                name="maintenance_mode"
-                                defaultChecked={config.maintenance === "true"}
-                                onCheckedChange={({ checked }) => form.setValue("maintenance", `${checked}`)}
-                                disabled={isSaving}
-                            >
-                                <Switch.HiddenInput />
-                                <Switch.Control />
-                                <Switch.Label>Maintenance Mode <Field.RequiredIndicator /></Switch.Label>
-                            </Switch.Root>
-                            <Field.ErrorText>{form.formState.errors.maintenance?.message}</Field.ErrorText>
-                        </Field.Root>
+                    <SettingsBox
+                        title="Pick'Ems"
+                        description="Manage Pick'Ems, the categories, and scores"
+                        icon={<LuPointer size="30px" />}
+                        onClick={() => pickEmsSettingsDisclosure.onOpen()}
+                    />
 
-                        <Field.Root invalid={!!form.formState.errors.dd_pre_evaluation} maxWidth="300px">
-                            <Switch.Root
-                                name="dd_pre_evaluation"
-                                defaultChecked={config.dd_pre_evaluation === "true"}
-                                onCheckedChange={({ checked }) => form.setValue("dd_pre_evaluation", `${checked}`)}
-                                disabled={isSaving}
-                            >
-                                <Switch.HiddenInput />
-                                <Switch.Control />
-                                <Switch.Label>DreamDraft: Pre Evaluation <Field.RequiredIndicator /></Switch.Label>
-                            </Switch.Root>
-                            <Field.ErrorText>{form.formState.errors.dd_pre_evaluation?.message}</Field.ErrorText>
-                        </Field.Root>
+                    <SettingsBox
+                        title="Champion Select"
+                        description="Modify the pre-banned champions in champion select lobbies"
+                        icon={<LuBan size="30px" />}
+                        onClick={() => champSelectSettingsDisclosure.onOpen()}
+                    />
+                </HStack>
 
-                        <Field.Root invalid={!!form.formState.errors.dd_unlocked} maxWidth="300px">
-                            <Switch.Root
-                                name="dd_unlocked"
-                                defaultChecked={config.dd_unlocked === "true"}
-                                onCheckedChange={({ checked }) => form.setValue("dd_unlocked", `${checked}`)}
-                                disabled={isSaving}
-                            >
-                                <Switch.HiddenInput />
-                                <Switch.Control />
-                                <Switch.Label>DreamDraft: Unlocked <Field.RequiredIndicator /></Switch.Label>
-                            </Switch.Root>
-                            <Field.ErrorText>{form.formState.errors.dd_unlocked?.message}</Field.ErrorText>
-                        </Field.Root>
-
-                        <Field.Root invalid={!!form.formState.errors.pickem_unlocked} maxWidth="300px">
-                            <Switch.Root
-                                name="pickem_unlocked"
-                                defaultChecked={config.pickem_unlocked === "true"}
-                                onCheckedChange={({ checked }) => form.setValue("pickem_unlocked", `${checked}`)}
-                                disabled={isSaving}
-                            >
-                                <Switch.HiddenInput />
-                                <Switch.Control />
-                                <Switch.Label>PickEm: Unlocked <Field.RequiredIndicator /></Switch.Label>
-                            </Switch.Root>
-                            <Field.ErrorText>{form.formState.errors.pickem_unlocked?.message}</Field.ErrorText>
-                        </Field.Root>
-
-                        <Field.Root invalid={!!form.formState.errors.pickem_categories} maxWidth="600px" required>
-                            <Field.Label>PickEm Categories <Field.RequiredIndicator /></Field.Label>
-                            <Textarea variant="subtle" autoresize {...form.register("pickem_categories", { required: true })} />
-                            <Field.HelperText>{"Split by new lines, add Pick'Ems like so: \"ID::TYPE::TITLE::SCORE::EXTRAS\", where EXTRAS is an optional area separated by two colons `::` for custom categories (non-PLAYER, TEAM, CHAMPION) that have custom options."}</Field.HelperText>
-                            <Field.ErrorText>{form.formState.errors.pickem_categories?.message}</Field.ErrorText>
-                        </Field.Root>
-                    </VStack>
-                    <Button type="submit" loading={isSaving} mt={5}>Submit</Button>
-                </chakra.form>
-            )}
+                <TournamentSettingsDialog isSaving={isSaving} disclosure={tournamentSettingsDisclosure} form={form} onSave={onSubmit} />
+                <DreamDraftSettingsDialog isSaving={isSaving} disclosure={dreamDraftSettingsDisclosure} form={form} onSave={onSubmit} />
+                <PickemsSettingsDialog isSaving={isSaving} disclosure={pickEmsSettingsDisclosure} form={form} onSave={onSubmit} />
+                <ChampSelectSettingsDialog isSaving={isSaving} champions={champions} disclosure={champSelectSettingsDisclosure} form={form} onSave={onSubmit} />
+            </Show>
         </AdminLayout>
     )
 }

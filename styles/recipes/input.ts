@@ -7,6 +7,6 @@ export const inputRecipe = defineRecipe({
         }
     },
     defaultVariants: {
-        variant: "subtle"
+        variant: "subtle",
     },
 })
