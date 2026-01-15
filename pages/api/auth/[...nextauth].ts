@@ -50,6 +50,7 @@ export const authOptions: NextAuthOptions = {
                 )
             }
 
+            connection.end()
 
             return true;
         },
@@ -68,6 +69,8 @@ export const authOptions: NextAuthOptions = {
                 'SELECT * FROM profiles WHERE discord_id = ? LIMIT 1',
                 [discordId]
             )
+
+            connection.end()
 
             const result: DBUser | undefined = results[0];
 
@@ -97,6 +100,8 @@ export const authOptions: NextAuthOptions = {
                     'SELECT * FROM profiles WHERE discord_id = ? LIMIT 1',
                     [account.providerAccountId]
                 )
+
+                connection.end()
 
                 const result: DBUser | undefined = results[0];
 
