@@ -122,7 +122,7 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
                 setTeamTurn(undefined)
             }
 
-            if (teamTurn && teamTurn === captain) {
+            if (captain && turnOrderCurrent?.toLowerCase().startsWith(captain)) {
                 ownTurnHowler.play()
             }
         })
@@ -134,7 +134,7 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
         if (turn >= turnOrder.length) {
             scope.current?.methods.resetTimer("Game has Ended")
         }
-    }, [turn, started, captain, ownTurnHowler, teamTurn])
+    }, [turn, started, captain, ownTurnHowler])
 
     useEffect(() => {
         const ws = new LobbyWebsocket(lobbyId, team)
