@@ -96,6 +96,7 @@ export interface TournamentMatchResponse {
     winner_team_name?: string
     tournament_match_id?: string
     lobby_code?: string
+    vod_url?: string
 }
 
 export interface ScheduledMatch {

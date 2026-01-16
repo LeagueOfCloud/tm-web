@@ -25,6 +25,20 @@ async function postTournamentMatch(payload: object, token?: string): Promise<str
     })
 }
 
+async function patchTournamentMatch(payload: object, token?: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        axios.patch(`${API_URL}/tournament-matches`, payload, { headers: { Authorization: token } })
+            .then(res => {
+                const data = res.data
+
+                resolve(data)
+            })
+            .catch(err => {
+                reject(err.response?.data)
+            })
+    })
+}
+
 async function deleteTournamentMatch(matchId: number, token?: string): Promise<string> {
     return new Promise((resolve, reject) => {
         axios.delete(`${API_URL}/tournament-matches`, { headers: { Authorization: token }, data: JSON.stringify({ id: matchId }) })
@@ -59,6 +73,7 @@ async function deleteTournamentMatchMultiple(matchIds: number[], token?: string)
 export default {
     createTournamentLobby,
     postTournamentMatch,
+    patchTournamentMatch,
     deleteTournamentMatch,
     deleteTournamentMatchMultiple
 } as const

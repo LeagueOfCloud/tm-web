@@ -3,16 +3,29 @@ import DataTable from "@/components/ui/data-table"
 import Loader from "@/components/ui/loader"
 import useApiFetch from "@/lib/hooks/useApiFetch"
 import { TeamResponse, TournamentMatchResponse } from "@/types/db"
-import { AbsoluteCenter, Button, ButtonGroup, Clipboard, Code, HStack, Icon, Show, useDisclosure } from "@chakra-ui/react"
+import { AbsoluteCenter, Button, ButtonGroup, Clipboard, Code, HStack, Icon, Link, Show, Text, useDisclosure } from "@chakra-ui/react"
 import { useSession } from "next-auth/react"
 import { useState } from "react"
-import { LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu"
+import { LuPencil, LuPlus, LuRefreshCcw, LuTrash2 } from "react-icons/lu"
 import { ellipsise, formatTimeFromMs } from "@/lib/helpers"
 import api from "@/lib/api"
 import { toaster } from "@/components/ui/toaster"
 import CreateTournamentMatch from "@/components/dialogs/tournament-matches/create-match"
 import usePublicFetch from "@/lib/hooks/usePublicFetch"
 import DeleteTournamentMatchesModal from "@/components/dialogs/tournament-matches/delete-match"
+import { FaExternalLinkAlt } from "react-icons/fa"
+import EditTournamentMatchDialog from "@/components/dialogs/tournament-matches/edit-match"
+
+function MatchEdit({ token, match, onEnd }: { match: TournamentMatchResponse, teams: TeamResponse[], token?: string, onEnd: () => void }) {
+    const disclosure = useDisclosure();
+
+    return (
+        <>
+            <Icon as={LuPencil} mx={2} cursor="pointer" onClick={() => disclosure.onOpen()} />
+            <EditTournamentMatchDialog match={match} disclosure={disclosure} token={token} onEnd={onEnd} />
+        </>
+    )
+}
 
 export default function AdminMatchesManager() {
     const session = useSession()
@@ -62,11 +75,30 @@ export default function AdminMatchesManager() {
                         { key: "winner_team_name", header: "Winner Team", render: m => m.winner_team_name ?? "-" },
                         { key: "tournament_match_id", header: "Riot Match ID", render: m => m.tournament_match_id ?? "-" },
                         {
+                            key: "vod_url",
+                            header: "VOD",
+                            render: m => {
+                                if (m.vod_url) {
+                                    return (
+                                        <Link href={m.vod_url} target="_blank">
+                                            <Icon as={FaExternalLinkAlt} />
+                                        </Link>
+                                    )
+                                } else {
+                                    return (
+                                        <Text fontSize="xs">
+                                            UNSET
+                                        </Text>
+                                    )
+                                }
+                            }
+                        },
+                        {
                             key: "lobby_code", header: "Lobby Code", render: m => {
                                 if (m.lobby_code) {
                                     return (
                                         <HStack>
-                                            <Code>{ellipsise(m.lobby_code, 8, 8, 10, "*")}</Code>
+                                            <Code>{ellipsise(m.lobby_code, 4, 4, 5, "*")}</Code>
                                             <Clipboard.Root value={m.lobby_code}>
                                                 <Clipboard.Trigger asChild>
                                                     <Icon as={Clipboard.Indicator} cursor="pointer" />
@@ -107,6 +139,22 @@ export default function AdminMatchesManager() {
                                     )
                                 }
                             }
+                        },
+                        {
+                            key: "edit",
+                            header: "Edit",
+                            width: 30,
+                            render: m => (
+                                <MatchEdit
+                                    teams={teams}
+                                    token={session.data?.user.token}
+                                    match={m}
+                                    onEnd={() => {
+                                        setSelectedMatches([])
+                                        refreshTournamentMatches()
+                                    }}
+                                />
+                            ),
                         },
                     ]}
                 />
