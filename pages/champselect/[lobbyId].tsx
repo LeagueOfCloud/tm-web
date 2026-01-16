@@ -1,17 +1,18 @@
 import LobbyWebsocket from "@/lib/lobbyWebsocket"
 import { barlow } from "@/styles/fonts"
-import { Box, Button, Center, Flex, HStack, Icon, Image, Input, Show, SimpleGrid, Spacer, Text, VStack } from "@chakra-ui/react"
+import { Box, Button, Center, Flex, HStack, Icon, Image, Input, Show, SimpleGrid, Slider, Spacer, Text, VStack } from "@chakra-ui/react"
 import { GetServerSidePropsContext } from "next"
 import { animate, createScope, Scope } from "animejs"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import useChampions from "@/lib/hooks/useChampions"
 import Loader from "@/components/ui/loader"
 import { toaster } from "@/components/ui/toaster"
 import { ImBlocked } from "react-icons/im";
-import { getHoverSettings } from "@/lib/helpers"
+import { getCdnImage, getHoverSettings } from "@/lib/helpers"
 import Head from "next/head"
 import { HoverSettings } from "@/types/ws"
 import ChampionPickBox from "@/components/ui/champselect/champion-pick-box"
+import { Howl } from "howler"
 
 type ChampSelectLobbyProps = {
     lobbyId: string
@@ -69,25 +70,33 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
     const root = useRef<HTMLDivElement>(null)
     const scope = useRef<Scope>(null)
 
-    // const teamTurn = useMemo(() => {
-    //     const turnOrderCurrent = turnOrder[turn]
-    //     if (turnOrderCurrent?.startsWith("BlueTeam")) {
-    //         return "blue"
-    //     } else if (turnOrderCurrent?.startsWith("RedTeam")) {
-    //         return "red"
-    //     }
-    // }, [turn])
+    const backgroundHowler = useMemo(() => {
+        const audio = new Howl({
+            src: [getCdnImage(`assets/champions/champselect/audio/background_music.mp3`)],
+            volume: 0.1,
+            loop: true
+        })
 
-    // const turnType = useMemo(() => {
-    //     const turnOrderCurrent = turnOrder[turn]
-    //     if (turnOrderCurrent?.endsWith("Pick")) {
-    //         return "pick"
-    //     } else if (turnOrderCurrent?.endsWith("Ban")) {
-    //         return "ban"
-    //     }
-    // }, [turn])
-    // 
-    // const hoverSettings = useMemo(() => getHoverSettings(turnOrder, turn), [turn])
+        return audio
+    }, [])
+
+    const ownTurnHowler = useMemo(() => {
+        const audio = new Howl({
+            src: [getCdnImage(`assets/champions/champselect/audio/own-turn.mp3`)],
+            volume: 0.3,
+        })
+
+        return audio
+    }, [])
+
+    const lockInHowler = useMemo(() => {
+        const audio = new Howl({
+            src: [getCdnImage(`assets/champions/champselect/audio/lock-in.mp3`)],
+            volume: 0.3,
+        })
+
+        return audio
+    }, [])
 
     useEffect(() => {
         queueMicrotask(() => {
@@ -113,6 +122,9 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
                 setTeamTurn(undefined)
             }
 
+            if (teamTurn && teamTurn === captain) {
+                ownTurnHowler.play()
+            }
         })
 
         if (started && turn < turnOrder.length) {
@@ -122,12 +134,14 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
         if (turn >= turnOrder.length) {
             scope.current?.methods.resetTimer("Game has Ended")
         }
-    }, [turn, started])
+    }, [turn, started, captain, ownTurnHowler, teamTurn])
 
     useEffect(() => {
         const ws = new LobbyWebsocket(lobbyId, team)
 
         queueMicrotask(() => setWebsocket(ws))
+
+        ws.getSocket().addEventListener("open", () => backgroundHowler.play())
 
         ws.getSocket().addEventListener("close", () => {
             toaster.create({
@@ -404,6 +418,8 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
                                                 })
                                             }
                                         }
+
+                                        lockInHowler.play()
                                     }
                                 }
                             }}
@@ -455,6 +471,22 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
                                 )
                             })}
                         </HStack>
+
+                        <Spacer />
+
+                        <VStack>
+                            <Text fontWeight="bold">Background Music</Text>
+                            <Slider.Root width="200px" defaultValue={[0.1]} step={0.01} min={0} max={1} onValueChange={(e) => {
+                                backgroundHowler.volume(e.value[0])
+                            }}>
+                                <Slider.Control>
+                                    <Slider.Track>
+                                        <Slider.Range />
+                                    </Slider.Track>
+                                    <Slider.Thumbs />
+                                </Slider.Control>
+                            </Slider.Root>
+                        </VStack>
 
                         <Spacer />
 
