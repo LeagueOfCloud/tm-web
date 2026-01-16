@@ -5,7 +5,6 @@ import { AbsoluteCenter, Box, Button, Center, Heading, HStack, IconButton, Image
 import { useSession } from "next-auth/react";
 import MainLayout from "@/components/layouts/MainLayout";
 import { FaLock } from "react-icons/fa";
-import Shamrock from "@/components/shamrock";
 import BorderFillButtonStg from "@/components/svg/border-fill-button";
 import { useRouter } from "next/router";
 import { getCdnImage } from "@/lib/helpers";
@@ -20,7 +19,6 @@ import EmptyLastMatch from "@/components/empty/last-match";
 export default function Index() {
   const session = useSession()
   const router = useRouter()
-  const shamrockDisclosure = useDisclosure()
   const [host, setHost] = useState<string>("")
 
   const { data: scheduleData, loading: loadingSchedule } = usePublicFetch<ScheduledMatch[]>("schedule")
@@ -217,22 +215,6 @@ export default function Index() {
             </iframe>
           </Center>
         </Box>
-
-        <IconButton
-          position="absolute"
-          left={0}
-          top={"230px"}
-          background="orange.500"
-          roundedRight="md"
-          border="none"
-          size="2xs"
-          height="80px"
-          onClick={shamrockDisclosure.onOpen}
-        >
-          <FaLock />
-        </IconButton>
-
-        <Shamrock isOpen={shamrockDisclosure.open} onClose={shamrockDisclosure.onClose} />
       </MainLayout>
     </Show>
   );

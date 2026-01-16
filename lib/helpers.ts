@@ -91,3 +91,31 @@ export function getHoverSettings(
     return { team, type, position };
 }
 
+export function brightenColor(hex: string, percent: number = 10): string {
+    let normalizedHex = hex.replace("#", "");
+    if (normalizedHex.length === 3) {
+        normalizedHex = normalizedHex
+            .split("")
+            .map(c => c + c)
+            .join("");
+    }
+
+    if (normalizedHex.length !== 6) {
+        throw new Error("Invalid hex color");
+    }
+
+    const brighten = (value: number) =>
+        Math.min(255, Math.round(value + (255 - value) * (percent / 100)));
+
+    const r = brighten(parseInt(normalizedHex.slice(0, 2), 16));
+    const g = brighten(parseInt(normalizedHex.slice(2, 4), 16));
+    const b = brighten(parseInt(normalizedHex.slice(4, 6), 16));
+
+    return (
+        "#" +
+        [r, g, b]
+            .map(v => v.toString(16).padStart(2, "0"))
+            .join("")
+    );
+}
+

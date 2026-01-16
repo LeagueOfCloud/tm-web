@@ -114,6 +114,8 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                             {"PICK'EMS"}
                         </HeaderButton>
 
+                        <HeaderButton to="/about">{"ABOUT"}</HeaderButton>
+
                         {session.data?.user.type === "admin" && (
                             <HeaderButton to="/admin">{"ADMIN"}</HeaderButton>
                         )}

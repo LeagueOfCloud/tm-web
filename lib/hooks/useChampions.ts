@@ -3,13 +3,22 @@ import { queryKeys } from "../query";
 import axios from "axios";
 import { Champion } from "@/types/riot";
 
-export default function useChampions(patch = "16.1.1") {
+export default function useChampions(patch = "latest") {
     const queryClient = useQueryClient();
 
     const query = useQuery({
         queryKey: [queryKeys.dataDragonChampions],
         queryFn: async () => {
-            const res = await axios.get(`https://ddragon.leagueoflegends.com/cdn/${patch}/data/en_US/champion.json`)
+            let version
+
+            if (!patch || patch === "latest") {
+                const ddVersionRes = await axios.get("https://ddragon.leagueoflegends.com/api/versions.json")
+                version = ddVersionRes.data[0]
+            } else {
+                version = patch
+            }
+
+            const res = await axios.get(`https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion.json`)
             const data = res.data
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,7 +27,7 @@ export default function useChampions(patch = "16.1.1") {
                 name: c.name,
                 title: c.title,
                 splash_url: `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${c.id}_0.jpg`,
-                square_url: `https://ddragon.leagueoflegends.com/cdn/${patch}/img/champion/${c.id}.png`
+                square_url: `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${c.id}.png`
             })) as Champion[];
         }
     });
