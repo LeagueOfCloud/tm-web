@@ -1,16 +1,17 @@
 import LobbyWebsocket from "@/lib/lobbyWebsocket"
 import { barlow } from "@/styles/fonts"
-import { LobbyState } from "@/types/ws"
 import { Box, Button, Center, Flex, HStack, Icon, Image, Input, Show, SimpleGrid, Spacer, Text, VStack } from "@chakra-ui/react"
 import { GetServerSidePropsContext } from "next"
 import { animate, createScope, Scope } from "animejs"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import useChampions from "@/lib/hooks/useChampions"
 import Loader from "@/components/ui/loader"
 import { toaster } from "@/components/ui/toaster"
 import { ImBlocked } from "react-icons/im";
-import { getCdnImage, getHoverSettings } from "@/lib/helpers"
+import { getHoverSettings } from "@/lib/helpers"
 import Head from "next/head"
+import { HoverSettings } from "@/types/ws"
+import ChampionPickBox from "@/components/ui/champselect/champion-pick-box"
 
 type ChampSelectLobbyProps = {
     lobbyId: string
@@ -45,16 +46,8 @@ const turnOrder = [
     "RedTeamPick"
 ]
 
-const roleOrder = [
-    "top",
-    "jungle",
-    "mid",
-    "bot",
-    "support"
-]
-
 export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProps) {
-    const [lobbyData, setLobbyData] = useState<LobbyState>()
+    const [loaded, setLoaded] = useState<boolean>(false)
     const [preBans, setPreBans] = useState<string[]>([])
     const [blueBans, setBlueBans] = useState<string[]>([])
     const [redBans, setRedBans] = useState<string[]>([])
@@ -69,34 +62,57 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
     const [websocket, setWebsocket] = useState<LobbyWebsocket>()
     const [selectedChampionId, setSelectedChampionId] = useState<string | null>(null)
     const [hover, setHover] = useState<string | null>(null)
+    const [teamTurn, setTeamTurn] = useState<"blue" | "red">()
+    const [turnType, setTurnType] = useState<"pick" | "ban">()
+    const [hoverSettings, setHoverSettings] = useState<HoverSettings | null>()
 
     const root = useRef<HTMLDivElement>(null)
     const scope = useRef<Scope>(null)
 
-    const teamTurn = useMemo(() => {
-        const turnOrderCurrent = turnOrder[turn]
-        if (turnOrderCurrent?.startsWith("BlueTeam")) {
-            return "blue"
-        } else if (turnOrderCurrent?.startsWith("RedTeam")) {
-            return "red"
-        }
-    }, [turn])
+    // const teamTurn = useMemo(() => {
+    //     const turnOrderCurrent = turnOrder[turn]
+    //     if (turnOrderCurrent?.startsWith("BlueTeam")) {
+    //         return "blue"
+    //     } else if (turnOrderCurrent?.startsWith("RedTeam")) {
+    //         return "red"
+    //     }
+    // }, [turn])
 
-    const turnType = useMemo(() => {
-        const turnOrderCurrent = turnOrder[turn]
-        if (turnOrderCurrent?.endsWith("Pick")) {
-            return "pick"
-        } else if (turnOrderCurrent?.endsWith("Ban")) {
-            return "ban"
-        }
-    }, [turn])
-
-    const hoverSettings = useMemo(() => getHoverSettings(turnOrder, turn), [turn])
+    // const turnType = useMemo(() => {
+    //     const turnOrderCurrent = turnOrder[turn]
+    //     if (turnOrderCurrent?.endsWith("Pick")) {
+    //         return "pick"
+    //     } else if (turnOrderCurrent?.endsWith("Ban")) {
+    //         return "ban"
+    //     }
+    // }, [turn])
+    // 
+    // const hoverSettings = useMemo(() => getHoverSettings(turnOrder, turn), [turn])
 
     useEffect(() => {
         queueMicrotask(() => {
             setSelectedChampionId(null)
             setHover(null)
+
+            setHoverSettings(getHoverSettings(turnOrder, turn))
+            const turnOrderCurrent = turnOrder[turn]
+
+            if (turnOrderCurrent?.endsWith("Pick")) {
+                setTurnType("pick")
+            } else if (turnOrderCurrent?.endsWith("Ban")) {
+                setTurnType("ban")
+            } else {
+                setTurnType(undefined)
+            }
+
+            if (turnOrderCurrent?.startsWith("BlueTeam")) {
+                setTeamTurn("blue")
+            } else if (turnOrderCurrent?.startsWith("RedTeam")) {
+                setTeamTurn("red")
+            } else {
+                setTeamTurn(undefined)
+            }
+
         })
 
         if (started && turn < turnOrder.length) {
@@ -109,6 +125,78 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
     }, [turn, started])
 
     useEffect(() => {
+        const ws = new LobbyWebsocket(lobbyId, team)
+
+        queueMicrotask(() => setWebsocket(ws))
+
+        ws.getSocket().addEventListener("close", () => {
+            toaster.create({
+                title: "Disconnected",
+                description: "You have been disconnected...",
+                type: "error",
+                closable: false
+            })
+        })
+
+        ws.getSocket().addEventListener("message", e => {
+            let message
+
+            try {
+                message = JSON.parse(e.data)
+            } catch {
+                return
+            }
+
+            switch (message.action) {
+                case "Sync":
+                    const lobbyData = message
+                    queueMicrotask(() => {
+                        setRedPicks(lobbyData.redTeamChampions)
+                        setBluePicks(lobbyData.blueTeamChampions)
+                        setBlueBans(lobbyData.blueTeamBans)
+                        setRedBans(lobbyData.redTeamBans)
+                        setPreBans(lobbyData.preBans)
+                        setTurn(lobbyData.turn)
+
+                        if (lobbyData.state !== "Waiting") {
+                            setStarted(true)
+                        }
+
+                        if (lobbyData.connectionId === lobbyData.blueCaptain) {
+                            setCaptain("blue")
+                        } else if (lobbyData.connectionId === lobbyData.redCaptain) {
+                            setCaptain("red")
+                        }
+
+                        setLoaded(true)
+                    })
+                    break
+                case "BanChampion":
+                    setTurn(prev => prev + 1)
+                    if (message.Team === "Blue") {
+                        setBlueBans((prev) => [...prev, message.ChampionId])
+                    } else {
+                        setRedBans((prev) => [...prev, message.ChampionId])
+                    }
+                    break
+                case "SelectChampion":
+                    setTurn(prev => prev + 1)
+                    if (message.Team === "Blue") {
+                        setBluePicks((prev) => [...prev, message.ChampionId])
+                    } else {
+                        setRedPicks((prev) => [...prev, message.ChampionId])
+                    }
+                    break
+                case "Start":
+                    setStarted(true)
+                    setTurn(1)
+                    break
+                case "Hover":
+                    setHover(message.ChampionId)
+                    break
+            }
+        })
+
         scope.current = createScope({ root }).add(self => {
             const timerBoxAnimation = animate(`.${ANIMATION_KEYS.timerBox}`, {
                 width: ["100%", "0%"],
@@ -152,105 +240,17 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
             })
         })
 
-        return () => scope.current?.revert()
-    }, [])
-
-    useEffect(() => {
-        if (lobbyData) {
-            queueMicrotask(() => {
-                setRedPicks(lobbyData.redTeamChampions)
-                setBluePicks(lobbyData.blueTeamChampions)
-                setBlueBans(lobbyData.blueTeamBans)
-                setRedBans(lobbyData.redTeamBans)
-                setPreBans(lobbyData.preBans)
-                setTurn(lobbyData.turn)
-
-                if (lobbyData.state !== "Waiting") {
-                    setStarted(true)
-                }
-
-                if (lobbyData.connectionId === lobbyData.blueCaptain) {
-                    setCaptain("blue")
-                } else if (lobbyData.connectionId === lobbyData.redCaptain) {
-                    setCaptain("red")
-                }
-            })
+        return () => {
+            ws.getSocket().close()
+            scope.current?.revert()
         }
-    }, [lobbyData])
-
-    useEffect(() => {
-        const ws = new LobbyWebsocket(lobbyId, team)
-
-        queueMicrotask(() => setWebsocket(ws))
-
-        ws.getSocket().addEventListener("close", () => {
-            toaster.create({
-                title: "Disconnected",
-                description: "You have been disconnected...",
-                type: "error",
-                closable: false
-            })
-        })
-
-        ws.getSocket().addEventListener("message", e => {
-            let message
-
-            try {
-                message = JSON.parse(e.data)
-            } catch {
-                return
-            }
-
-            switch (message.action) {
-                case "Sync":
-                    setLobbyData(message)
-                    break
-                case "BanChampion":
-                    setTurn(prev => prev + 1)
-                    if (message.Team === "Blue") {
-                        setBlueBans((prev) => [...prev, message.ChampionId])
-                    } else {
-                        setRedBans((prev) => [...prev, message.ChampionId])
-                    }
-                    break
-                case "SelectChampion":
-                    setTurn(prev => prev + 1)
-                    if (message.Team === "Blue") {
-                        setBluePicks((prev) => [...prev, message.ChampionId])
-                    } else {
-                        setRedPicks((prev) => [...prev, message.ChampionId])
-                    }
-                    break
-                case "Start":
-                    setStarted(true)
-                    setTurn(1)
-                    break
-                case "Hover":
-                    setHover(message.ChampionId)
-                    break
-            }
-        })
-
-        return () => ws.getSocket().close()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
-    const titleState = useMemo(() => {
-        const turnState = turnOrder[turn]
-
-        if (turnState === "Waiting") {
-            return "Waiting..."
-        } else if (turnState === undefined) {
-            return "Finished"
-        } else {
-            return `${teamTurn?.toUpperCase()} is ${turnType?.toUpperCase()}ING`
-        }
-    }, [turn, teamTurn, turnType])
 
     return (
         <>
             <Head>
-                <title>{`${titleState} - Champion Select`}</title>
+                <title>Champion Select Lobby</title>
             </Head>
 
             <Flex
@@ -259,20 +259,13 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
             >
                 <VStack gap={0}>
                     {Array(5).fill(1).map((_, i) => (
-                        <Box
-                            key={`blue-champion-${i}`}
-                            height="20vh"
-                            width="300px"
-                            background="gray.900"
-                            boxShadow="inset 0px -8px 0px 0px var(--chakra-colors-feature)"
-                            backgroundImage={
-                                bluePicks[i] ? `url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${bluePicks[i]}_0.jpg)` :
-                                    hoverSettings?.team == "blue" && hoverSettings?.type == "pick" && hoverSettings?.position === i && hover !== null ?
-                                        `linear-gradient(to right, rgba(255, 255, 255, 0.3)), url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${hover}_0.jpg)`
-                                        :
-                                        `url(${getCdnImage("assets/champselect/champselect_blue_" + roleOrder[i] + ".png")})`
-                            }
-                            backgroundSize="cover"
+                        <ChampionPickBox
+                            key={`blue-team-pick-${i}-${bluePicks[i]}`}
+                            hoverSettings={hoverSettings}
+                            pick={bluePicks[i]}
+                            hover={hover}
+                            position={i}
+                            team="blue"
                         />
                     ))}
                 </VStack>
@@ -297,7 +290,7 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
                             transform="translateX(-50%)"
                         />
 
-                        <Show when={lobbyData} fallback={
+                        <Show when={loaded} fallback={
                             <Text position="absolute" width="50%" top="50%" left="50%" transform="translate(-50%, -50%)">
                                 Connecting...
                             </Text>
@@ -351,7 +344,7 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
                                             key={`champion-select-${champ.id}`}
                                             textAlign="center"
                                             cursor={isSelected ? "disabled" : "pointer"}
-                                            filter={isSelected ? "grayscale(1)" : "grayscale(0)"}
+                                            filter={isSelected ? "grayscale(1)" : selectedChampionId === champ.id ? "brightness(1.8)" : "grayscale(0)"}
                                             onClick={() => {
                                                 if (isSelected) {
                                                     return
@@ -368,7 +361,7 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
                                                 }
                                             }}
                                         >
-                                            <Image alt="champion icon" src={champ.square_url} boxSize="100px" border="1px solid" borderColor={selectedChampionId === champ.id ? "gold" : "transparent"} />
+                                            <Image alt="champion icon" src={champ.square_url} boxSize="100px" />
                                             <Text>{champ.name}</Text>
                                         </VStack>
                                     )
@@ -497,20 +490,13 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
 
                 <VStack gap={0}>
                     {Array(5).fill(1).map((_, i) => (
-                        <Box
-                            key={`red-champion-${i}`}
-                            height="20vh"
-                            width="300px"
-                            background="gray.900"
-                            boxShadow="inset 0px -8px 0px 0px tomato"
-                            backgroundImage={
-                                redPicks[i] ? `url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${redPicks[i]}_0.jpg)` :
-                                    hoverSettings?.team == "red" && hoverSettings?.type == "pick" && hoverSettings?.position === i && hover !== null ?
-                                        `linear-gradient(to right, rgba(255, 255, 255, 0.3)), url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${hover}_0.jpg)`
-                                        :
-                                        `url(${getCdnImage("assets/champselect/champselect_red_" + roleOrder[i] + ".png")})`
-                            }
-                            backgroundSize="cover"
+                        <ChampionPickBox
+                            key={`red-team-pick-${i}-${bluePicks[i]}`}
+                            hoverSettings={hoverSettings}
+                            pick={redPicks[i]}
+                            hover={hover}
+                            position={i}
+                            team="red"
                         />
                     ))}
                 </VStack>
