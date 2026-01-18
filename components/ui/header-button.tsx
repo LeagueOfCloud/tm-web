@@ -68,7 +68,12 @@ export default function HeaderButton({ to, asMenu, children, menuRender }: Heade
 
     return (
         <Link
-            onClick={() => router.push(to)}
+            href={to}
+            onClick={(e) => {
+                e.preventDefault()
+                router.push(to)
+            }}
+            outline="none"
             fontWeight="700"
             fontSize="15px"
             position="relative"
