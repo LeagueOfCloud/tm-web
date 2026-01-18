@@ -15,7 +15,8 @@ import PickemsSettingsDialog from "@/components/dialogs/settings/pickems";
 import ChampSelectSettingsDialog from "@/components/dialogs/settings/champselect";
 import useChampions from "@/lib/hooks/useChampions";
 import SettingsBox from "@/components/ui/settings-box";
-import { LuBan, LuMedal, LuPointer, LuTrophy } from "react-icons/lu";
+import { LuBan, LuMedal, LuPaintBucket, LuPointer, LuTrophy } from "react-icons/lu";
+import StyleSettingsDialog from "@/components/dialogs/settings/style";
 
 export default function AdminConfig() {
     const session = useSession();
@@ -30,6 +31,7 @@ export default function AdminConfig() {
     const dreamDraftSettingsDisclosure = useDisclosure()
     const pickEmsSettingsDisclosure = useDisclosure()
     const champSelectSettingsDisclosure = useDisclosure()
+    const styleSetingsDisclosure = useDisclosure()
 
     useEffect(() => {
         Object.entries(config).map(([key, value]) => {
@@ -49,10 +51,10 @@ export default function AdminConfig() {
     const onSubmit = form.handleSubmit((data) => {
         let isInvalid = false
 
-        if (data.tournament_name.length < 3 || data.tournament_name.length > 20) {
+        if (data.tournament_name.length < 3 || data.tournament_name.length > 40) {
             isInvalid = true
             form.setError("tournament_name", {
-                message: "Tournament name must be within 3 and 20 characters."
+                message: "Tournament name must be within 3 and 40 characters."
             })
         }
 
@@ -125,12 +127,20 @@ export default function AdminConfig() {
                         icon={<LuBan size="30px" />}
                         onClick={() => champSelectSettingsDisclosure.onOpen()}
                     />
+
+                    <SettingsBox
+                        title="Style Settings"
+                        description="Configure website style settings"
+                        icon={<LuPaintBucket size="30px" />}
+                        onClick={() => styleSetingsDisclosure.onOpen()}
+                    />
                 </HStack>
 
                 <TournamentSettingsDialog isSaving={isSaving} disclosure={tournamentSettingsDisclosure} form={form} onSave={onSubmit} />
                 <DreamDraftSettingsDialog isSaving={isSaving} disclosure={dreamDraftSettingsDisclosure} form={form} onSave={onSubmit} />
                 <PickemsSettingsDialog isSaving={isSaving} disclosure={pickEmsSettingsDisclosure} form={form} onSave={onSubmit} />
                 <ChampSelectSettingsDialog isSaving={isSaving} champions={champions} disclosure={champSelectSettingsDisclosure} form={form} onSave={onSubmit} />
+                <StyleSettingsDialog isSaving={isSaving} disclosure={styleSetingsDisclosure} form={form} onSave={onSubmit} />
             </Show>
         </AdminLayout>
     )

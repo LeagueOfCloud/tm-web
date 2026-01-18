@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image, Text, Link, SimpleGrid, Menu } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image, Text, Link, SimpleGrid, Menu, Show } from "@chakra-ui/react";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { LuPencilLine } from "react-icons/lu";
 import useSettings from "@/lib/hooks/useSettings";
@@ -60,6 +60,8 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                 <title>
                     {title ? `${title} - ${settings?.tournament_name}` : settings?.tournament_name}
                 </title>
+
+                <link rel="shortcut icon" href={settings?.tournament_favicon_url} type="image/x-icon" />
             </Head>
 
             <Flex
@@ -80,7 +82,17 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                     zIndex={100}
                 >
                     <Heading size="2xl" fontWeight="bold" letterSpacing="0.8px" className={barlow.className}>
-                        {settings?.tournament_name.toUpperCase()}
+                        <Show when={settings?.tournament_logo_url && settings?.tournament_logo_height && settings?.tournament_logo_width} fallback={settings?.tournament_name.toUpperCase()}>
+                            <Image
+                                onClick={() => router.push("/")}
+                                cursor="pointer"
+                                alt="logo"
+                                src={settings.tournament_logo_url}
+                                height={settings.tournament_logo_height}
+                                width={settings.tournament_logo_width}
+                                draggable={false}
+                            />
+                        </Show>
                     </Heading>
 
                     <HStack gap={5}>

@@ -1,10 +1,9 @@
 "use client"
 
 import Loader from "@/components/ui/loader";
-import { AbsoluteCenter, Box, Button, Center, Heading, HStack, IconButton, Image, Show, Text, useDisclosure, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, Box, Button, Center, Heading, HStack, Image, Show, Text, VStack } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import MainLayout from "@/components/layouts/MainLayout";
-import { FaLock } from "react-icons/fa";
 import BorderFillButtonStg from "@/components/svg/border-fill-button";
 import { useRouter } from "next/router";
 import { getCdnImage } from "@/lib/helpers";
@@ -15,11 +14,13 @@ import { SwordIcon } from "@/components/svg/sword";
 import { DateTime } from "luxon";
 import { barlow, poppins } from "@/styles/fonts";
 import EmptyLastMatch from "@/components/empty/last-match";
+import useSettings from "@/lib/hooks/useSettings";
 
 export default function Index() {
   const session = useSession()
   const router = useRouter()
   const [host, setHost] = useState<string>("")
+  const { settings } = useSettings()
 
   const { data: scheduleData, loading: loadingSchedule } = usePublicFetch<ScheduledMatch[]>("schedule")
 
@@ -52,14 +53,14 @@ export default function Index() {
                 fontSize="8em"
                 textShadow="-1px 5px 0 rgba(69, 248, 130, .66)"
               >
-                LOCKED // OUT
+                {settings?.home_title}
               </Heading>
               <Text
                 fontWeight="bold"
                 mt="3em"
                 fontSize="1.4em"
               >
-                LEAGUE OF LEGENDS TOURNAMENT
+                {settings?.home_description}
               </Text>
 
               <Box position="relative" className="animBorderFill" mt="2em" cursor="pointer">
