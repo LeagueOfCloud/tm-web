@@ -1,8 +1,9 @@
 import MainLayout from "@/components/layouts/MainLayout";
-import BorderFillButtonStg from "@/components/svg/border-fill-button";
 import { RuneIcon } from "@/components/svg/runes";
 import DreamDraftPlayerCard from "@/components/ui/dreamdraft/player-card";
 import Loader from "@/components/ui/loader";
+import PageHeaderButton from "@/components/ui/page-header-button";
+import PageHeaderTitle from "@/components/ui/page-header-title";
 import { toaster } from "@/components/ui/toaster";
 import api from "@/lib/api";
 import { CURRENCY_NAME } from "@/lib/constants";
@@ -11,9 +12,8 @@ import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import useSettings from "@/lib/hooks/useSettings";
 import { barlow } from "@/styles/fonts";
 import { PlayerResponse } from "@/types/db";
-import { AbsoluteCenter, ActionBar, Badge, Box, Button, Center, Heading, HStack, Image, Portal, ScrollArea, Show, SimpleGrid, Span, Text, useClipboard, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, ActionBar, Badge, Box, Button, Center, HStack, Image, Portal, ScrollArea, Show, SimpleGrid, Span, Text, useClipboard, VStack } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { LuCheck, LuSaveAll, LuShare2, LuTrash } from "react-icons/lu";
 
@@ -23,7 +23,6 @@ interface DreamDraftProps {
 
 export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
     const session = useSession()
-    const router = useRouter()
     const { data: players, loading: loadingPlayers } = usePublicFetch<PlayerResponse[]>("players")
     const { settings, loading: loadingSettings } = useSettings()
     const [originalDreamDraftIds, setOriginalDreamDraftIds] = useState<number[]>([])
@@ -91,131 +90,58 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                     <Loader />
                 </AbsoluteCenter>
             )}>
-                <Box
-                    height="100vh"
-                    background={`url(${getCdnImage("assets/background_dreamdraft.png")})`}
-                    backgroundSize="cover"
-                >
-
-                    <Center mt="25vh">
-                        <VStack>
-                            {(session.status === "authenticated" || otherProfileId) && (
-                                <HStack
-                                    mb="5vh"
-                                    fontFamily="Berlin Sans FB"
-                                    fontWeight="bold"
-                                    background={clipboard.copied ? "green" : "orange.500"}
-                                    px={3}
-                                    py={1}
-                                    rounded="lg"
-                                    cursor="pointer"
-                                    onClick={() => clipboard.copy()}
-                                >
-                                    {clipboard.copied ? <LuCheck /> : <LuShare2 />}
-                                    <Text>
-                                        {clipboard.copied ? "COPIED" : "SHARE"}
-                                    </Text>
-                                </HStack>
-                            )}
-
-                            <Heading
-                                fontFamily="Berlin Sans FB Bold"
-                                fontSize="8em"
-                                textShadow="-1px 5px 0 rgba(69, 248, 130, 0.66)"
+                <PageHeaderTitle
+                    backgroundImageUrl={getCdnImage("assets/background_dreamdraft.png")}
+                    title="Dream Draft"
+                    description="Make Your Perfect Team"
+                    buttons={
+                        <>
+                            <Show
+                                when={session.status === "authenticated"}
+                                fallback={
+                                    <PageHeaderButton onClick={() => signIn("discord")}>
+                                        Login To Draft
+                                    </PageHeaderButton>
+                                }
                             >
-                                {"DREAM DRAFT"}
-                            </Heading>
-                            <Text
+                                <PageHeaderButton link="#make-team">
+                                    Form your Team
+                                </PageHeaderButton>
+                            </Show>
+
+
+                            <PageHeaderButton link="/dreamdraft/leaderboard">
+                                Leaderboard
+                            </PageHeaderButton>
+                        </>
+                    }
+                    topContent={
+                        <Show when={session.status === "authenticated" || otherProfileId}>
+                            <HStack
+                                mb="5vh"
+                                fontFamily="Berlin Sans FB"
                                 fontWeight="bold"
-                                mt="3em"
-                                fontSize="1.4em"
+                                background={clipboard.copied ? "green" : "orange.500"}
+                                px={3}
+                                py={1}
+                                rounded="lg"
+                                cursor="pointer"
+                                onClick={() => clipboard.copy()}
                             >
-                                MAKE YOUR PERFECT TEAM
-                            </Text>
-
-                            <HStack mt="2em" gap={5}>
-                                <Box position="relative" className="animBorderFill" cursor="pointer">
-                                    <BorderFillButtonStg
-                                        svgProps={{
-                                            width: "200px"
-                                        }}
-
-                                        pathProps={{
-                                            stroke: "white",
-                                            fill: "var(--chakra-colors-ui-login-text)"
-                                        }}
-                                    />
-
-                                    <Show
-                                        when={session.status === "authenticated"}
-                                        fallback={
-                                            <Button
-                                                position="absolute"
-                                                top="50%"
-                                                left="50%"
-                                                transform="translate(-50%, -50%)"
-                                                color="black"
-                                                fontWeight="bold"
-                                                fontSize="md"
-                                                variant="plain"
-                                                onClick={() => signIn("discord")}
-                                            >
-                                                LOGIN TO DRAFT
-                                            </Button>
-                                        }
-                                    >
-                                        <Button
-                                            position="absolute"
-                                            top="50%"
-                                            left="50%"
-                                            transform="translate(-50%, -50%)"
-                                            color="black"
-                                            fontWeight="bold"
-                                            fontSize="md"
-                                            variant="plain"
-                                            onClick={() => router.push("#make-team")}
-                                        >
-                                            FORM YOUR TEAM
-                                        </Button>
-                                    </Show>
-                                </Box>
-
-                                <Box position="relative" className="animBorderFill" cursor="pointer">
-                                    <BorderFillButtonStg
-                                        svgProps={{
-                                            width: "200px"
-                                        }}
-
-                                        pathProps={{
-                                            stroke: "white",
-                                            fill: "var(--chakra-colors-ui-login-text)"
-                                        }}
-                                    />
-
-                                    <Button
-                                        position="absolute"
-                                        top="50%"
-                                        left="50%"
-                                        transform="translate(-50%, -50%)"
-                                        color="black"
-                                        fontWeight="bold"
-                                        fontSize="md"
-                                        variant="plain"
-                                        onClick={() => router.push("/dreamdraft/leaderboard")}
-                                    >
-                                        LEADERBOARD
-                                    </Button>
-                                </Box>
+                                {clipboard.copied ? <LuCheck /> : <LuShare2 />}
+                                <Text>
+                                    {clipboard.copied ? "COPIED" : "SHARE"}
+                                </Text>
                             </HStack>
-                        </VStack>
-                    </Center>
-                </Box>
+                        </Show>
+                    }
+                />
 
                 <Box
                     height="125vh"
                     backgroundImage={`url(${getCdnImage("assets/backgrounds/dreamdraft/dreamdraft_1_1.png")})`}
                     backgroundSize="cover"
-                    mt="-20em"
+                    mt="-16em"
                     id="make-team"
                     pt="20em"
                     px={10}

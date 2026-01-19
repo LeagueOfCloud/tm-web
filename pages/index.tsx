@@ -1,11 +1,9 @@
 "use client"
 
 import Loader from "@/components/ui/loader";
-import { AbsoluteCenter, Box, Button, Center, Heading, HStack, Image, Show, Text, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, Box, Center, Heading, HStack, Image, Show, Text } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import MainLayout from "@/components/layouts/MainLayout";
-import BorderFillButtonStg from "@/components/svg/border-fill-button";
-import { useRouter } from "next/router";
 import { getCdnImage } from "@/lib/helpers";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import { ScheduledMatch } from "@/types/db";
@@ -15,10 +13,11 @@ import { DateTime } from "luxon";
 import { barlow, poppins } from "@/styles/fonts";
 import EmptyLastMatch from "@/components/empty/last-match";
 import useSettings from "@/lib/hooks/useSettings";
+import PageHeaderTitle from "@/components/ui/page-header-title";
+import PageHeaderButton from "@/components/ui/page-header-button";
 
 export default function Index() {
   const session = useSession()
-  const router = useRouter()
   const [host, setHost] = useState<string>("")
   const { settings } = useSettings()
 
@@ -38,67 +37,22 @@ export default function Index() {
       fallback={<AbsoluteCenter><Loader /></AbsoluteCenter>}
     >
       <MainLayout>
-
-        <Box
-          height="90vh"
-          backgroundImage={`url(${getCdnImage("assets/background_1.png")})`}
-          backgroundSize="100%"
-        >
-
-          <Center>
-            <VStack>
-              <Heading
-                paddingTop="30vh"
-                fontFamily="Berlin Sans FB Bold"
-                fontSize="8em"
-                textShadow="-1px 5px 0 rgba(69, 248, 130, .66)"
-              >
-                {settings?.home_title}
-              </Heading>
-              <Text
-                fontWeight="bold"
-                mt="3em"
-                fontSize="1.4em"
-              >
-                {settings?.home_description}
-              </Text>
-
-              <Box position="relative" className="animBorderFill" mt="2em" cursor="pointer">
-                <BorderFillButtonStg
-                  svgProps={{
-                    width: "200px"
-                  }}
-
-                  pathProps={{
-                    stroke: "white",
-                    fill: "var(--chakra-colors-ui-login-text)"
-                  }}
-                />
-
-                <Button
-                  position="absolute"
-                  top="50%"
-                  left="50%"
-                  transform="translate(-50%, -50%)"
-                  color="black"
-                  fontWeight="bold"
-                  fontSize="md"
-                  variant="plain"
-                  onClick={() => router.push("/schedule")}
-                >
-                  VIEW SCHEDULE
-                </Button>
-              </Box>
-            </VStack>
-          </Center>
-
-        </Box>
+        <PageHeaderTitle
+          backgroundImageUrl={getCdnImage("assets/background_1.png")}
+          title={settings?.home_title}
+          description={settings?.home_description}
+          buttons={
+            <PageHeaderButton link="/schedule">
+              View Schedule
+            </PageHeaderButton>
+          }
+        />
 
         <Box
           height="100vh"
           backgroundImage={`url(${getCdnImage("assets/background_landing_1.png")})`}
           backgroundSize="100%"
-          mt="-10em"
+          mt="-5em"
           pt="18em"
         >
 

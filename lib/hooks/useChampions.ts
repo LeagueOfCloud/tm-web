@@ -27,7 +27,8 @@ export default function useChampions(patch = "latest") {
                 name: c.name,
                 title: c.title,
                 splash_url: `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${c.id}_0.jpg`,
-                square_url: `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${c.id}.png`
+                square_url: `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${c.id}.png`,
+                centered_url: `https://ddragon.leagueoflegends.com/cdn/img/champion/centered/${c.id === "Fiddlesticks" ? "FiddleSticks" : c.id}_0.jpg`
             })) as Champion[];
         }
     });

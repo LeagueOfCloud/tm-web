@@ -20,7 +20,7 @@ export default function SelectPickemChampion({ champions, onChampionSelect, disc
                     key={`pickems-select-champion-${champion.id}`}
                     roundedLeft="md"
                     backgroundColor="rgba(0, 0, 0, 0.95);"
-                    backgroundImage={`url(${champion.splash_url})`}
+                    backgroundImage={`url(${champion.centered_url})`}
                     backgroundSize="cover"
                     backgroundPosition="center"
                     backgroundBlendMode="darken"

@@ -1,12 +1,10 @@
 "use client"
 
 import MainLayout from "@/components/layouts/MainLayout";
-import { AbsoluteCenter, Box, Button, Center, Heading, HStack, Show, SimpleGrid, Text, useClipboard, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, Box, HStack, Show, SimpleGrid, Text, useClipboard } from "@chakra-ui/react";
 
 import useSettings from "@/lib/hooks/useSettings";
 import PlayerPickEmCard from "@/components/ui/pickems/player-card";
-import BorderFillButtonStg from "@/components/svg/border-fill-button";
-import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import { PickEmResponse, PlayerResponse, TeamResponse } from "@/types/db";
@@ -20,6 +18,8 @@ import MiscPickemCard from "@/components/ui/pickems/misc-card";
 import { LuCheck, LuShare2 } from "react-icons/lu";
 import { getCdnImage } from "@/lib/helpers";
 import { barlow } from "@/styles/fonts";
+import PageHeaderTitle from "@/components/ui/page-header-title";
+import PageHeaderButton from "@/components/ui/page-header-button";
 
 interface PickEmsProps {
     otherProfileId?: number
@@ -42,7 +42,6 @@ function HeaderText({ children }: PropsWithChildren) {
 
 export default function PickEms({ otherProfileId }: PickEmsProps) {
     const { settings, loading } = useSettings()
-    const router = useRouter()
     const session = useSession()
     const { data: players, loading: loadingPlayers } = usePublicFetch<PlayerResponse[]>("players")
     const { data: teams, loading: loadingTeams } = usePublicFetch<TeamResponse[]>("teams")
@@ -92,134 +91,59 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                     <Loader />
                 </AbsoluteCenter>
             )}>
-                <Box
-                    height="100vh"
-                    background={`url(${getCdnImage("assets/background_pickems.png")})`}
-                    backgroundSize="cover"
-                >
 
-                    <Center pt="25vh">
-                        <VStack>
-                            {(session.status === "authenticated" || otherProfileId) && (
-                                <HStack
-                                    mb="5vh"
-                                    fontFamily="Berlin Sans FB"
-                                    fontWeight="bold"
-                                    background={clipboard.copied ? "green" : "orange.500"}
-                                    px={3}
-                                    py={1}
-                                    rounded="lg"
-                                    cursor="pointer"
-                                    onClick={() => clipboard.copy()}
-                                >
-                                    {clipboard.copied ? <LuCheck /> : <LuShare2 />}
-                                    <Text>
-                                        {clipboard.copied ? "COPIED" : "SHARE"}
-                                    </Text>
-                                </HStack>
-                            )}
-
-                            <Heading
-                                fontFamily="Berlin Sans FB Bold"
-                                fontSize="8em"
-                                textShadow="-1px 5px 0 rgba(69, 248, 130, 0.66)"
+                <PageHeaderTitle
+                    backgroundImageUrl={getCdnImage("assets/background_pickems.png")}
+                    title="Pick'Ems"
+                    description="Make Your Tournament Predictions"
+                    buttons={
+                        <>
+                            <Show
+                                when={session.status === "authenticated"}
+                                fallback={
+                                    <PageHeaderButton onClick={() => signIn("discord")}>
+                                        Login To Vote
+                                    </PageHeaderButton>
+                                }
                             >
-                                {"PICK'EMS"}
-                            </Heading>
+                                <PageHeaderButton link="#players">
+                                    Cast Your Votes
+                                </PageHeaderButton>
+                            </Show>
 
 
-                            <Text
+                            <PageHeaderButton link="/pickems/leaderboard">
+                                Leaderboard
+                            </PageHeaderButton>
+                        </>
+                    }
+                    topContent={
+                        <Show when={session.status === "authenticated" || otherProfileId}>
+                            <HStack
+                                mb="5vh"
+                                fontFamily="Berlin Sans FB"
                                 fontWeight="bold"
-                                mt="3em"
-                                fontSize="1.4em"
+                                background={clipboard.copied ? "green" : "orange.500"}
+                                px={3}
+                                py={1}
+                                rounded="lg"
+                                cursor="pointer"
+                                onClick={() => clipboard.copy()}
                             >
-                                MAKE YOUR TOURNAMENT PREDICTIONS
-                            </Text>
-
-                            <HStack mt="2em" gap={5}>
-                                <Box position="relative" className="animBorderFill" cursor="pointer">
-                                    <BorderFillButtonStg
-                                        svgProps={{
-                                            width: "200px"
-                                        }}
-
-                                        pathProps={{
-                                            stroke: "white",
-                                            fill: "var(--chakra-colors-ui-login-text)"
-                                        }}
-                                    />
-
-                                    <Show
-                                        when={session.status === "authenticated"}
-                                        fallback={
-                                            <Button
-                                                position="absolute"
-                                                top="50%"
-                                                left="50%"
-                                                transform="translate(-50%, -50%)"
-                                                color="black"
-                                                fontWeight="bold"
-                                                fontSize="md"
-                                                variant="plain"
-                                                onClick={() => signIn("discord")}
-                                            >
-                                                LOGIN TO VOTE
-                                            </Button>
-                                        }
-                                    >
-                                        <Button
-                                            position="absolute"
-                                            top="50%"
-                                            left="50%"
-                                            transform="translate(-50%, -50%)"
-                                            color="black"
-                                            fontWeight="bold"
-                                            fontSize="md"
-                                            variant="plain"
-                                            onClick={() => router.push("#players")}
-                                        >
-                                            CAST YOUR VOTES
-                                        </Button>
-                                    </Show>
-                                </Box>
-
-                                <Box position="relative" className="animBorderFill" cursor="pointer">
-                                    <BorderFillButtonStg
-                                        svgProps={{
-                                            width: "200px"
-                                        }}
-
-                                        pathProps={{
-                                            stroke: "white",
-                                            fill: "var(--chakra-colors-ui-login-text)"
-                                        }}
-                                    />
-
-                                    <Button
-                                        position="absolute"
-                                        top="50%"
-                                        left="50%"
-                                        transform="translate(-50%, -50%)"
-                                        color="black"
-                                        fontWeight="bold"
-                                        fontSize="md"
-                                        variant="plain"
-                                        onClick={() => router.push("/pickems/leaderboard")}
-                                    >
-                                        LEADERBOARD
-                                    </Button>
-                                </Box>
+                                {clipboard.copied ? <LuCheck /> : <LuShare2 />}
+                                <Text>
+                                    {clipboard.copied ? "COPIED" : "SHARE"}
+                                </Text>
                             </HStack>
-                        </VStack>
-                    </Center>
-
-                </Box>
+                        </Show>
+                    }
+                />
 
                 <Box
                     height="125vh"
                     backgroundImage={`url(${getCdnImage("assets/backgrounds/pickems/pickems_1.png")})`}
                     backgroundSize="cover"
-                    mt="-15em"
+                    mt="-14em"
                     id="players"
                     pt="15em"
                     px={10}

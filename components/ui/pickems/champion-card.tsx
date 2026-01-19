@@ -37,7 +37,7 @@ export default function ChampionPickemCard({ pickemId, title, defaultId, champio
                     objectFit="cover"
                     minWidth="200px"
                     height="200px"
-                    src={selectedChampion ? selectedChampion.splash_url : `${process.env.NEXT_PUBLIC_CDN_URL}/assets/pickem_missing.png`}
+                    src={selectedChampion ? selectedChampion.centered_url : `${process.env.NEXT_PUBLIC_CDN_URL}/assets/pickem_missing.png`}
                     alt="pickem-cover"
                     draggable={false}
                 />

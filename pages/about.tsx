@@ -1,10 +1,10 @@
 import MainLayout from "@/components/layouts/MainLayout";
-import BorderFillButtonStg from "@/components/svg/border-fill-button";
+import PageHeaderButton from "@/components/ui/page-header-button";
+import PageHeaderTitle from "@/components/ui/page-header-title";
 import TeamMemberCard from "@/components/ui/team-member-card";
 import { getCdnImage } from "@/lib/helpers";
 import { barlow, poppins } from "@/styles/fonts";
-import { Box, Button, Center, Heading, HStack, Image, Link, Text, VStack } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { Center, Heading, HStack, Image, Link, Text } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
 
 export function AboutSectionHeading({ children }: PropsWithChildren) {
@@ -23,70 +23,24 @@ export function AboutLinkRef({ to, children }: PropsWithChildren & { to?: string
 
 
 export default function About() {
-    const router = useRouter()
-
     return (
         <MainLayout title="About">
-            <Box
-                height="100vh"
-                background={`url(${getCdnImage("assets/backgrounds/about/about_1.png")})`}
-                backgroundSize="cover"
-            >
-                <Center mt="25vh">
-                    <VStack>
-
-                        <Heading
-                            fontFamily="Berlin Sans FB Bold"
-                            fontSize="8em"
-                            textShadow="-1px 5px 0 rgba(69, 248, 130, 0.66)"
-                        >
-                            {"ABOUT"}
-                        </Heading>
-                        <Text
-                            fontWeight="bold"
-                            mt="3em"
-                            fontSize="1.4em"
-                        >
-                            SOME INFORMATION ABOUT US
-                        </Text>
-
-                        <HStack mt="2em" gap={5}>
-                            <Box position="relative" className="animBorderFill" cursor="pointer">
-                                <BorderFillButtonStg
-                                    svgProps={{
-                                        width: "200px"
-                                    }}
-
-                                    pathProps={{
-                                        stroke: "white",
-                                        fill: "var(--chakra-colors-ui-login-text)"
-                                    }}
-                                />
-
-                                <Button
-                                    position="absolute"
-                                    top="50%"
-                                    left="50%"
-                                    transform="translate(-50%, -50%)"
-                                    color="black"
-                                    fontWeight="bold"
-                                    fontSize="md"
-                                    variant="plain"
-                                    onClick={() => router.push("#more")}
-                                >
-                                    LEARN MORE
-                                </Button>
-                            </Box>
-                        </HStack>
-                    </VStack>
-                </Center>
-            </Box>
+            <PageHeaderTitle
+                title="About"
+                description="Learn more about us"
+                backgroundImageUrl={getCdnImage("assets/backgrounds/about/about_1.png")}
+                buttons={
+                    <PageHeaderButton link="#more">
+                        Learn More
+                    </PageHeaderButton>
+                }
+            />
 
             <Center
                 minHeight="100vh"
                 background={`url(${getCdnImage("assets/backgrounds/about/about_2.png")})`}
                 backgroundSize="cover"
-                mt={"-15em"}
+                mt={"-13em"}
                 backgroundPosition="center top"
                 flexDirection="column"
                 id="more"
