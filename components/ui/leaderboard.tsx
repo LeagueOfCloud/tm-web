@@ -1,17 +1,18 @@
 "use client"
 
 import MainLayout from "@/components/layouts/MainLayout";
-import BorderFillButtonStg from "@/components/svg/border-fill-button";
 import LeaderboardCard from "@/components/ui/leaderboard-card";
 import Loader from "@/components/ui/loader";
 import { toaster } from "@/components/ui/toaster";
 import api from "@/lib/api";
 import { getCdnImage } from "@/lib/helpers";
 import { LeaderboardResponse } from "@/types/db";
-import { Box, Button, ButtonGroup, Center, Heading, HStack, IconButton, Pagination, Show, Text, VStack } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { ButtonGroup, Center, IconButton, Pagination, Show, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import PageHeaderTitle from "./page-header-title";
+import PageHeaderButton from "./page-header-button";
+import PageSectorContainer from "./page-sector-container";
 
 interface LeaderboardProps {
     title: string
@@ -19,7 +20,6 @@ interface LeaderboardProps {
 }
 
 export default function Leaderboard({ title, board }: LeaderboardProps) {
-    const router = useRouter()
     const [currentPage, setCurrentPage] = useState<number>(1)
     const [aproxTotalItems, setAproxTotalItems] = useState<number>(1)
     const [loadingProfiles, setLoadingProfiles] = useState<boolean>(true)
@@ -62,77 +62,24 @@ export default function Leaderboard({ title, board }: LeaderboardProps) {
 
     return (
         <MainLayout title={`${title} - Leaderboard`}>
-            <Box
-                height="100vh"
-                backgroundImage={`url(${getCdnImage("assets/backgrounds/leaderboard/leaderboard_header_1.png")})`}
-                backgroundSize="100%"
-            >
-                <Center mt="20vh">
-                    <VStack>
-                        <Heading
-                            fontFamily="Berlin Sans FB Bold"
-                            fontSize="8em"
-                            textShadow="-1px 5px 0 rgba(69, 248, 130, 0.66)"
-                        >
-                            {title.toUpperCase()}
-                        </Heading>
-                        <Heading
-                            mt=".8em"
-                            fontFamily="Berlin Sans FB Bold"
-                            fontSize="8em"
-                            textShadow="-1px 5px 0 rgba(69, 248, 130, 0.66)"
-                        >
-                            {"LEADERBOARD"}
-                        </Heading>
-                        <Text
-                            fontWeight="bold"
-                            mt="3em"
-                            fontSize="1.4em"
-                        >
-                            THE BEST TOURNAMENT PREDICTIONS
-                        </Text>
 
-                        <HStack mt="2em" gap={5}>
-                            <Box position="relative" className="animBorderFill" cursor="pointer">
-                                <BorderFillButtonStg
-                                    svgProps={{
-                                        width: "200px"
-                                    }}
+            <PageHeaderTitle
+                title="Leaderboard"
+                description={`The Best ${title} done`}
+                backgroundImageUrl={getCdnImage("assets/backgrounds/leaderboard/leaderboard_header_1.png")}
+                buttons={
+                    <PageHeaderButton link="#view">
+                        View Rankings
+                    </PageHeaderButton>
+                }
+            />
 
-                                    pathProps={{
-                                        stroke: "white",
-                                        fill: "var(--chakra-colors-ui-login-text)"
-                                    }}
-                                />
-
-                                <Button
-                                    position="absolute"
-                                    top="50%"
-                                    left="50%"
-                                    transform="translate(-50%, -50%)"
-                                    color="black"
-                                    fontWeight="bold"
-                                    fontSize="md"
-                                    variant="plain"
-                                    onClick={() => {
-                                        router.push("#view")
-                                    }}
-                                >
-                                    {"VIEW RANKINGS"}
-                                </Button>
-                            </Box>
-                        </HStack>
-                    </VStack>
-                </Center>
-            </Box>
-
-            <Box
-                mt="-25em"
-                pt="20em"
+            <PageSectorContainer
+                spacingTopOut="-15em"
+                spacingTopIn="20em"
                 height="130vh"
                 id="view"
-                backgroundImage={`url(${getCdnImage("assets/backgrounds/leaderboard/leaderboard_1.png")})`}
-                backgroundSize="cover"
+                backgroundImageUrl={getCdnImage("assets/backgrounds/leaderboard/leaderboard_1.png")}
                 backgroundPosition="center top"
             >
 
@@ -183,7 +130,7 @@ export default function Leaderboard({ title, board }: LeaderboardProps) {
                         </ButtonGroup>
                     </Pagination.Root>
                 </Center>
-            </Box>
+            </PageSectorContainer>
         </MainLayout >
     )
 }

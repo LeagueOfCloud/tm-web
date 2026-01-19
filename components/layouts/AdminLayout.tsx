@@ -35,6 +35,8 @@ export default function AdminLayout({ title, children }: AdminLayoutProps & Prop
                 <title>
                     {title ? `${title} - Admin - ${settings?.tournament_name}` : `Admin - ${settings?.tournament_name}`}
                 </title>
+
+                <link rel="shortcut icon" href={settings?.tournament_favicon_url} type="image/x-icon" />
             </Head>
 
             {session.status !== "authenticated" && (

@@ -4,4 +4,5 @@ export interface Champion {
     title: string
     splash_url: string
     square_url: string
+    centered_url: string
 }

@@ -1,12 +1,9 @@
 "use client"
 
 import Loader from "@/components/ui/loader";
-import { AbsoluteCenter, Box, Button, Center, Heading, HStack, IconButton, Image, Show, Text, useDisclosure, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, Box, Center, Heading, HStack, Image, Show, Text } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import MainLayout from "@/components/layouts/MainLayout";
-import { FaLock } from "react-icons/fa";
-import BorderFillButtonStg from "@/components/svg/border-fill-button";
-import { useRouter } from "next/router";
 import { getCdnImage } from "@/lib/helpers";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import { ScheduledMatch } from "@/types/db";
@@ -15,11 +12,15 @@ import { SwordIcon } from "@/components/svg/sword";
 import { DateTime } from "luxon";
 import { barlow, poppins } from "@/styles/fonts";
 import EmptyLastMatch from "@/components/empty/last-match";
+import useSettings from "@/lib/hooks/useSettings";
+import PageHeaderTitle from "@/components/ui/page-header-title";
+import PageHeaderButton from "@/components/ui/page-header-button";
+import PageSectorContainer from "@/components/ui/page-sector-container";
 
 export default function Index() {
   const session = useSession()
-  const router = useRouter()
   const [host, setHost] = useState<string>("")
+  const { settings } = useSettings()
 
   const { data: scheduleData, loading: loadingSchedule } = usePublicFetch<ScheduledMatch[]>("schedule")
 
@@ -37,68 +38,21 @@ export default function Index() {
       fallback={<AbsoluteCenter><Loader /></AbsoluteCenter>}
     >
       <MainLayout>
+        <PageHeaderTitle
+          backgroundImageUrl={getCdnImage("assets/background_1.png")}
+          title={settings?.home_title}
+          description={settings?.home_description}
+          buttons={
+            <PageHeaderButton link="/schedule">
+              View Schedule
+            </PageHeaderButton>
+          }
+        />
 
-        <Box
-          height="90vh"
-          backgroundImage={`url(${getCdnImage("assets/background_1.png")})`}
-          backgroundSize="100%"
-        >
-
-          <Center>
-            <VStack>
-              <Heading
-                paddingTop="30vh"
-                fontFamily="Berlin Sans FB Bold"
-                fontSize="8em"
-                textShadow="-1px 5px 0 rgba(69, 248, 130, .66)"
-              >
-                LOCKED // OUT
-              </Heading>
-              <Text
-                fontWeight="bold"
-                mt="3em"
-                fontSize="1.4em"
-              >
-                LEAGUE OF LEGENDS TOURNAMENT
-              </Text>
-
-              <Box position="relative" className="animBorderFill" mt="2em" cursor="pointer">
-                <BorderFillButtonStg
-                  svgProps={{
-                    width: "200px"
-                  }}
-
-                  pathProps={{
-                    stroke: "white",
-                    fill: "var(--chakra-colors-ui-login-text)"
-                  }}
-                />
-
-                <Button
-                  position="absolute"
-                  top="50%"
-                  left="50%"
-                  transform="translate(-50%, -50%)"
-                  color="black"
-                  fontWeight="bold"
-                  fontSize="md"
-                  variant="plain"
-                  onClick={() => router.push("/schedule")}
-                >
-                  VIEW SCHEDULE
-                </Button>
-              </Box>
-            </VStack>
-          </Center>
-
-        </Box>
-
-        <Box
-          height="100vh"
-          backgroundImage={`url(${getCdnImage("assets/background_landing_1.png")})`}
-          backgroundSize="100%"
-          mt="-10em"
-          pt="18em"
+        <PageSectorContainer
+          backgroundImageUrl={getCdnImage("assets/background_landing_1.png")}
+          spacingTopOut="-5em"
+          spacingTopIn="18em"
         >
 
           <Center flexDirection="column">
@@ -195,14 +149,12 @@ export default function Index() {
               </Text>
             </Show>
           </Center>
-        </Box>
+        </PageSectorContainer>
 
-        <Box
-          height="100vh"
+        <PageSectorContainer
           backgroundImage={`url(${getCdnImage("assets/background_landing_1.png")})`}
-          backgroundSize="100%"
-          mt="-6em"
-          pt="10em"
+          spacingTopOut="-6em"
+          spacingTopIn="10em"
           id="live"
         >
           <Center>
@@ -214,7 +166,7 @@ export default function Index() {
               allowFullScreen>
             </iframe>
           </Center>
-        </Box>
+        </PageSectorContainer>
       </MainLayout>
     </Show>
   );

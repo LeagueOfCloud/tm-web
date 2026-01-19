@@ -1,17 +1,17 @@
 import MainLayout from "@/components/layouts/MainLayout";
-import { Box, Center, Heading, Text, VStack, HStack, Spinner, Stack, Button, Icon, Show } from "@chakra-ui/react";
+import { Box, Text, VStack, Spinner, Stack, Button, Icon, Show } from "@chakra-ui/react";
 import { getCdnImage } from "@/lib/helpers";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import { ScheduledMatch } from "@/types/db";
 import { useMemo, useRef, useState } from "react";
 import { SlArrowUp, SlArrowDown } from "react-icons/sl";
-import { useRouter } from "next/router";
-import BorderFillButtonStg from "@/components/svg/border-fill-button";
 import ScheduledMatchCard from "@/components/ui/schedule-match-card";
 import { barlow } from "@/styles/fonts";
+import PageHeaderTitle from "@/components/ui/page-header-title";
+import PageHeaderButton from "@/components/ui/page-header-button";
+import PageSectorContainer from "@/components/ui/page-sector-container";
 
 export default function SchedulePage() {
-    const router = useRouter()
     const { data: matches, loading: loadingMatches } = usePublicFetch<ScheduledMatch[]>("schedule")
     const MatchesRef = useRef<HTMLDivElement>(null)
     const [showPast, setShowPast] = useState(false);
@@ -38,85 +38,48 @@ export default function SchedulePage() {
 
     return (
         <MainLayout title="Schedule">
-            <Box
-                height="100vh"
-                zIndex={1}
-                background={`url(${getCdnImage("assets/background_schedule.png")})`}
-                backgroundSize="cover"
-                backgroundPosition="bottom"
-            >
-                <Center mt="25vh">
-                    <VStack>
-                        <Heading
-                            fontFamily="Berlin Sans FB Bold"
-                            fontSize="8em"
-                            textShadow="-1px 5px 0 rgba(69, 248, 130, 0.66)"
-                        >
-                            {"SCHEDULE"}
-                        </Heading>
-                        <Text
-                            fontWeight="bold"
-                            mt="3em"
-                            fontSize="1.4em"
-                        >
-                            TOURNAMENT MATCHES AND TIMES
-                        </Text>
+            <PageHeaderTitle
+                backgroundImageUrl={getCdnImage("assets/backgrounds/schedule/schedule_1.png")}
+                title="Schedule"
+                description="Tournament Matches And Times"
+                buttons={
+                    <PageHeaderButton link="#view">
+                        View Matches
+                    </PageHeaderButton>
+                }
+                containerProps={{
+                    zIndex: 1,
+                }}
+            />
 
-                        <HStack mt="2em" gap={5}>
-                            <Box position="relative" className="animBorderFill" cursor="pointer">
-                                <BorderFillButtonStg
-                                    svgProps={{
-                                        width: "200px"
-                                    }}
 
-                                    pathProps={{
-                                        stroke: "white",
-                                        fill: "var(--chakra-colors-ui-login-text)"
-                                    }}
-                                />
-
-                                <Button
-                                    position="absolute"
-                                    top="50%"
-                                    left="50%"
-                                    transform="translate(-50%, -50%)"
-                                    color="black"
-                                    fontWeight="bold"
-                                    fontSize="md"
-                                    variant="plain"
-                                    onClick={() => router.push("#view")}
-                                >
-                                    VIEW MATCHES
-                                </Button>
-                            </Box>
-                        </HStack>
-                    </VStack>
-                </Center>
-            </Box>
-            <Button
-                size="sm"
-                variant="plain"
-                h="auto"
-                padding={6}
-                alignSelf="center"
-                onClick={() => { setShowPast(prev => !prev); }}
-            >
-                <VStack justify="center">
-                    <Icon boxSize={4}>
-                        {!showPast ? <SlArrowUp /> : <SlArrowDown />}
-                    </Icon>
-                    <Text
-                        fontWeight="bold"
-                        fontSize="lg"
-                        textAlign="center"
-                    >
-                        {!showPast ? "Show Past Matches" : "Hide Past Matches"}
-                    </Text>
-                </VStack>
-            </Button>
-
-            <Box p={6} id="view" background={`url(${getCdnImage("assets/background_schedule_loop.png")})`} mt={"-20em"} pt="20em">
+            <PageSectorContainer spacingTopIn="20em" spacingTopOut="-16em" pb={10} id="view" backgroundImageUrl={getCdnImage("assets/background_schedule_loop.png")} height="100%">
                 <VStack align="stretch" spaceY={6}>
+                    <Button
+                        size="sm"
+                        variant="plain"
+                        h="auto"
+                        padding={6}
+                        alignSelf="center"
+                        mt="-12em"
+                        cursor="pointer"
+                        onClick={() => { setShowPast(prev => !prev); }}
+                        zIndex={1}
+                    >
+                        <VStack justify="center">
+                            <Icon boxSize={4}>
+                                {!showPast ? <SlArrowUp /> : <SlArrowDown />}
+                            </Icon>
+                            <Text
+                                fontWeight="bold"
+                                fontSize="lg"
+                                textAlign="center"
+                            >
+                                {!showPast ? "Show Past Matches" : "Hide Past Matches"}
+                            </Text>
+                        </VStack>
+                    </Button>
+
                     <Box ref={MatchesRef}>
                         {(loadingMatches) ? (
                             <Stack alignItems="center"><Spinner /></Stack>
@@ -156,7 +119,7 @@ export default function SchedulePage() {
                         )}
                     </Box>
                 </VStack>
-            </Box >
+            </PageSectorContainer>
         </MainLayout >
     )
 }
