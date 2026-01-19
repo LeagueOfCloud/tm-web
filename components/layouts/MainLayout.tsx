@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image, Text, Link, SimpleGrid, Menu, Show } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image, Text, Link, SimpleGrid, Menu, Show, useBreakpointValue } from "@chakra-ui/react";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { LuPencilLine } from "react-icons/lu";
 import useSettings from "@/lib/hooks/useSettings";
@@ -12,6 +12,7 @@ import BorderFillButtonStg from "../svg/border-fill-button";
 import { FaGithub } from "react-icons/fa";
 import { barlow, poppins } from "@/styles/fonts";
 import Head from "next/head";
+import MainLayoutHeaderDrawer from "./MainLayoutHeaderDrawer";
 
 const SCROLL_HEIGHT_REVEAL = 200
 
@@ -24,6 +25,10 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
     const { settings, loading: loadingSettings } = useSettings()
     const session = useSession()
     const router = useRouter()
+    const showHeaderDrawer = useBreakpointValue({
+        base: true,
+        desktop: false
+    })
 
     useEffect(() => {
         let changeFn: () => void
@@ -95,82 +100,87 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                         </Show>
                     </Heading>
 
-                    <HStack gap={5}>
-                        <HeaderButton to="/">{"HOME"}</HeaderButton>
+                    <Show
+                        when={!showHeaderDrawer}
+                        fallback={<MainLayoutHeaderDrawer />}
+                    >
+                        <HStack gap={5}>
+                            <HeaderButton to="/">{"HOME"}</HeaderButton>
 
-                        <HeaderButton to="/schedule">{"SCHEDULE"}</HeaderButton>
+                            <HeaderButton to="/schedule">{"SCHEDULE"}</HeaderButton>
 
-                        <HeaderButton
-                            to="/dreamdraft"
-                            asMenu
-                            menuRender={() => (
-                                <>
-                                    <Menu.Item value="dd-create" cursor="pointer" onClick={() => router.push("/dreamdraft")}>Make Your Draft</Menu.Item>
-                                    <Menu.Item value="dd-leaderboard" cursor="pointer" onClick={() => router.push("/dreamdraft/leaderboard")}>Leaderboard</Menu.Item>
-                                </>
+                            <HeaderButton
+                                to="/dreamdraft"
+                                asMenu
+                                menuRender={() => (
+                                    <>
+                                        <Menu.Item value="dd-create" cursor="pointer" onClick={() => router.push("/dreamdraft")}>Make Your Draft</Menu.Item>
+                                        <Menu.Item value="dd-leaderboard" cursor="pointer" onClick={() => router.push("/dreamdraft/leaderboard")}>Leaderboard</Menu.Item>
+                                    </>
+                                )}
+                            >
+                                {"DREAM DRAFT"}
+                            </HeaderButton>
+
+                            <HeaderButton
+                                to="/pickems"
+                                asMenu
+                                menuRender={() => (
+                                    <>
+                                        <Menu.Item value="pickems-create" cursor="pointer" onClick={() => router.push("/pickems")}>Your Predictions</Menu.Item>
+                                        <Menu.Item value="pickems-leaderboard" cursor="pointer" onClick={() => router.push("/pickems/leaderboard")}>Leaderboard</Menu.Item>
+                                    </>
+                                )}
+                            >
+                                {"PICK'EMS"}
+                            </HeaderButton>
+
+                            <HeaderButton to="/about">{"ABOUT"}</HeaderButton>
+
+                            {session.data?.user.type === "admin" && (
+                                <HeaderButton to="/admin">{"ADMIN"}</HeaderButton>
                             )}
-                        >
-                            {"DREAM DRAFT"}
-                        </HeaderButton>
+                        </HStack>
 
-                        <HeaderButton
-                            to="/pickems"
-                            asMenu
-                            menuRender={() => (
-                                <>
-                                    <Menu.Item value="pickems-create" cursor="pointer" onClick={() => router.push("/pickems")}>Your Predictions</Menu.Item>
-                                    <Menu.Item value="pickems-leaderboard" cursor="pointer" onClick={() => router.push("/pickems/leaderboard")}>Leaderboard</Menu.Item>
-                                </>
-                            )}
-                        >
-                            {"PICK'EMS"}
-                        </HeaderButton>
+                        <Box width="300px" />
 
-                        <HeaderButton to="/about">{"ABOUT"}</HeaderButton>
+                        <HStack>
+                            <Box position="relative" className="animBorderFill">
+                                <BorderFillButtonStg />
 
-                        {session.data?.user.type === "admin" && (
-                            <HeaderButton to="/admin">{"ADMIN"}</HeaderButton>
-                        )}
-                    </HStack>
+                                {session.status === "unauthenticated" && (
+                                    <Button
+                                        position="absolute"
+                                        top="50%"
+                                        left="50%"
+                                        transform="translate(-50%, -50%)"
+                                        color="ui.loginText"
+                                        variant="plain"
+                                        onClick={() => signIn("discord")}
+                                    >
+                                        <Icon as={LuPencilLine} />
+                                        SIGN IN
+                                    </Button>
+                                )}
 
-                    <Box width="300px" />
-
-                    <HStack>
-                        <Box position="relative" className="animBorderFill">
-                            <BorderFillButtonStg />
-
-                            {session.status === "unauthenticated" && (
-                                <Button
-                                    position="absolute"
-                                    top="50%"
-                                    left="50%"
-                                    transform="translate(-50%, -50%)"
-                                    color="ui.loginText"
-                                    variant="plain"
-                                    onClick={() => signIn("discord")}
-                                >
-                                    <Icon as={LuPencilLine} />
-                                    SIGN IN
-                                </Button>
-                            )}
-
-                            {session.status === "authenticated" && (
-                                <Button
-                                    position="absolute"
-                                    top="50%"
-                                    left="50%"
-                                    transform="translate(-50%, -50%)"
-                                    color="ui.loginText"
-                                    variant="plain"
-                                    fontWeight="semibold"
-                                    onClick={() => router.push("/profile")}
-                                >
-                                    <Image alt="avatar" src={session.data.user.avatar_url} height="25px" rounded="full" />
-                                    {session.data.user.name.toUpperCase()}
-                                </Button>
-                            )}
-                        </Box>
-                    </HStack>
+                                {session.status === "authenticated" && (
+                                    <Button
+                                        position="absolute"
+                                        top="50%"
+                                        left="50%"
+                                        transform="translate(-50%, -50%)"
+                                        color="ui.loginText"
+                                        variant="plain"
+                                        fontWeight="semibold"
+                                        onClick={() => router.push("/profile")}
+                                    >
+                                        <Image alt="avatar" src={session.data.user.avatar_url} height="25px" rounded="full" />
+                                        {session.data.user.name.toUpperCase()}
+                                    </Button>
+                                )}
+                            </Box>
+                        </HStack>
+                    </Show>
                 </HStack>
 
                 <Flex flex="1" direction="column">

@@ -14,6 +14,7 @@ export default function PageSectorContainer({ backgroundImageUrl, children, spac
             height="100vh"
             backgroundImage={`url(${backgroundImageUrl})`}
             backgroundSize="cover"
+            backgroundPosition="center top"
             mt={spacingTopOut}
             pt={spacingTopIn}
             {...props}
