@@ -9,6 +9,7 @@ import ScheduledMatchCard from "@/components/ui/schedule-match-card";
 import { barlow } from "@/styles/fonts";
 import PageHeaderTitle from "@/components/ui/page-header-title";
 import PageHeaderButton from "@/components/ui/page-header-button";
+import PageSectorContainer from "@/components/ui/page-sector-container";
 
 export default function SchedulePage() {
     const { data: matches, loading: loadingMatches } = usePublicFetch<ScheduledMatch[]>("schedule")
@@ -51,31 +52,34 @@ export default function SchedulePage() {
                 }}
             />
 
-            <Button
-                size="sm"
-                variant="plain"
-                h="auto"
-                padding={6}
-                alignSelf="center"
-                mt={-6}
-                onClick={() => { setShowPast(prev => !prev); }}
-            >
-                <VStack justify="center">
-                    <Icon boxSize={4}>
-                        {!showPast ? <SlArrowUp /> : <SlArrowDown />}
-                    </Icon>
-                    <Text
-                        fontWeight="bold"
-                        fontSize="lg"
-                        textAlign="center"
-                    >
-                        {!showPast ? "Show Past Matches" : "Hide Past Matches"}
-                    </Text>
-                </VStack>
-            </Button>
 
-            <Box p={6} id="view" background={`url(${getCdnImage("assets/background_schedule_loop.png")})`} mt={"-20em"} pt="20em">
+            <PageSectorContainer spacingTopIn="20em" spacingTopOut="-16em" pb={10} id="view" backgroundImageUrl={getCdnImage("assets/background_schedule_loop.png")} height="100%">
                 <VStack align="stretch" spaceY={6}>
+                    <Button
+                        size="sm"
+                        variant="plain"
+                        h="auto"
+                        padding={6}
+                        alignSelf="center"
+                        mt="-12em"
+                        cursor="pointer"
+                        onClick={() => { setShowPast(prev => !prev); }}
+                        zIndex={1}
+                    >
+                        <VStack justify="center">
+                            <Icon boxSize={4}>
+                                {!showPast ? <SlArrowUp /> : <SlArrowDown />}
+                            </Icon>
+                            <Text
+                                fontWeight="bold"
+                                fontSize="lg"
+                                textAlign="center"
+                            >
+                                {!showPast ? "Show Past Matches" : "Hide Past Matches"}
+                            </Text>
+                        </VStack>
+                    </Button>
+
                     <Box ref={MatchesRef}>
                         {(loadingMatches) ? (
                             <Stack alignItems="center"><Spinner /></Stack>
@@ -115,7 +119,7 @@ export default function SchedulePage() {
                         )}
                     </Box>
                 </VStack>
-            </Box >
+            </PageSectorContainer>
         </MainLayout >
     )
 }

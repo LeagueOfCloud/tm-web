@@ -1,7 +1,7 @@
 "use client"
 
 import MainLayout from "@/components/layouts/MainLayout";
-import { AbsoluteCenter, Box, HStack, Show, SimpleGrid, Text, useClipboard } from "@chakra-ui/react";
+import { AbsoluteCenter, HStack, Show, SimpleGrid, Text, useClipboard } from "@chakra-ui/react";
 
 import useSettings from "@/lib/hooks/useSettings";
 import PlayerPickEmCard from "@/components/ui/pickems/player-card";
@@ -20,6 +20,7 @@ import { getCdnImage } from "@/lib/helpers";
 import { barlow } from "@/styles/fonts";
 import PageHeaderTitle from "@/components/ui/page-header-title";
 import PageHeaderButton from "@/components/ui/page-header-button";
+import PageSectorContainer from "@/components/ui/page-sector-container";
 
 interface PickEmsProps {
     otherProfileId?: number
@@ -139,13 +140,12 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                     }
                 />
 
-                <Box
+                <PageSectorContainer
                     height="125vh"
-                    backgroundImage={`url(${getCdnImage("assets/backgrounds/pickems/pickems_1.png")})`}
-                    backgroundSize="cover"
-                    mt="-14em"
+                    backgroundImageUrl={getCdnImage("assets/backgrounds/pickems/pickems_1.png")}
+                    spacingTopOut="-14em"
                     id="players"
-                    pt="15em"
+                    spacingTopIn="15em"
                     px={10}
                 >
                     <HeaderText>Players</HeaderText>
@@ -165,15 +165,13 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                         ))}
                     </SimpleGrid>
 
-                </Box>
+                </PageSectorContainer>
 
-                <Box
-                    height="100vh"
-                    backgroundImage={`url(${getCdnImage("assets/backgrounds/pickems/pickems_2.png")})`}
-                    backgroundSize="cover"
+                <PageSectorContainer
+                    backgroundImageUrl={getCdnImage("assets/backgrounds/pickems/pickems_2.png")}
                     id="teams"
-                    mt="-11em"
-                    pt="10em"
+                    spacingTopOut="-11em"
+                    spacingTopIn="10em"
                     px={10}
                 >
                     <HeaderText>Teams</HeaderText>
@@ -193,15 +191,13 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                         ))}
                     </SimpleGrid>
 
-                </Box>
+                </PageSectorContainer>
 
-                <Box
-                    height="100vh"
-                    backgroundImage={`url(${getCdnImage("assets/backgrounds/pickems/pickems_3.png")})`}
-                    backgroundSize="cover"
+                <PageSectorContainer
+                    backgroundImageUrl={getCdnImage("assets/backgrounds/pickems/pickems_3.png")}
                     id="champions"
-                    mt="-12em"
-                    pt="15em"
+                    spacingTopOut="-12em"
+                    spacingTopIn="15em"
                     px={10}
                 >
                     <HeaderText>Champions</HeaderText>
@@ -221,15 +217,14 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                         ))}
                     </SimpleGrid>
 
-                </Box>
+                </PageSectorContainer>
 
-                <Box
+                <PageSectorContainer
                     height="115vh"
-                    backgroundImage={`url(${getCdnImage("assets/backgrounds/pickems/pickems_4.png")})`}
-                    backgroundSize="cover"
+                    backgroundImageUrl={getCdnImage("assets/backgrounds/pickems/pickems_4.png")}
                     id="misc"
-                    mt="-10em"
-                    pt="15em"
+                    spacingTopOut="-10em"
+                    spacingTopIn="15em"
                     px={10}
                 >
                     <HeaderText>Miscellaneous</HeaderText>
@@ -248,8 +243,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                             />
                         ))}
                     </SimpleGrid>
-
-                </Box>
+                </PageSectorContainer>
             </Show>
         </MainLayout >
     )

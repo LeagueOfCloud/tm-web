@@ -4,6 +4,7 @@ import DreamDraftPlayerCard from "@/components/ui/dreamdraft/player-card";
 import Loader from "@/components/ui/loader";
 import PageHeaderButton from "@/components/ui/page-header-button";
 import PageHeaderTitle from "@/components/ui/page-header-title";
+import PageSectorContainer from "@/components/ui/page-sector-container";
 import { toaster } from "@/components/ui/toaster";
 import api from "@/lib/api";
 import { CURRENCY_NAME } from "@/lib/constants";
@@ -137,13 +138,12 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                     }
                 />
 
-                <Box
+                <PageSectorContainer
                     height="125vh"
-                    backgroundImage={`url(${getCdnImage("assets/backgrounds/dreamdraft/dreamdraft_1_1.png")})`}
-                    backgroundSize="cover"
-                    mt="-16em"
+                    backgroundImageUrl={getCdnImage("assets/backgrounds/dreamdraft/dreamdraft_1_1.png")}
+                    spacingTopOut="-16em"
+                    spacingTopIn="20em"
                     id="make-team"
-                    pt="20em"
                     px={10}
                 >
                     <Show when={!dreamDraftUnlocked}>
@@ -335,7 +335,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                             </ScrollArea.Root>
                         </VStack>
                     </SimpleGrid>
-                </Box>
+                </PageSectorContainer>
             </Show>
 
             <ActionBar.Root open={changesExist}>

@@ -15,6 +15,7 @@ import EmptyLastMatch from "@/components/empty/last-match";
 import useSettings from "@/lib/hooks/useSettings";
 import PageHeaderTitle from "@/components/ui/page-header-title";
 import PageHeaderButton from "@/components/ui/page-header-button";
+import PageSectorContainer from "@/components/ui/page-sector-container";
 
 export default function Index() {
   const session = useSession()
@@ -48,12 +49,10 @@ export default function Index() {
           }
         />
 
-        <Box
-          height="100vh"
-          backgroundImage={`url(${getCdnImage("assets/background_landing_1.png")})`}
-          backgroundSize="100%"
-          mt="-5em"
-          pt="18em"
+        <PageSectorContainer
+          backgroundImageUrl={getCdnImage("assets/background_landing_1.png")}
+          spacingTopOut="-5em"
+          spacingTopIn="18em"
         >
 
           <Center flexDirection="column">
@@ -150,14 +149,12 @@ export default function Index() {
               </Text>
             </Show>
           </Center>
-        </Box>
+        </PageSectorContainer>
 
-        <Box
-          height="100vh"
+        <PageSectorContainer
           backgroundImage={`url(${getCdnImage("assets/background_landing_1.png")})`}
-          backgroundSize="100%"
-          mt="-6em"
-          pt="10em"
+          spacingTopOut="-6em"
+          spacingTopIn="10em"
           id="live"
         >
           <Center>
@@ -169,7 +166,7 @@ export default function Index() {
               allowFullScreen>
             </iframe>
           </Center>
-        </Box>
+        </PageSectorContainer>
       </MainLayout>
     </Show>
   );
