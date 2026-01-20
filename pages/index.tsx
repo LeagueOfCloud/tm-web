@@ -7,7 +7,7 @@ import MainLayout from "@/components/layouts/MainLayout";
 import { getCdnImage } from "@/lib/helpers";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import { ScheduledMatch } from "@/types/db";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { SwordIcon } from "@/components/svg/sword";
 import { DateTime } from "luxon";
 import { barlow, poppins } from "@/styles/fonts";
@@ -19,7 +19,6 @@ import PageSectorContainer from "@/components/ui/page-sector-container";
 
 export default function Index() {
   const session = useSession()
-  const [host, setHost] = useState<string>("")
   const { settings } = useSettings()
   const { data: scheduleData, loading: loadingSchedule } = usePublicFetch<ScheduledMatch[]>("schedule")
 
@@ -59,10 +58,6 @@ export default function Index() {
       }
     }
   })
-
-  useEffect(() => {
-    queueMicrotask(() => setHost(location.host.split(":")[0]))
-  }, [])
 
   return (
     <Show
@@ -180,24 +175,6 @@ export default function Index() {
                 {lastMatch !== undefined && DateTime.fromJSDate(new Date(lastMatch.start_date)).toFormat("LLLL dd, yyyy | hh:mm a")}
               </Text>
             </Show>
-          </Center>
-        </PageSectorContainer>
-
-        <PageSectorContainer
-          backgroundImage={`url(${getCdnImage("assets/background_landing_1.png")})`}
-          spacingTopOut="-6em"
-          spacingTopIn="10em"
-          id="live"
-          hidden={hideExcessContainers}
-        >
-          <Center height="90%" px={5}>
-            <iframe
-              key={`twitch-iframe-${host}`}
-              src={`https://player.twitch.tv/?channel=${process.env.NEXT_PUBLIC_TWITCH_CHANNEL_NAME}&parent=${host}`}
-              width="100%"
-              height="100%"
-              allowFullScreen>
-            </iframe>
           </Center>
         </PageSectorContainer>
       </MainLayout>

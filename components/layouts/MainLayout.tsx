@@ -13,6 +13,8 @@ import { FaGithub } from "react-icons/fa";
 import { barlow, poppins } from "@/styles/fonts";
 import Head from "next/head";
 import MainLayoutHeaderDrawer from "./MainLayoutHeaderDrawer";
+import useLiveStatus from "@/lib/hooks/useLiveStatus";
+import { LiveStatusCircle } from "../ui/live-status-circle";
 
 const SCROLL_HEIGHT_REVEAL = 200
 
@@ -25,6 +27,10 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
     const { settings, loading: loadingSettings } = useSettings()
     const session = useSession()
     const router = useRouter()
+    const isTwitchLive = useLiveStatus()
+
+
+
     const showHeaderDrawer = useBreakpointValue({
         base: true,
         desktop: false
@@ -113,6 +119,16 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                     >
                         <HStack gap={5}>
                             <HeaderButton to="/">{"HOME"}</HeaderButton>
+
+                            <Show when={settings?.twitch_channel}>
+                                <HeaderButton to={`https://twitch.tv/${settings?.twitch_channel}`} isExternal>
+                                    {isTwitchLive ? "LIVE NOW" : "WATCH"}
+
+                                    <Show when={isTwitchLive}>
+                                        <LiveStatusCircle />
+                                    </Show>
+                                </HeaderButton>
+                            </Show>
 
                             <HeaderButton to="/schedule">{"SCHEDULE"}</HeaderButton>
 

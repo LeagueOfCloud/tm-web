@@ -9,7 +9,9 @@ interface StyleSettings {
 
 export interface AdminSettings extends StyleSettings {
     tournament_name: string
+    tournament_id: string
     tournament_provider_id: number
+    twitch_channel: string
     maintenance: "true" | "false"
     dd_pre_evaluation: "true" | "false"
     dd_unlocked: "true" | "false"

@@ -9,9 +9,10 @@ type HeaderButtonProps = {
     to: string
     asMenu?: boolean
     menuRender?: () => ReactNode
+    isExternal?: boolean
 }
 
-export default function HeaderButton({ to, asMenu, children, menuRender }: HeaderButtonProps & PropsWithChildren) {
+export default function HeaderButton({ to, asMenu, children, menuRender, isExternal }: HeaderButtonProps & PropsWithChildren) {
     const router = useRouter()
 
     if (asMenu && menuRender !== undefined) {
@@ -69,9 +70,12 @@ export default function HeaderButton({ to, asMenu, children, menuRender }: Heade
     return (
         <Link
             href={to}
+            target={isExternal ? "_blank" : "_self"}
             onClick={(e) => {
-                e.preventDefault()
-                router.push(to)
+                if (!isExternal) {
+                    e.preventDefault()
+                    router.push(to)
+                }
             }}
             outline="none"
             fontWeight="700"
