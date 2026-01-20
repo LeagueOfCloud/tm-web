@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image, Text, Link, SimpleGrid, Menu, Show, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image, Text, Link, SimpleGrid, Menu, Show, useBreakpointValue, Spacer } from "@chakra-ui/react";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { LuPencilLine } from "react-icons/lu";
 import useSettings from "@/lib/hooks/useSettings";
@@ -28,6 +28,11 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
     const showHeaderDrawer = useBreakpointValue({
         base: true,
         desktop: false
+    })
+
+    const isMobile = useBreakpointValue({
+        base: true,
+        tablet: false
     })
 
     useEffect(() => {
@@ -80,13 +85,15 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                     left={0}
                     width="100%"
                     p={5}
-                    px={20}
+                    px={isMobile ? 5 : 20}
                     justifyContent="space-between"
                     transition="all 200ms linear"
                     background={headerBackgroundVisible ? "ui.headerBackground" : "transparent"}
                     zIndex={100}
                 >
-                    <Heading size="2xl" fontWeight="bold" letterSpacing="0.8px" className={barlow.className}>
+                    <Spacer hidden={!isMobile} />
+
+                    <Heading size="2xl" fontWeight="bold" letterSpacing="0.8px" className={barlow.className} hidden={isMobile}>
                         <Show when={settings?.tournament_logo_url && settings?.tournament_logo_height && settings?.tournament_logo_width} fallback={settings?.tournament_name.toUpperCase()}>
                             <Image
                                 onClick={() => router.push("/")}
@@ -191,8 +198,10 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                     p={8}
                     justifyContent="space-evenly"
                     background="footerBackground"
+                    direction={isMobile ? "column" : "row"}
                     id="footer"
                     className={poppins.className}
+                    gap={5}
                 >
                     <Box>
                         <Heading>{settings.tournament_name}</Heading>

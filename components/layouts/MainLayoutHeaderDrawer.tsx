@@ -1,8 +1,10 @@
-import { CloseButton, Drawer, Icon, Portal } from "@chakra-ui/react";
+import { CloseButton, Drawer, Icon, Image, Portal, Show } from "@chakra-ui/react";
 import { RiMenu3Fill } from "react-icons/ri";
 import HeaderButton from "../ui/header-button";
+import useSettings from "@/lib/hooks/useSettings";
 
 export default function MainLayoutHeaderDrawer() {
+    const { settings } = useSettings()
 
     return (
         <Drawer.Root>
@@ -19,7 +21,17 @@ export default function MainLayoutHeaderDrawer() {
                 <Drawer.Positioner>
                     <Drawer.Content>
                         <Drawer.Content>
-                            <Drawer.Header />
+                            <Drawer.Header>
+                                <Show when={settings?.tournament_logo_url && settings?.tournament_logo_height && settings?.tournament_logo_width} fallback={settings?.tournament_name.toUpperCase()}>
+                                    <Image
+                                        alt="logo"
+                                        src={settings.tournament_logo_url}
+                                        height={settings.tournament_logo_height}
+                                        width={settings.tournament_logo_width}
+                                        draggable={false}
+                                    />
+                                </Show>
+                            </Drawer.Header>
                             <Drawer.Body>
                                 <HeaderButton to="/">HOME</HeaderButton>
                             </Drawer.Body>

@@ -50,10 +50,11 @@ export default function SchedulePage() {
                 containerProps={{
                     zIndex: 1,
                 }}
+                buttonSpacing="0"
             />
 
 
-            <PageSectorContainer spacingTopIn="20em" spacingTopOut="-16em" pb={10} id="view" backgroundImageUrl={getCdnImage("assets/background_schedule_loop.png")} height="100%">
+            <PageSectorContainer spacingTopIn="20em" spacingTopOut="-23em" pb={10} id="view" backgroundImageUrl={getCdnImage("assets/background_schedule_loop.png")} height="100%">
                 <VStack align="stretch" spaceY={6}>
                     <Button
                         size="sm"

@@ -7,11 +7,12 @@ type PageHeaderTitleProps = {
     title?: string
     description?: string
     buttons?: ReactNode
+    buttonSpacing?: string
     topContent?: ReactNode
     containerProps?: BoxProps
 }
 
-export default function PageHeaderTitle({ backgroundImageUrl, title, description, buttons, topContent, containerProps }: PageHeaderTitleProps) {
+export default function PageHeaderTitle({ backgroundImageUrl, title, description, buttons, topContent, containerProps, buttonSpacing }: PageHeaderTitleProps) {
     const titleResponsiveProps = useBreakpointValue({
         smallMobile: {
             fontSize: "1.9em"
@@ -37,7 +38,7 @@ export default function PageHeaderTitle({ backgroundImageUrl, title, description
     })
 
     const descriptionResponsiveProps = useBreakpointValue({
-        smallMobile: {
+        base: {
             fontSize: "0.5em"
         },
         mobile: {
@@ -65,6 +66,7 @@ export default function PageHeaderTitle({ backgroundImageUrl, title, description
             height="90vh"
             backgroundImage={`url(${backgroundImageUrl})`}
             backgroundSize="cover"
+            backgroundPosition="center"
             {...containerProps}
         >
             <Center>
@@ -75,6 +77,7 @@ export default function PageHeaderTitle({ backgroundImageUrl, title, description
                         fontFamily="Berlin Sans FB Bold"
                         textShadow="-1px 5px 0 rgba(69, 248, 130, .66)"
                         textTransform="uppercase"
+                        textAlign="center"
                         {...titleResponsiveProps}
                     >
                         {title}
@@ -84,12 +87,13 @@ export default function PageHeaderTitle({ backgroundImageUrl, title, description
                         fontWeight="bold"
                         fontSize="1.4em"
                         textTransform="uppercase"
+                        textAlign="center"
                         {...descriptionResponsiveProps}
                     >
                         {description}
                     </Text>
 
-                    <HStack mt="2em" gap={5} className={barlow.className}>
+                    <HStack mt={buttonSpacing ?? "2em"} gap={5} className={barlow.className}>
                         {buttons}
                     </HStack>
                 </VStack>
