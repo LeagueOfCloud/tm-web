@@ -66,7 +66,7 @@ export default function PageHeaderTitle({ backgroundImageUrl, title, description
             height="90vh"
             backgroundImage={`url(${backgroundImageUrl})`}
             backgroundSize="cover"
-            backgroundPosition="center"
+            backgroundPosition="center top"
             {...containerProps}
         >
             <Center>
