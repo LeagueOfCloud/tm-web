@@ -1,5 +1,5 @@
-import { Box, Center, HStack, Image, Text, useBreakpointValue, Button, Link } from "@chakra-ui/react";
-import { ScheduledMatchBox, ScheduledMatchDate} from "../svg/scheduled-match-box";
+import { Box, Center, HStack, Image, Text, useBreakpointValue, Link } from "@chakra-ui/react";
+import { ScheduledMatchBox, ScheduledMatchDate } from "../svg/scheduled-match-box";
 import { barlow } from "@/styles/fonts";
 import styles from "@/styles/schedule.module.css"
 import { ScheduledMatch } from "@/types/db";
@@ -41,9 +41,9 @@ export default function ScheduledMatchCard({ match }: ScheduledMatchCardProps) {
             lg: "1190px"
         }} p={5} className={styles.scheduleBox}>
             {match.vod_url && (
-                <Center position="relative" className={styles.date} mb={{base: "10px", lg: "20px"}}>
+                <Center position="relative" className={styles.date} mb={{ base: "10px", lg: "20px" }}>
                     <ScheduledMatchDate
-                    transform={"scale(-1, -1)"}
+                        transform={"scale(-1, -1)"}
                         width={{
                             base: "300px",
                             lg: "400px"
@@ -67,7 +67,7 @@ export default function ScheduledMatchCard({ match }: ScheduledMatchCardProps) {
                             lg: "calc(-30px + 1.6em)"
                         }}
                         px="40"
-                        py={{base: 0, lg: 1.4}}
+                        py={{ base: 0, lg: 1.4 }}
                         display="flex"
                         alignItems="center"
                         justifyContent="center"
@@ -77,7 +77,7 @@ export default function ScheduledMatchCard({ match }: ScheduledMatchCardProps) {
                             textTransform="uppercase"
                             fontWeight="800"
                             color="gray.400"
-                            fontSize={{base: "xs", lg: "sm"}}
+                            fontSize={{ base: "xs", lg: "sm" }}
                             letterSpacing="1px"
                             transition="100ms"
                             cursor="pointer"

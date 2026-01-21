@@ -41,6 +41,11 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
         tablet: false
     })
 
+    const isWide = useBreakpointValue({
+        base: false,
+        wide: true
+    })
+
     useEffect(() => {
         let changeFn: () => void
         if (headerBackgroundVisible) {
@@ -169,7 +174,9 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
 
                         <HStack>
                             <Box position="relative" className="animBorderFill">
-                                <BorderFillButtonStg />
+                                <BorderFillButtonStg svgProps={isWide ? {
+                                    width: "230px"
+                                } : undefined} />
 
                                 {session.status === "unauthenticated" && (
                                     <Button
@@ -180,6 +187,7 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                                         color="ui.loginText"
                                         variant="plain"
                                         onClick={() => signIn("discord")}
+                                        fontSize={isWide ? "lg" : "md"}
                                     >
                                         <Icon as={LuPencilLine} />
                                         SIGN IN
@@ -196,8 +204,9 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                                         variant="plain"
                                         fontWeight="semibold"
                                         onClick={() => router.push("/profile")}
+                                        fontSize={isWide ? "lg" : "md"}
                                     >
-                                        <Image alt="avatar" src={session.data.user.avatar_url} height="25px" rounded="full" />
+                                        <Image alt="avatar" src={session.data.user.avatar_url} height={isWide ? "40px" : "25px"} rounded="full" />
                                         {session.data.user.name.toUpperCase()}
                                     </Button>
                                 )}

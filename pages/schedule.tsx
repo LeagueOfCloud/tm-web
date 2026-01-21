@@ -1,15 +1,15 @@
 import MainLayout from "@/components/layouts/MainLayout";
-import { Box, Text, VStack, Spinner, Stack, Button, Icon, Show, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Text, VStack, Spinner, Stack, Button, Icon, Show, useBreakpointValue, Center, Spacer } from "@chakra-ui/react";
 import { getCdnImage } from "@/lib/helpers";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import { ScheduledMatch } from "@/types/db";
 import { useMemo, useRef, useState } from "react";
-import { SlArrowUp, SlArrowDown } from "react-icons/sl";
 import ScheduledMatchCard from "@/components/ui/schedule-match-card";
 import { barlow } from "@/styles/fonts";
 import PageHeaderTitle from "@/components/ui/page-header-title";
 import PageHeaderButton from "@/components/ui/page-header-button";
 import PageSectorContainer from "@/components/ui/page-sector-container";
+import { LuEye, LuEyeClosed } from "react-icons/lu";
 
 export default function SchedulePage() {
     const { data: matches, loading: loadingMatches } = usePublicFetch<ScheduledMatch[]>("schedule")
@@ -38,31 +38,15 @@ export default function SchedulePage() {
 
     const containerSpacingResponsive = useBreakpointValue({
         base: {
-            out: "-25em",
-            in: "20em"
-        },
-        wide: {
-            out: "-20em",
-            in: "25em"
-        },
-        desktop: {
-            out: "-20em",
-            in: "24em"
-        },
-        laptop: {
-            out: "-25em",
-            in: "23em"
-        },
-        tablet: {
-            out: "-25em",
-            in: "22em"
-        },
+            out: "-13em",
+            in: "17em"
+        }
     })
 
     return (
         <MainLayout title="Schedule">
             <PageHeaderTitle
-                backgroundImageUrl={getCdnImage("assets/backgrounds/schedule/schedule_1.png")}
+                backgroundImageUrl={getCdnImage("assets/backgrounds/schedule/schedule_1_1.png")}
                 title="Schedule"
                 description="Tournament Matches And Times"
                 buttons={
@@ -71,7 +55,9 @@ export default function SchedulePage() {
                     </PageHeaderButton>
                 }
                 containerProps={{
-                    zIndex: 1
+                    zIndex: 1,
+                    height: "70vh",
+                    backgroundPosition: "center bottom"
                 }}
                 buttonSpacing="0"
             />
@@ -79,30 +65,21 @@ export default function SchedulePage() {
 
             <PageSectorContainer spacingTopIn={containerSpacingResponsive?.in} spacingTopOut={containerSpacingResponsive?.out} id="view" backgroundImageUrl={getCdnImage("assets/background_schedule_loop.png")} height="100%">
                 <VStack align="stretch" spaceY={6}>
-                    <Button
-                        size="sm"
-                        variant="plain"
-                        h="auto"
-                        padding={6}
-                        alignSelf="center"
-                        mt="-12em"
-                        cursor="pointer"
-                        onClick={() => { setShowPast(prev => !prev); }}
-                        zIndex={1}
-                    >
-                        <VStack justify="center">
-                            <Icon boxSize={4}>
-                                {!showPast ? <SlArrowUp /> : <SlArrowDown />}
-                            </Icon>
-                            <Text
-                                fontWeight="bold"
-                                fontSize="lg"
-                                textAlign="center"
-                            >
-                                {!showPast ? "Show Past Matches" : "Hide Past Matches"}
-                            </Text>
-                        </VStack>
-                    </Button>
+                    <Center width="95%">
+                        <Spacer />
+                        <Button
+                            onClick={() => setShowPast(!showPast)}
+                            borderColor="feature"
+                            _hover={{
+                                backgroundColor: "feature/40"
+                            }}
+                            outline="none"
+                            size="xs"
+                        >
+                            <Icon as={showPast ? LuEye : LuEyeClosed} />
+                            {!showPast ? "Hiding" : "Showing"} Past Matches
+                        </Button>
+                    </Center>
 
                     <Box ref={MatchesRef}>
                         {(loadingMatches) ? (

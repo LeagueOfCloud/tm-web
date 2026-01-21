@@ -1,7 +1,7 @@
 "use client"
 
 import { barlow, poppins } from "@/styles/fonts";
-import { Link, Menu, Portal } from "@chakra-ui/react";
+import { Link, Menu, Portal, useBreakpointValue } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { PropsWithChildren, ReactNode } from "react";
 
@@ -15,12 +15,17 @@ type HeaderButtonProps = {
 export default function HeaderButton({ to, asMenu, children, menuRender, isExternal }: HeaderButtonProps & PropsWithChildren) {
     const router = useRouter()
 
+    const fontSizeResponsive = useBreakpointValue({
+        base: "15px",
+        wide: "20px"
+    })
+
     if (asMenu && menuRender !== undefined) {
         return (
             <Menu.Root>
                 <Menu.Trigger
                     fontWeight="700"
-                    fontSize="15px"
+                    fontSize={fontSizeResponsive}
                     _hover={{
                         textDecoration: "none",
                         _after: {
@@ -79,7 +84,7 @@ export default function HeaderButton({ to, asMenu, children, menuRender, isExter
             }}
             outline="none"
             fontWeight="700"
-            fontSize="15px"
+            fontSize={fontSizeResponsive}
             position="relative"
             transition="all 150ms ease-in-out"
             _after={{

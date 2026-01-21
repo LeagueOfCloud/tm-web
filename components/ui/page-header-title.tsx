@@ -14,7 +14,7 @@ type PageHeaderTitleProps = {
 
 export default function PageHeaderTitle({ backgroundImageUrl, title, description, buttons, topContent, containerProps, buttonSpacing }: PageHeaderTitleProps) {
     const titleResponsiveProps = useBreakpointValue({
-        smallMobile: {
+        base: {
             fontSize: "1.9em"
         },
         mobile: {

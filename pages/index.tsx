@@ -70,9 +70,17 @@ export default function Index() {
           title={settings?.home_title}
           description={settings?.home_description}
           buttons={
-            <PageHeaderButton link="/schedule">
-              View Schedule
-            </PageHeaderButton>
+            <>
+              <PageHeaderButton link="/schedule">
+                View Schedule
+              </PageHeaderButton>
+
+              <Show when={settings?.twitch_channel}>
+                <PageHeaderButton link={`https://twitch.tv/${settings?.twitch_channel}`} isExternal>
+                  Watch Live
+                </PageHeaderButton>
+              </Show>
+            </>
           }
         />
 
