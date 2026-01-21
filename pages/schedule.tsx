@@ -1,5 +1,5 @@
 import MainLayout from "@/components/layouts/MainLayout";
-import { Box, Text, VStack, Spinner, Stack, Button, Icon, Show } from "@chakra-ui/react";
+import { Box, Text, VStack, Spinner, Stack, Button, Icon, Show, useBreakpointValue } from "@chakra-ui/react";
 import { getCdnImage } from "@/lib/helpers";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import { ScheduledMatch } from "@/types/db";
@@ -36,6 +36,29 @@ export default function SchedulePage() {
         })
     }, [sortedMatches, now])
 
+    const containerSpacingResponsive = useBreakpointValue({
+        base: {
+            out: "-25em",
+            in: "20em"
+        },
+        wide: {
+            out: "-20em",
+            in: "25em"
+        },
+        desktop: {
+            out: "-20em",
+            in: "24em"
+        },
+        laptop: {
+            out: "-25em",
+            in: "23em"
+        },
+        tablet: {
+            out: "-25em",
+            in: "22em"
+        },
+    })
+
     return (
         <MainLayout title="Schedule">
             <PageHeaderTitle
@@ -54,7 +77,7 @@ export default function SchedulePage() {
             />
 
 
-            <PageSectorContainer spacingTopIn="26em" spacingTopOut="-23em" id="view" backgroundImageUrl={getCdnImage("assets/background_schedule_loop.png")} height="100%">
+            <PageSectorContainer spacingTopIn={containerSpacingResponsive?.in} spacingTopOut={containerSpacingResponsive?.out} id="view" backgroundImageUrl={getCdnImage("assets/background_schedule_loop.png")} height="100%">
                 <VStack align="stretch" spaceY={6}>
                     <Button
                         size="sm"

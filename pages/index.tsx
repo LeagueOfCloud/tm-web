@@ -78,8 +78,8 @@ export default function Index() {
 
         <PageSectorContainer
           backgroundImageUrl={getCdnImage("assets/background_landing_1.png")}
-          spacingTopOut="-5em"
-          spacingTopIn="18em"
+          spacingTopOut="-14vh"
+          spacingTopIn="30vh"
           hidden={hideExcessContainers}
         >
 

@@ -1,7 +1,7 @@
 "use client"
 
 import MainLayout from "@/components/layouts/MainLayout";
-import { AbsoluteCenter, HStack, Show, SimpleGrid, Text, useClipboard } from "@chakra-ui/react";
+import { AbsoluteCenter, HStack, Show, SimpleGrid, Text, useBreakpointValue, useClipboard } from "@chakra-ui/react";
 
 import useSettings from "@/lib/hooks/useSettings";
 import PlayerPickEmCard from "@/components/ui/pickems/player-card";
@@ -85,6 +85,21 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
         }
     }, [settings])
 
+    const containerSpacingResponsive = useBreakpointValue({
+        base: {
+            out: "-10em",
+            in: "14em"
+        },
+        wide: {
+            out: "-20em",
+            in: "25em"
+        },
+        desktop: {
+            out: "-14em",
+            in: "15em"
+        }
+    })
+
     return (
         <MainLayout title="Pick'Ems">
             <Show when={!loading && !loadingPlayers && !loadingTeams && !loadingChampions} fallback={(
@@ -143,10 +158,11 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                 <PageSectorContainer
                     height="125vh"
                     backgroundImageUrl={getCdnImage("assets/backgrounds/pickems/pickems_1.png")}
-                    spacingTopOut="-14em"
+                    spacingTopOut={containerSpacingResponsive?.out}
+                    spacingTopIn={containerSpacingResponsive?.in}
                     id="players"
-                    spacingTopIn="15em"
                     px={10}
+                    mb="6%"
                 >
                     <HeaderText>Players</HeaderText>
 
@@ -170,7 +186,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                 <PageSectorContainer
                     backgroundImageUrl={getCdnImage("assets/backgrounds/pickems/pickems_2.png")}
                     id="teams"
-                    spacingTopOut="-11em"
+                    spacingTopOut="-15em"
                     spacingTopIn="10em"
                     px={10}
                 >
