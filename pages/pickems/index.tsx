@@ -1,7 +1,7 @@
 "use client"
 
 import MainLayout from "@/components/layouts/MainLayout";
-import { AbsoluteCenter, HStack, Show, SimpleGrid, Text, useBreakpointValue, useClipboard } from "@chakra-ui/react";
+import { AbsoluteCenter, HStack, Show, SimpleGrid, Text, useClipboard } from "@chakra-ui/react";
 
 import useSettings from "@/lib/hooks/useSettings";
 import PlayerPickEmCard from "@/components/ui/pickems/player-card";
@@ -85,21 +85,6 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
         }
     }, [settings])
 
-    const containerSpacingResponsive = useBreakpointValue({
-        base: {
-            out: "-10em",
-            in: "14em"
-        },
-        wide: {
-            out: "-20em",
-            in: "25em"
-        },
-        desktop: {
-            out: "-14em",
-            in: "15em"
-        }
-    })
-
     return (
         <MainLayout title="Pick'Ems">
             <Show when={!loading && !loadingPlayers && !loadingTeams && !loadingChampions} fallback={(
@@ -158,8 +143,18 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                 <PageSectorContainer
                     height="125vh"
                     backgroundImageUrl={getCdnImage("assets/backgrounds/pickems/pickems_1.png")}
-                    spacingTopOut={containerSpacingResponsive?.out}
-                    spacingTopIn={containerSpacingResponsive?.in}
+                    spacingTopOut={{
+                        smDown: "-15em",
+                        md: "-13em",
+                        lg: "-12em",
+                        "2xl": "-20em"
+                    }}
+                    spacingTopIn={{
+                        smDown: "12em",
+                        md: "11em",
+                        lg: "13em",
+                        "2xl": "21em"
+                    }}
                     id="players"
                     px={10}
                     mb="6%"

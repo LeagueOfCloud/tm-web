@@ -46,15 +46,6 @@ const config = defineConfig({
         recipes: {
             button: buttonRecipe,
             input: inputRecipe
-        },
-        breakpoints: {
-            wide: "2560px",
-            desktop: "1440px",
-            laptop: "1024px",
-            tablet: "768px",
-            wideMobile: "425px",
-            mobile: "375px",
-            smallMobile: "320px"
         }
     },
     globalCss: {

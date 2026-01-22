@@ -1,5 +1,5 @@
 import { barlow } from "@/styles/fonts";
-import { Box, BoxProps, Center, Heading, HStack, Text, useBreakpointValue, VStack } from "@chakra-ui/react";
+import { Box, BoxProps, Center, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
 type PageHeaderTitleProps = {
@@ -13,53 +13,6 @@ type PageHeaderTitleProps = {
 }
 
 export default function PageHeaderTitle({ backgroundImageUrl, title, description, buttons, topContent, containerProps, buttonSpacing }: PageHeaderTitleProps) {
-    const titleResponsiveProps = useBreakpointValue({
-        base: {
-            fontSize: "1.9em"
-        },
-        mobile: {
-            fontSize: "2em"
-        },
-        wideMobile: {
-            fontSize: "3em"
-        },
-        tablet: {
-            fontSize: "5em"
-        },
-        laptop: {
-            fontSize: "6em"
-        },
-        desktop: {
-            fontSize: "8em"
-        },
-        wide: {
-            fontSize: "12em"
-        }
-    })
-
-    const descriptionResponsiveProps = useBreakpointValue({
-        base: {
-            fontSize: "0.5em"
-        },
-        mobile: {
-            fontSize: "0.8em"
-        },
-        wideMobile: {
-            fontSize: "1em"
-        },
-        tablet: {
-            fontSize: "1.2em"
-        },
-        laptop: {
-            fontSize: "1.3em"
-        },
-        desktop: {
-            fontSize: "1.4em"
-        },
-        wide: {
-            fontSize: "2em"
-        }
-    })
 
     return (
         <Box
@@ -78,17 +31,31 @@ export default function PageHeaderTitle({ backgroundImageUrl, title, description
                         textShadow="-1px 5px 0 rgba(69, 248, 130, .66)"
                         textTransform="uppercase"
                         textAlign="center"
-                        {...titleResponsiveProps}
+                        fontSize={{
+                            smDown: "2.4em",
+                            sm: "3em",
+                            md: "5em",
+                            lg: "6em",
+                            xl: "8em",
+                            "2xl": "10em"
+                        }}
                     >
                         {title}
                     </Heading>
                     <Text
-                        mt="3em"
+                        mt={{
+                            base: "1em",
+                            md: "3em"
+                        }}
                         fontWeight="bold"
-                        fontSize="1.4em"
                         textTransform="uppercase"
                         textAlign="center"
-                        {...descriptionResponsiveProps}
+                        fontSize={{
+                            mdDown: "1.2em",
+                            lg: "1.3em",
+                            xl: "1.4em",
+                            "2xl": "1.8em"
+                        }}
                     >
                         {description}
                     </Text>

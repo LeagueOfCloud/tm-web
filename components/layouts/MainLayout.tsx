@@ -30,20 +30,14 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
     const isTwitchLive = useLiveStatus()
 
 
-
     const showHeaderDrawer = useBreakpointValue({
         base: true,
-        desktop: false
+        xl: false
     })
 
     const isMobile = useBreakpointValue({
         base: true,
-        tablet: false
-    })
-
-    const isWide = useBreakpointValue({
-        base: false,
-        wide: true
+        xl: false
     })
 
     useEffect(() => {
@@ -174,9 +168,9 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
 
                         <HStack>
                             <Box position="relative" className="animBorderFill">
-                                <BorderFillButtonStg svgProps={isWide ? {
-                                    width: "230px"
-                                } : undefined} />
+                                <BorderFillButtonStg svgProps={{
+                                    width: "160px"
+                                }} />
 
                                 {session.status === "unauthenticated" && (
                                     <Button
@@ -187,7 +181,7 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                                         color="ui.loginText"
                                         variant="plain"
                                         onClick={() => signIn("discord")}
-                                        fontSize={isWide ? "lg" : "md"}
+                                        fontSize="md"
                                     >
                                         <Icon as={LuPencilLine} />
                                         SIGN IN
@@ -204,9 +198,9 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                                         variant="plain"
                                         fontWeight="semibold"
                                         onClick={() => router.push("/profile")}
-                                        fontSize={isWide ? "lg" : "md"}
+                                        fontSize="md"
                                     >
-                                        <Image alt="avatar" src={session.data.user.avatar_url} height={isWide ? "40px" : "25px"} rounded="full" />
+                                        <Image alt="avatar" src={session.data.user.avatar_url} height="30px" rounded="full" />
                                         {session.data.user.name.toUpperCase()}
                                     </Button>
                                 )}

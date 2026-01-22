@@ -14,25 +14,14 @@ export default function PageHeaderButton({ link, children, onClick, isExternal }
 
     const buttonWidthResponsive = useBreakpointValue({
         base: "100px",
-        wideMobile: "160px",
-        desktop: "200px",
-        wide: "300px"
-    })
-
-    const fontSizeResponsive = useBreakpointValue({
-        base: "0.6em",
-        wideMobile: "xs",
-        desktop: "md",
-        wide: "2xl"
-    })
-
-    const marginTopResponsive = useBreakpointValue({
-        wide: "7em",
-        base: "2em",
+        md: "150px",
+        "2xl": "200px"
     })
 
     return (
-        <Box position="relative" className="animBorderFill" mt={marginTopResponsive} cursor="pointer">
+        <Box position="relative" className="animBorderFill" mt={{
+            base: "2em"
+        }} cursor="pointer">
             <BorderFillButtonStg
                 svgProps={{
                     width: buttonWidthResponsive
@@ -51,7 +40,11 @@ export default function PageHeaderButton({ link, children, onClick, isExternal }
                 transform="translate(-50%, -50%)"
                 color="black"
                 fontWeight="bold"
-                fontSize={fontSizeResponsive}
+                fontSize={{
+                    mdDown: "10px",
+                    md: "12px",
+                    lg: "md"
+                }}
                 variant="plain"
                 onClick={() => {
                     if (isExternal && link) {

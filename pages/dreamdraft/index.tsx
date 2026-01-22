@@ -64,17 +64,9 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
             out: "-16em",
             in: "17em"
         },
-        wide: {
-            out: "-20em",
-            in: "25em"
-        },
-        desktop: {
-            out: "-15em",
-            in: "16em"
-        },
-        tablet: {
-            out: "-15em",
-            in: "16em"
+        sm: {
+            out: "-18em",
+            in: "20em"
         }
     })
 

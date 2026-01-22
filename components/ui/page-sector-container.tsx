@@ -2,8 +2,8 @@ import { Box, BoxProps } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
 
 type PageSectorContainerProps = BoxProps & PropsWithChildren & {
-    spacingTopOut?: string
-    spacingTopIn?: string
+    spacingTopOut?: string | Record<string, string>
+    spacingTopIn?: string | Record<string, string>
     backgroundImageUrl?: string
 }
 

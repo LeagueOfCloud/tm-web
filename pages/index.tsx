@@ -28,12 +28,13 @@ export default function Index() {
 
   const hideExcessContainers = useBreakpointValue({
     base: true,
-    tablet: false
+    md: false
   })
+
   const latestResultsResponsiveProps = useBreakpointValue({
-    tablet: {
+    md: {
       image: {
-        boxSize: "90px"
+        boxSize: "60px"
       },
       resultContainer: {
         width: "110px",
@@ -44,7 +45,7 @@ export default function Index() {
         boxSize: "30px"
       }
     },
-    laptop: {
+    lg: {
       image: {
         boxSize: "112px"
       },
