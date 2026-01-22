@@ -181,7 +181,7 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                                         color="ui.loginText"
                                         variant="plain"
                                         onClick={() => signIn("discord")}
-                                        fontSize="md"
+                                        fontSize="sm"
                                     >
                                         <Icon as={LuPencilLine} />
                                         SIGN IN
@@ -198,7 +198,7 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                                         variant="plain"
                                         fontWeight="semibold"
                                         onClick={() => router.push("/profile")}
-                                        fontSize="md"
+                                        fontSize="sm"
                                     >
                                         <Image alt="avatar" src={session.data.user.avatar_url} height="30px" rounded="full" />
                                         {session.data.user.name.toUpperCase()}
