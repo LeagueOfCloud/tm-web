@@ -147,13 +147,13 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                         smDown: "-15em",
                         md: "-13em",
                         lg: "-12em",
-                        "2xl": "-20em"
+                        "2xl": "-19em"
                     }}
                     spacingTopIn={{
                         smDown: "12em",
                         md: "11em",
                         lg: "13em",
-                        "2xl": "21em"
+                        "2xl": "20em"
                     }}
                     id="players"
                     px={10}

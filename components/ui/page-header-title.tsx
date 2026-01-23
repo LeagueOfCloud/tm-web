@@ -16,7 +16,7 @@ export default function PageHeaderTitle({ backgroundImageUrl, title, description
 
     return (
         <Box
-            height="90vh"
+            height="100vh"
             backgroundImage={`url(${backgroundImageUrl})`}
             backgroundSize="cover"
             backgroundPosition="center top"
