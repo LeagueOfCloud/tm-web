@@ -73,8 +73,6 @@ export default function MiscPickemCard({ pickemId, title, defaultSelection, opti
                 onOptionSelect={option => {
                     selectDisclosure.onClose()
 
-                    console.log(option)
-
                     api.updatePickem(pickemId, option, session.data!.user.token)
                         .then(() => {
                             setSelected(option)

@@ -1,7 +1,7 @@
 import { AdminSettings } from "@/types/form"
 import { Button, ButtonGroup, CloseButton, Dialog, Field, Input, InputGroup, Link, Portal, Switch, UseDisclosureReturn, VStack } from "@chakra-ui/react"
 import { UseFormReturn } from "react-hook-form"
-import { LuHash, LuTrophy } from "react-icons/lu"
+import { LuHash, LuTrophy, LuTwitch } from "react-icons/lu"
 
 type TournamentSettingsDialogProps = {
     form: UseFormReturn<AdminSettings, unknown, AdminSettings>
@@ -33,6 +33,25 @@ export default function TournamentSettingsDialog({ form, disclosure, onSave, isS
                                         <Input placeholder="Enter tournament name..." {...form.register("tournament_name", { required: true })} autoComplete="off" />
                                     </InputGroup>
                                     <Field.ErrorText>{form.formState.errors.tournament_name?.message}</Field.ErrorText>
+                                </Field.Root>
+
+                                <Field.Root invalid={!!form.formState.errors.twitch_channel} required>
+                                    <Field.Label>Twitch Channel</Field.Label>
+                                    <InputGroup startElement={<LuTwitch />}>
+                                        <Input placeholder="Enter twich channel name..." {...form.register("twitch_channel", { required: true })} autoComplete="off" />
+                                    </InputGroup>
+                                    <Field.ErrorText>{form.formState.errors.twitch_channel?.message}</Field.ErrorText>
+                                </Field.Root>
+
+                                <Field.Root invalid={!!form.formState.errors.tournament_id} required>
+                                    <Field.Label>Tournament ID</Field.Label>
+                                    <InputGroup startElement={<LuHash />}>
+                                        <Input placeholder="Enter tournament ID..." {...form.register("tournament_id", { required: true })} autoComplete="off" />
+                                    </InputGroup>
+                                    <Field.HelperText>
+                                        * Tournament ID can be retrieved from the <Link href="https://developer.riotgames.com/apis#tournament-v5" target="_blank">Riot Tournament API</Link>.
+                                    </Field.HelperText>
+                                    <Field.ErrorText>{form.formState.errors.tournament_provider_id?.message}</Field.ErrorText>
                                 </Field.Root>
 
                                 <Field.Root invalid={!!form.formState.errors.tournament_provider_id} required>

@@ -37,7 +37,7 @@ const config = defineConfig({
             colors: {
                 discord: {
                     solid: { value: "#5966f2" },
-                }
+                },
             }
         },
         slotRecipes: {

@@ -143,10 +143,21 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                 <PageSectorContainer
                     height="125vh"
                     backgroundImageUrl={getCdnImage("assets/backgrounds/pickems/pickems_1.png")}
-                    spacingTopOut="-14em"
+                    spacingTopOut={{
+                        smDown: "-15em",
+                        md: "-13em",
+                        lg: "-12em",
+                        "2xl": "-19em"
+                    }}
+                    spacingTopIn={{
+                        smDown: "12em",
+                        md: "11em",
+                        lg: "13em",
+                        "2xl": "20em"
+                    }}
                     id="players"
-                    spacingTopIn="15em"
                     px={10}
+                    mb="6%"
                 >
                     <HeaderText>Players</HeaderText>
 
@@ -170,7 +181,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                 <PageSectorContainer
                     backgroundImageUrl={getCdnImage("assets/backgrounds/pickems/pickems_2.png")}
                     id="teams"
-                    spacingTopOut="-11em"
+                    spacingTopOut="-15em"
                     spacingTopIn="10em"
                     px={10}
                 >

@@ -13,7 +13,7 @@ import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import useSettings from "@/lib/hooks/useSettings";
 import { barlow } from "@/styles/fonts";
 import { PlayerResponse } from "@/types/db";
-import { AbsoluteCenter, ActionBar, Badge, Box, Button, Center, HStack, Image, Portal, ScrollArea, Show, SimpleGrid, Span, Text, useClipboard, VStack } from "@chakra-ui/react";
+import { AbsoluteCenter, ActionBar, Badge, Box, Button, Center, HStack, Image, Portal, ScrollArea, Show, SimpleGrid, Span, Text, useBreakpointValue, useClipboard, VStack } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import { LuCheck, LuSaveAll, LuShare2, LuTrash } from "react-icons/lu";
@@ -58,6 +58,17 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
     const selectedPlayers = useMemo(() => dreamDraftIds.map(playerId => players.find(p => p.id === playerId)).filter(p => p !== undefined), [dreamDraftIds, players])
 
     const dreamDraftUnlocked = useMemo(() => settings.dd_unlocked === "true", [settings])
+
+    const containerSpacingResponsive = useBreakpointValue({
+        base: {
+            out: "-16em",
+            in: "17em"
+        },
+        sm: {
+            out: "-18em",
+            in: "20em"
+        }
+    })
 
     useEffect(() => {
         if (otherProfileId) {
@@ -141,8 +152,8 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                 <PageSectorContainer
                     height="125vh"
                     backgroundImageUrl={getCdnImage("assets/backgrounds/dreamdraft/dreamdraft_1_1.png")}
-                    spacingTopOut="-16em"
-                    spacingTopIn="20em"
+                    spacingTopOut={containerSpacingResponsive?.out}
+                    spacingTopIn={containerSpacingResponsive?.in}
                     id="make-team"
                     px={10}
                 >

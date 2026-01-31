@@ -1,13 +1,13 @@
 "use client"
 
 import Loader from "@/components/ui/loader";
-import { AbsoluteCenter, Box, Center, Heading, HStack, Image, Show, Text } from "@chakra-ui/react";
+import { AbsoluteCenter, Box, Center, Heading, HStack, Image, Show, Text, useBreakpointValue } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import MainLayout from "@/components/layouts/MainLayout";
 import { getCdnImage } from "@/lib/helpers";
 import usePublicFetch from "@/lib/hooks/usePublicFetch";
 import { ScheduledMatch } from "@/types/db";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { SwordIcon } from "@/components/svg/sword";
 import { DateTime } from "luxon";
 import { barlow, poppins } from "@/styles/fonts";
@@ -19,18 +19,46 @@ import PageSectorContainer from "@/components/ui/page-sector-container";
 
 export default function Index() {
   const session = useSession()
-  const [host, setHost] = useState<string>("")
   const { settings } = useSettings()
-
   const { data: scheduleData, loading: loadingSchedule } = usePublicFetch<ScheduledMatch[]>("schedule")
 
   const lastMatch = useMemo(() => {
     return scheduleData.findLast(m => new Date(m.start_date).getTime() < new Date().getTime() && m.winner_team_id)
   }, [scheduleData])
 
-  useEffect(() => {
-    queueMicrotask(() => setHost(location.host.split(":")[0]))
-  }, [])
+  const hideExcessContainers = useBreakpointValue({
+    base: true,
+    md: false
+  })
+
+  const latestResultsResponsiveProps = useBreakpointValue({
+    md: {
+      image: {
+        boxSize: "60px"
+      },
+      resultContainer: {
+        width: "110px",
+        height: "50px",
+        fontSize: "20px"
+      },
+      sword: {
+        boxSize: "30px"
+      }
+    },
+    lg: {
+      image: {
+        boxSize: "112px"
+      },
+      resultContainer: {
+        width: "130px",
+        height: "70px",
+        fontSize: "30px"
+      },
+      sword: {
+        boxSize: "60px"
+      }
+    }
+  })
 
   return (
     <Show
@@ -43,16 +71,25 @@ export default function Index() {
           title={settings?.home_title}
           description={settings?.home_description}
           buttons={
-            <PageHeaderButton link="/schedule">
-              View Schedule
-            </PageHeaderButton>
+            <>
+              <PageHeaderButton link="/schedule">
+                View Schedule
+              </PageHeaderButton>
+
+              <Show when={settings?.twitch_channel}>
+                <PageHeaderButton link={`https://twitch.tv/${settings?.twitch_channel}`} isExternal>
+                  Watch Live
+                </PageHeaderButton>
+              </Show>
+            </>
           }
         />
 
         <PageSectorContainer
           backgroundImageUrl={getCdnImage("assets/background_landing_1.png")}
-          spacingTopOut="-5em"
-          spacingTopIn="18em"
+          spacingTopOut="-14vh"
+          spacingTopIn="30vh"
+          hidden={hideExcessContainers}
         >
 
           <Center flexDirection="column">
@@ -80,25 +117,24 @@ export default function Index() {
                   <Image
                     alt="team-1-image"
                     src={lastMatch?.team_1_logo}
-                    boxSize="112px"
                     rounded="full"
                     background="gray.800"
                     border="5px solid"
                     borderColor="featureAlter"
                     zIndex={1}
+                    {...latestResultsResponsiveProps?.image}
                   />
 
                   <Center
                     ml={-10}
                     p={5}
-                    width="130px"
-                    height="70px"
                     clipPath="polygon(0% 0%, 75% 0%, 100% 50%, 75% 100%, 0% 100%)"
                     background="featureAlter"
                     color="featureBlack"
                     fontWeight="extrabold"
-                    fontSize="30px"
                     letterSpacing="2px"
+                    textAlign="end"
+                    {...latestResultsResponsiveProps?.resultContainer}
                   >
                     {lastMatch?.winner_team_id === lastMatch?.team_1_id ? "WIN" : "LOSS"}
                   </Center>
@@ -108,6 +144,7 @@ export default function Index() {
                   <SwordIcon
                     fill="featureAlter"
                     boxSize="60px"
+                    {...latestResultsResponsiveProps?.sword}
                   />
                 </Center>
 
@@ -115,27 +152,26 @@ export default function Index() {
                   <Center
                     mr={-10}
                     p={5}
-                    width="130px"
-                    height="70px"
                     clipPath="polygon(25% 0%, 100% 0%, 100% 100%, 25% 100%, 0% 50%)"
                     background="featureAlter"
                     color="featureBlack"
                     fontWeight="extrabold"
-                    fontSize="30px"
                     letterSpacing="2px"
+                    textAlign="start"
+                    {...latestResultsResponsiveProps?.resultContainer}
                   >
                     {lastMatch?.winner_team_id === lastMatch?.team_2_id ? "WIN" : "LOSS"}
                   </Center>
 
                   <Image
-                    alt="team-1-image"
+                    alt="team-2-image"
                     src={lastMatch?.team_2_logo}
-                    boxSize="112px"
                     rounded="full"
                     background="gray.800"
                     border="5px solid"
                     borderColor="featureAlter"
                     zIndex={1}
+                    {...latestResultsResponsiveProps?.image}
                   />
                   <Box>
                     <Heading fontFamily="Barlow, sans-serif" fontWeight="extrabold" textTransform="uppercase">{lastMatch?.team_2_name}</Heading>
@@ -148,23 +184,6 @@ export default function Index() {
                 {lastMatch !== undefined && DateTime.fromJSDate(new Date(lastMatch.start_date)).toFormat("LLLL dd, yyyy | hh:mm a")}
               </Text>
             </Show>
-          </Center>
-        </PageSectorContainer>
-
-        <PageSectorContainer
-          backgroundImage={`url(${getCdnImage("assets/background_landing_1.png")})`}
-          spacingTopOut="-6em"
-          spacingTopIn="10em"
-          id="live"
-        >
-          <Center>
-            <iframe
-              key={`twitch-iframe-${host}`}
-              src={`https://player.twitch.tv/?channel=${process.env.NEXT_PUBLIC_TWITCH_CHANNEL_NAME}&parent=${host}`}
-              height="720"
-              width="1280"
-              allowFullScreen>
-            </iframe>
           </Center>
         </PageSectorContainer>
       </MainLayout>

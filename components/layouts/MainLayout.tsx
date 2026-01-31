@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image, Text, Link, SimpleGrid, Menu, Show } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, Button, Icon, AbsoluteCenter, Image, Text, Link, SimpleGrid, Menu, Show, useBreakpointValue, Spacer } from "@chakra-ui/react";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { LuPencilLine } from "react-icons/lu";
 import useSettings from "@/lib/hooks/useSettings";
@@ -12,6 +12,9 @@ import BorderFillButtonStg from "../svg/border-fill-button";
 import { FaGithub } from "react-icons/fa";
 import { barlow, poppins } from "@/styles/fonts";
 import Head from "next/head";
+import MainLayoutHeaderDrawer from "./MainLayoutHeaderDrawer";
+import useLiveStatus from "@/lib/hooks/useLiveStatus";
+import { LiveStatusCircle } from "../ui/live-status-circle";
 
 const SCROLL_HEIGHT_REVEAL = 200
 
@@ -24,6 +27,18 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
     const { settings, loading: loadingSettings } = useSettings()
     const session = useSession()
     const router = useRouter()
+    const isTwitchLive = useLiveStatus()
+
+
+    const showHeaderDrawer = useBreakpointValue({
+        base: true,
+        xl: false
+    })
+
+    const isMobile = useBreakpointValue({
+        base: true,
+        xl: false
+    })
 
     useEffect(() => {
         let changeFn: () => void
@@ -75,13 +90,15 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                     left={0}
                     width="100%"
                     p={5}
-                    px={20}
+                    px={isMobile ? 5 : 20}
                     justifyContent="space-between"
                     transition="all 200ms linear"
                     background={headerBackgroundVisible ? "ui.headerBackground" : "transparent"}
                     zIndex={100}
                 >
-                    <Heading size="2xl" fontWeight="bold" letterSpacing="0.8px" className={barlow.className}>
+                    <Spacer hidden={!isMobile} />
+
+                    <Heading size="2xl" fontWeight="bold" letterSpacing="0.8px" className={barlow.className} hidden={isMobile}>
                         <Show when={settings?.tournament_logo_url && settings?.tournament_logo_height && settings?.tournament_logo_width} fallback={settings?.tournament_name.toUpperCase()}>
                             <Image
                                 onClick={() => router.push("/")}
@@ -95,82 +112,101 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                         </Show>
                     </Heading>
 
-                    <HStack gap={5}>
-                        <HeaderButton to="/">{"HOME"}</HeaderButton>
+                    <Show
+                        when={!showHeaderDrawer}
+                        fallback={<MainLayoutHeaderDrawer />}
+                    >
+                        <HStack gap={5}>
+                            <HeaderButton to="/">{"HOME"}</HeaderButton>
 
-                        <HeaderButton to="/schedule">{"SCHEDULE"}</HeaderButton>
+                            <Show when={settings?.twitch_channel}>
+                                <HeaderButton to={`https://twitch.tv/${settings?.twitch_channel}`} isExternal>
+                                    {isTwitchLive ? "LIVE NOW" : "WATCH"}
 
-                        <HeaderButton
-                            to="/dreamdraft"
-                            asMenu
-                            menuRender={() => (
-                                <>
-                                    <Menu.Item value="dd-create" cursor="pointer" onClick={() => router.push("/dreamdraft")}>Make Your Draft</Menu.Item>
-                                    <Menu.Item value="dd-leaderboard" cursor="pointer" onClick={() => router.push("/dreamdraft/leaderboard")}>Leaderboard</Menu.Item>
-                                </>
+                                    <Show when={isTwitchLive}>
+                                        <LiveStatusCircle />
+                                    </Show>
+                                </HeaderButton>
+                            </Show>
+
+                            <HeaderButton to="/schedule">{"SCHEDULE"}</HeaderButton>
+
+                            <HeaderButton
+                                to="/dreamdraft"
+                                asMenu
+                                menuRender={() => (
+                                    <>
+                                        <Menu.Item value="dd-create" cursor="pointer" onClick={() => router.push("/dreamdraft")}>Make Your Draft</Menu.Item>
+                                        <Menu.Item value="dd-leaderboard" cursor="pointer" onClick={() => router.push("/dreamdraft/leaderboard")}>Leaderboard</Menu.Item>
+                                    </>
+                                )}
+                            >
+                                {"DREAM DRAFT"}
+                            </HeaderButton>
+
+                            <HeaderButton
+                                to="/pickems"
+                                asMenu
+                                menuRender={() => (
+                                    <>
+                                        <Menu.Item value="pickems-create" cursor="pointer" onClick={() => router.push("/pickems")}>Your Predictions</Menu.Item>
+                                        <Menu.Item value="pickems-leaderboard" cursor="pointer" onClick={() => router.push("/pickems/leaderboard")}>Leaderboard</Menu.Item>
+                                    </>
+                                )}
+                            >
+                                {"PICK'EMS"}
+                            </HeaderButton>
+
+                            <HeaderButton to="/about">{"ABOUT"}</HeaderButton>
+
+                            {session.data?.user.type === "admin" && (
+                                <HeaderButton to="/admin">{"ADMIN"}</HeaderButton>
                             )}
-                        >
-                            {"DREAM DRAFT"}
-                        </HeaderButton>
+                        </HStack>
 
-                        <HeaderButton
-                            to="/pickems"
-                            asMenu
-                            menuRender={() => (
-                                <>
-                                    <Menu.Item value="pickems-create" cursor="pointer" onClick={() => router.push("/pickems")}>Your Predictions</Menu.Item>
-                                    <Menu.Item value="pickems-leaderboard" cursor="pointer" onClick={() => router.push("/pickems/leaderboard")}>Leaderboard</Menu.Item>
-                                </>
-                            )}
-                        >
-                            {"PICK'EMS"}
-                        </HeaderButton>
+                        <Box width="300px" />
 
-                        <HeaderButton to="/about">{"ABOUT"}</HeaderButton>
+                        <HStack>
+                            <Box position="relative" className="animBorderFill">
+                                <BorderFillButtonStg svgProps={{
+                                    width: "160px"
+                                }} />
 
-                        {session.data?.user.type === "admin" && (
-                            <HeaderButton to="/admin">{"ADMIN"}</HeaderButton>
-                        )}
-                    </HStack>
+                                {session.status === "unauthenticated" && (
+                                    <Button
+                                        position="absolute"
+                                        top="50%"
+                                        left="50%"
+                                        transform="translate(-50%, -50%)"
+                                        color="ui.loginText"
+                                        variant="plain"
+                                        onClick={() => signIn("discord")}
+                                        fontSize="sm"
+                                    >
+                                        <Icon as={LuPencilLine} />
+                                        SIGN IN
+                                    </Button>
+                                )}
 
-                    <Box width="300px" />
-
-                    <HStack>
-                        <Box position="relative" className="animBorderFill">
-                            <BorderFillButtonStg />
-
-                            {session.status === "unauthenticated" && (
-                                <Button
-                                    position="absolute"
-                                    top="50%"
-                                    left="50%"
-                                    transform="translate(-50%, -50%)"
-                                    color="ui.loginText"
-                                    variant="plain"
-                                    onClick={() => signIn("discord")}
-                                >
-                                    <Icon as={LuPencilLine} />
-                                    SIGN IN
-                                </Button>
-                            )}
-
-                            {session.status === "authenticated" && (
-                                <Button
-                                    position="absolute"
-                                    top="50%"
-                                    left="50%"
-                                    transform="translate(-50%, -50%)"
-                                    color="ui.loginText"
-                                    variant="plain"
-                                    fontWeight="semibold"
-                                    onClick={() => router.push("/profile")}
-                                >
-                                    <Image alt="avatar" src={session.data.user.avatar_url} height="25px" rounded="full" />
-                                    {session.data.user.name.toUpperCase()}
-                                </Button>
-                            )}
-                        </Box>
-                    </HStack>
+                                {session.status === "authenticated" && (
+                                    <Button
+                                        position="absolute"
+                                        top="50%"
+                                        left="50%"
+                                        transform="translate(-50%, -50%)"
+                                        color="ui.loginText"
+                                        variant="plain"
+                                        fontWeight="semibold"
+                                        onClick={() => router.push("/profile")}
+                                        fontSize="sm"
+                                    >
+                                        <Image alt="avatar" src={session.data.user.avatar_url} height="30px" rounded="full" />
+                                        {session.data.user.name.toUpperCase()}
+                                    </Button>
+                                )}
+                            </Box>
+                        </HStack>
+                    </Show>
                 </HStack>
 
                 <Flex flex="1" direction="column">
@@ -181,8 +217,10 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                     p={8}
                     justifyContent="space-evenly"
                     background="footerBackground"
+                    direction={isMobile ? "column" : "row"}
                     id="footer"
                     className={poppins.className}
+                    gap={5}
                 >
                     <Box>
                         <Heading>{settings.tournament_name}</Heading>

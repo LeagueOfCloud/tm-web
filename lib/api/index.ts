@@ -297,6 +297,19 @@ async function updateConfig(token: string, payload: object) {
     })
 }
 
+/*
+* LIVE CHECK
+*/
+async function liveCheck(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+        axios.get(`${API_URL}/livecheck`)
+            .then(res => {
+                resolve(res.data.is_live);
+            })
+            .catch(err => reject(err.response));
+    })
+}
+
 const api = {
     getTotal,
     getAll,
@@ -317,6 +330,7 @@ const api = {
     deleteRiotAccounts,
     deleteRiotAccountsMultiple,
     updateConfig,
+    liveCheck,
     ...pickems,
     ...dreamdraft,
     ...leaderboard,

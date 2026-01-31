@@ -1,6 +1,7 @@
 import { AdminSettings } from "@/types/form"
 import { Champion } from "@/types/riot"
 import { Button, ButtonGroup, Checkbox, CloseButton, Dialog, Portal, SimpleGrid, Spacer, Text, UseDisclosureReturn } from "@chakra-ui/react"
+import { useState } from "react"
 import { UseFormReturn } from "react-hook-form"
 
 type ChampSelectSettingsDialogProps = {
@@ -12,7 +13,7 @@ type ChampSelectSettingsDialogProps = {
 }
 
 export default function ChampSelectSettingsDialog({ form, disclosure, champions, onSave, isSaving }: ChampSelectSettingsDialogProps) {
-    console.log(champions)
+    const [championSeed, setChampionSeed] = useState(1)
 
     return (
         <Dialog.Root open={disclosure.open} onOpenChange={(e) => disclosure.setOpen(e.open)} variant="settings" size="xl">
@@ -29,11 +30,10 @@ export default function ChampSelectSettingsDialog({ form, disclosure, champions,
 
                         <Dialog.Body>
                             <Text fontWeight="medium">Pre-banned Champions</Text>
-                            <SimpleGrid mt={3} columns={5} gapX={10} gapY={3}>
+                            <SimpleGrid mt={3} columns={5} gapX={10} gapY={3} key={championSeed}>
                                 {champions.map(champion => (
                                     <Checkbox.Root key={`champ-toggle-${champion.id}`} defaultChecked={JSON.parse(form.getValues("banned_champions") ?? "[]").includes(champion.id)} onCheckedChange={(e) => {
                                         const currValue = JSON.parse(form.getValues("banned_champions") ?? "[]")
-                                        console.log(champion.id)
                                         if (e.checked) {
                                             form.setValue("banned_champions", JSON.stringify([...currValue, champion.id]))
                                         } else {
@@ -51,6 +51,16 @@ export default function ChampSelectSettingsDialog({ form, disclosure, champions,
 
                         <Dialog.Footer>
                             <ButtonGroup>
+                                <Button
+                                    colorPalette="red"
+                                    onClick={() => {
+                                        form.setValue("banned_champions", "[]")
+                                        setChampionSeed(Math.random())
+                                    }}
+                                >
+                                    Clear All
+                                </Button>
+
                                 <Button onClick={disclosure.onClose}>Cancel</Button>
                                 <Button
                                     colorPalette="green"
