@@ -48,6 +48,7 @@ const turnOrder = [
 ]
 
 export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProps) {
+    const [actionCd, setActionCd] = useState<boolean>(false)
     const [loaded, setLoaded] = useState<boolean>(false)
     const [preBans, setPreBans] = useState<string[]>([])
     const [blueBans, setBlueBans] = useState<string[]>([])
@@ -100,6 +101,7 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
 
     useEffect(() => {
         queueMicrotask(() => {
+            setActionCd(false)
             setSelectedChampionId(null)
             setHover(null)
 
@@ -387,6 +389,12 @@ export default function ChampSelectLobby({ lobbyId, team }: ChampSelectLobbyProp
                     <Show when={captain !== null}>
                         <Button
                             onClick={() => {
+                                if (actionCd) {
+                                    return
+                                }
+
+                                setActionCd(true)
+
                                 if (!started) {
                                     websocket?.sendMessage({
                                         action: "Start"
