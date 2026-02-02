@@ -59,7 +59,7 @@ export default function AdminChampSelect() {
             </Show>
 
             <DataTable
-                data={lobbies?.lobbies.filter(l => l.state !== "Finished").toSorted((a, b) => a.TTL! - b.TTL!) ?? []}
+                data={lobbies?.lobbies.filter(l => l.state !== "Finished").toSorted((a, b) => b.TTL! - a.TTL!) ?? []}
                 selected={selectedLobbies}
                 loading={loadingLobbies}
                 setSelected={setSelectedLobbies}
