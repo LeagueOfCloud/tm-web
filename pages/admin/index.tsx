@@ -4,7 +4,7 @@ import { toaster } from "@/components/ui/toaster";
 import api from "@/lib/api";
 import useAdminStats from "@/lib/hooks/useAdminStats";
 import { barlow, poppins } from "@/styles/fonts";
-import { Box, Button, HStack, Show, Span, Text, VStack } from "@chakra-ui/react";
+import { Box, HStack, Show, Span, Text, VStack } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
