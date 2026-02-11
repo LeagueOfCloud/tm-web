@@ -3,7 +3,6 @@ import DeleteRiotAccountsModal from "@/components/dialogs/riot-account/delete-ri
 import EditRiotAccount from "@/components/dialogs/riot-account/edit-riot-account";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import DataTable from "@/components/ui/data-table";
-import { toaster } from "@/components/ui/toaster";
 import { ellipsise } from "@/lib/helpers";
 import useApiFetch from "@/lib/hooks/useApiFetch";
 import { PlayerResponse, RiotAccountResponse } from "@/types/db";
@@ -88,14 +87,6 @@ export default function ManageRiotAccounts() {
                                         refreshRiotAccounts();
                                     }}
                                 />
-
-                                <Icon as={LuRefreshCcw} cursor="pointer" onClick={() => {
-                                    toaster.create({
-                                        title: "Feature under development",
-                                        type: "warning",
-                                        closable: true
-                                    })
-                                }} />
                             </HStack>
                         ),
                     },

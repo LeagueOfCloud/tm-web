@@ -11,6 +11,17 @@ export async function getAdminStats(token: string): Promise<{ [key: string]: unk
     })
 }
 
+export async function runDreamDraftEvaluation(token: string): Promise<Record<string, unknown>> {
+    return new Promise((resolve, reject) => {
+        axios.post(`${API_URL}/dream-draft/evaluate`, {}, { headers: { Authorization: token } })
+            .then(res => {
+                resolve(res.data)
+            })
+            .catch(err => reject(err))
+    })
+}
+
 export default {
-    getAdminStats
+    getAdminStats,
+    runDreamDraftEvaluation
 } as const
