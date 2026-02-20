@@ -1,9 +1,12 @@
 import AdminLayout from "@/components/layouts/AdminLayout";
 import CountUp from "@/components/ui/count-up";
+import { toaster } from "@/components/ui/toaster";
+import api from "@/lib/api";
 import useAdminStats from "@/lib/hooks/useAdminStats";
 import { barlow, poppins } from "@/styles/fonts";
-import { HStack, Show, Span, Text, VStack } from "@chakra-ui/react";
+import { Box, HStack, Show, Span, Text, VStack } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 type StatBoxProps = {
     description: string
@@ -43,6 +46,7 @@ export function StatBox({ description, stat }: StatBoxProps) {
 export default function AdminIndex() {
     const session = useSession()
     const { stats, loading: loadingStats } = useAdminStats(session.data?.user.token)
+    const [ddEvalLoading, setDdEvalLoading] = useState<boolean>(false)
 
     if (session.status !== "authenticated") {
         return <></>
@@ -51,6 +55,59 @@ export default function AdminIndex() {
     return (
         <AdminLayout>
             <Show when={!loadingStats}>
+                <Box
+                    boxSize="300px"
+                    border="2px solid gray"
+                    background="blackAlpha.600"
+                    padding={5}
+                    marginBottom={5}
+                >
+                    <Text className={barlow.className} letterSpacing="0.3px">ACTIONS</Text>
+
+                    <VStack alignItems="start" pt={3}>
+                        <Text
+                            cursor="pointer"
+                            _hover={{ color: "gray.400" }}
+                            transition="color 100ms"
+                            onClick={() => {
+                                if (ddEvalLoading) {
+                                    return
+                                }
+
+                                setDdEvalLoading(true)
+
+                                try {
+                                    toaster.promise((() => api.runDreamDraftEvaluation(session.data.user.token)), {
+                                        success: (args) => ({
+                                            title: "Evaluation Complete",
+                                            description: `${args.matches_processed} matches have been evaluated`
+                                        }),
+                                        error: (args) => ({
+                                            title: "Evaluation Failed",
+                                            description: `${args}`
+                                        }),
+                                        loading: {
+                                            title: "Evaluation running...",
+                                            description: "Please wait for the evaluation to complete"
+                                        }
+                                    })
+                                } catch (e) {
+                                    toaster.create({
+                                        type: "error",
+                                        title: "Could not run evaluation",
+                                        description: `${e}`
+                                    })
+                                }
+                                finally {
+                                    setDdEvalLoading(false)
+                                }
+                            }}
+                        >
+                            Run Dream Draft Evaluation
+                        </Text>
+                    </VStack>
+                </Box>
+
                 <HStack wrap="wrap">
                     <StatBox
                         description="Profiles"
