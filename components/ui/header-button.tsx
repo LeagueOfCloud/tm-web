@@ -1,6 +1,6 @@
 "use client"
 
-import { barlow, poppins } from "@/styles/fonts";
+import { barlow } from "@/styles/fonts";
 import { Link, Menu, Portal } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { PropsWithChildren, ReactNode } from "react";
@@ -60,9 +60,13 @@ export default function HeaderButton({ to, asMenu, children, menuRender, isExter
                 <Portal>
                     <Menu.Positioner>
                         <Menu.Content
-                            background="featureBackground"
+                            background="ui.headerBackground"
                             rounded="none"
-                            className={poppins.className}
+                            className={barlow.className}
+                            textTransform="uppercase"
+                            letterSpacing="1px"
+                            border="1px solid"
+                            borderColor="gray.700"
                         >
                             {menuRender()}
                         </Menu.Content>
