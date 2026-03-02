@@ -77,6 +77,10 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                 </title>
 
                 <link rel="shortcut icon" href={settings?.tournament_favicon_url} type="image/x-icon" />
+
+                <meta name="og:title" content={settings?.tournament_name} />
+                <meta name="og:description" content={settings?.tournament_description ?? "No Description"} />
+                <meta name="og:image" content={settings?.tournament_logo_url} />
             </Head>
 
             <Flex

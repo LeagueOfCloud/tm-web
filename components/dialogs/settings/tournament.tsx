@@ -1,7 +1,7 @@
 import { AdminSettings } from "@/types/form"
 import { Button, ButtonGroup, CloseButton, Dialog, Field, Input, InputGroup, Link, Portal, Switch, UseDisclosureReturn, VStack } from "@chakra-ui/react"
 import { UseFormReturn } from "react-hook-form"
-import { LuHash, LuTrophy, LuTwitch } from "react-icons/lu"
+import { LuHash, LuText, LuTrophy, LuTwitch } from "react-icons/lu"
 
 type TournamentSettingsDialogProps = {
     form: UseFormReturn<AdminSettings, unknown, AdminSettings>
@@ -31,6 +31,14 @@ export default function TournamentSettingsDialog({ form, disclosure, onSave, isS
                                     <Field.Label>Tournament Name <Field.RequiredIndicator /></Field.Label>
                                     <InputGroup startElement={<LuTrophy />}>
                                         <Input placeholder="Enter tournament name..." {...form.register("tournament_name", { required: true })} autoComplete="off" />
+                                    </InputGroup>
+                                    <Field.ErrorText>{form.formState.errors.tournament_name?.message}</Field.ErrorText>
+                                </Field.Root>
+
+                                <Field.Root invalid={!!form.formState.errors.tournament_description} required>
+                                    <Field.Label>Tournament Description <Field.RequiredIndicator /></Field.Label>
+                                    <InputGroup startElement={<LuText />}>
+                                        <Input placeholder="Enter tournament description..." {...form.register("tournament_description", { required: true })} autoComplete="off" />
                                     </InputGroup>
                                     <Field.ErrorText>{form.formState.errors.tournament_name?.message}</Field.ErrorText>
                                 </Field.Root>

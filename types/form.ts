@@ -9,6 +9,7 @@ interface StyleSettings {
 
 export interface AdminSettings extends StyleSettings {
     tournament_name: string
+    tournament_description: string
     tournament_id: string
     tournament_provider_id: number
     twitch_channel: string
