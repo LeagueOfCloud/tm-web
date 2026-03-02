@@ -77,10 +77,24 @@ export default function MainLayout({ title, children }: MainLayoutProps & PropsW
                 </title>
 
                 <link rel="shortcut icon" href={settings?.tournament_favicon_url} type="image/x-icon" />
+                <meta name="description" content={settings?.tournament_description ?? "No Description"} />
+
 
                 <meta name="og:title" content={settings?.tournament_name} />
+                <meta name="og:url" content={`https://${settings?.url}/`} />
+                <meta name="og:type" content="website" />
                 <meta name="og:description" content={settings?.tournament_description ?? "No Description"} />
                 <meta name="og:image" content={settings?.tournament_logo_url} />
+
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta property="twitter:domain" content={settings?.url} />
+                <meta property="twitter:url" content={`https://${settings?.url}/`} />
+                <meta name="twitter:title" content={settings?.tournament_name} />
+                <meta name="twitter:description" content={settings?.tournament_description ?? "No Description"} />
+                <meta name="twitter:image" content={settings?.tournament_favicon_url} />
+
+                <meta http-equiv="X-UA-Compatible" content="IE=7" />
+                <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
             </Head>
 
             <Flex
