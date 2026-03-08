@@ -36,7 +36,7 @@ export default function MiscPickemCard({ pickemId, title, defaultSelection, opti
                     objectFit="cover"
                     width="200px"
                     height="200px"
-                    src={selectedOption ? `https://api.nemika.me/images/league-tournament?width=200&height=200&font_size=60&content=${selectedOption.toUpperCase()}` : `${process.env.NEXT_PUBLIC_CDN_URL}/assets/pickem_missing.png`}
+                    src={selectedOption ? `https://api.nemika.me/images/league-tournament?width=200&height=200&font_size=${selectedOption.length < 6 ? 60 : 40}&content=${encodeURIComponent(selectedOption.toUpperCase())}` : `${process.env.NEXT_PUBLIC_CDN_URL}/assets/pickem_missing.png`}
                     alt="pickem-cover"
                     draggable={false}
                 />
