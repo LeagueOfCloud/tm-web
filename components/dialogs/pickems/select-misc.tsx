@@ -36,7 +36,7 @@ export default function SelectPickemMisc({ options, onOptionSelect, disclosure }
                 </HStack>
             )}
             filterFn={(option, filter) => `${option}`.toLowerCase().includes(filter)}
-            sortFn={(a, b) => a.localeCompare(b)}
+            sortFn={(a, b) => 1}
         />
     )
 }

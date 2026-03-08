@@ -107,7 +107,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                                     </PageHeaderButton>
                                 }
                             >
-                                <PageHeaderButton link="#players">
+                                <PageHeaderButton link="/pickems/#players">
                                     Cast Your Votes
                                 </PageHeaderButton>
                             </Show>
@@ -127,6 +127,7 @@ export default function PickEms({ otherProfileId }: PickEmsProps) {
                                 background={clipboard.copied ? "green" : "orange.500"}
                                 px={3}
                                 py={1}
+                                margin={67}
                                 rounded="lg"
                                 cursor="pointer"
                                 onClick={() => clipboard.copy()}

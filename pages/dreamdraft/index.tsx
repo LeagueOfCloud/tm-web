@@ -116,7 +116,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                                     </PageHeaderButton>
                                 }
                             >
-                                <PageHeaderButton link="#make-team">
+                                <PageHeaderButton link="/dreamdraft/#make-team">
                                     Form your Team
                                 </PageHeaderButton>
                             </Show>
@@ -136,6 +136,7 @@ export default function DreamDraft({ otherProfileId }: DreamDraftProps) {
                                 background={clipboard.copied ? "green" : "orange.500"}
                                 px={3}
                                 py={1}
+                                margin={67}
                                 rounded="lg"
                                 cursor="pointer"
                                 onClick={() => clipboard.copy()}
